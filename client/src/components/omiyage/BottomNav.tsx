@@ -5,12 +5,11 @@
 import { cn } from "@/lib/utils";
 import { useLocation } from "wouter";
 import { Home, Search, Map, Heart, User } from "lucide-react";
-import { toast } from "sonner";
 
 const NAV_ITEMS = [
   { id: "home", label: "ホーム", icon: Home, path: "/" },
   { id: "search", label: "探す", icon: Search, path: "/search" },
-  { id: "map", label: "マップ", icon: Map, path: "/map", placeholder: true },
+  { id: "map", label: "マップ", icon: Map, path: "/map" },
   { id: "favorites", label: "お気に入り", icon: Heart, path: "/favorites" },
   { id: "mypage", label: "マイページ", icon: User, path: "/mypage" },
 ];
@@ -19,10 +18,6 @@ export function BottomNav() {
   const [location, navigate] = useLocation();
 
   const handleNav = (item: (typeof NAV_ITEMS)[0]) => {
-    if (item.placeholder) {
-      toast.info("マップ機能は準備中です");
-      return;
-    }
     navigate(item.path);
   };
 

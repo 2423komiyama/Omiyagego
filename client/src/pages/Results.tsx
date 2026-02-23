@@ -2,13 +2,14 @@
 // Omiyage Go - 検索結果画面（カード一覧）
 // デザイン哲学: 候補を3〜10件に絞り、詳細へ誘導
 // ============================================================
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useLocation } from "wouter";
 import { ChevronLeft, SlidersHorizontal, X } from "lucide-react";
 import { AppLayout } from "@/components/omiyage/AppLayout";
 import { ProductCard } from "@/components/omiyage/ProductCard";
 import { ConstraintChip } from "@/components/omiyage/Badges";
 import { useSearch } from "@/contexts/SearchContext";
+import { useHistory, buildSearchLabel } from "@/contexts/HistoryContext";
 import { filterProducts, PRODUCTS, FACILITIES } from "@/lib/mockData";
 import { cn } from "@/lib/utils";
 
@@ -23,11 +24,26 @@ const SORT_OPTIONS: { value: SortType; label: string }[] = [
 export default function Results() {
   const [, navigate] = useLocation();
   const { conditions, updateCondition } = useSearch();
+  const { addSearchHistory } = useHistory();
   const [sortBy, setSortBy] = useState<SortType>("guarantee");
 
   const filteredProducts = useMemo(() => {
     return filterProducts(conditions);
   }, [conditions]);
+
+  // 検索結果が表示されたら履歴に保存
+  useEffect(() => {
+    const label = buildSearchLabel(conditions);
+    if (label !== "条件なし") {
+      addSearchHistory({
+        conditions,
+        timestamp: Date.now(),
+        resultCount: filteredProducts.length,
+        label,
+      });
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // 並び替えロジック
   const sortedProducts = useMemo(() => {

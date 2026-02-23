@@ -2,7 +2,7 @@
 // Omiyage Go - 商品詳細画面（最重要画面）
 // デザイン哲学: 保証→導線→文脈→受取 の1画面完結
 // ============================================================
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useLocation, useParams } from "wouter";
 import {
   ChevronLeft,
@@ -23,6 +23,7 @@ import { GuaranteeCard } from "@/components/omiyage/GuaranteeCard";
 import { RecommendBadge, ConstraintChip, LocationTag, StockBanner } from "@/components/omiyage/Badges";
 import { PRODUCTS } from "@/lib/mockData";
 import { useFavorites } from "@/contexts/FavoritesContext";
+import { useHistory } from "@/contexts/HistoryContext";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 
@@ -38,12 +39,27 @@ export default function ProductDetail() {
   const { id } = useParams<{ id: string }>();
   const [, navigate] = useLocation();
   const { isFavorite: checkFavorite, toggleFavorite } = useFavorites();
+  const { addViewHistory } = useHistory();
   const [giftTab, setGiftTab] = useState<GiftTab>("greeting");
   const [copied, setCopied] = useState(false);
   const [storyExpanded, setStoryExpanded] = useState(false);
   const [showReserve, setShowReserve] = useState(false);
 
   const product = PRODUCTS.find((p) => p.id === id);
+
+  // 閲覧履歴に保存
+  useEffect(() => {
+    if (product) {
+      addViewHistory({
+        productId: product.id,
+        productName: product.name,
+        productPrice: product.priceLabel,
+        productImage: product.imageUrl,
+        timestamp: Date.now(),
+      });
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [product?.id]);
 
   if (!product) {
     return (

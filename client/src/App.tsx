@@ -10,6 +10,7 @@ import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { SearchProvider } from "./contexts/SearchContext";
 import { FavoritesProvider } from "./contexts/FavoritesContext";
+import { HistoryProvider } from "./contexts/HistoryContext";
 import Home from "./pages/Home";
 import Conditions from "./pages/Conditions";
 import Results from "./pages/Results";
@@ -17,6 +18,7 @@ import ProductDetail from "./pages/ProductDetail";
 import SellerDetail from "./pages/SellerDetail";
 import Favorites from "./pages/Favorites";
 import MyPage from "./pages/MyPage";
+import MapPage from "./pages/MapPage";
 
 function Router() {
   return (
@@ -29,6 +31,7 @@ function Router() {
       <Route path="/seller/:id" component={SellerDetail} />
       <Route path="/favorites" component={Favorites} />
       <Route path="/mypage" component={MyPage} />
+      <Route path="/map" component={MapPage} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>
@@ -41,10 +44,12 @@ function App() {
       <ThemeProvider defaultTheme="light">
         <SearchProvider>
           <FavoritesProvider>
+            <HistoryProvider>
             <TooltipProvider>
               <Toaster position="top-center" />
               <Router />
             </TooltipProvider>
+            </HistoryProvider>
           </FavoritesProvider>
         </SearchProvider>
       </ThemeProvider>
