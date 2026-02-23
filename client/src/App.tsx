@@ -1,39 +1,49 @@
+// ============================================================
+// Omiyage Go - アプリルーティング
+// デザイン哲学: 駅案内板スタイル - 情報の読み取り速度最優先
+// ============================================================
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import NotFound from "@/pages/NotFound";
 import { Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
+import { SearchProvider } from "./contexts/SearchContext";
 import Home from "./pages/Home";
-
+import Conditions from "./pages/Conditions";
+import Results from "./pages/Results";
+import ProductDetail from "./pages/ProductDetail";
+import SellerDetail from "./pages/SellerDetail";
+import Favorites from "./pages/Favorites";
+import MyPage from "./pages/MyPage";
 
 function Router() {
   return (
     <Switch>
-      <Route path={"/"} component={Home} />
-      <Route path={"/404"} component={NotFound} />
-      {/* Final fallback route */}
+      <Route path="/" component={Home} />
+      <Route path="/conditions" component={Conditions} />
+      <Route path="/results" component={Results} />
+      <Route path="/search" component={Results} />
+      <Route path="/product/:id" component={ProductDetail} />
+      <Route path="/seller/:id" component={SellerDetail} />
+      <Route path="/favorites" component={Favorites} />
+      <Route path="/mypage" component={MyPage} />
+      <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>
   );
 }
 
-// NOTE: About Theme
-// - First choose a default theme according to your design style (dark or light bg), than change color palette in index.css
-//   to keep consistent foreground/background color across components
-// - If you want to make theme switchable, pass `switchable` ThemeProvider and use `useTheme` hook
-
 function App() {
   return (
     <ErrorBoundary>
-      <ThemeProvider
-        defaultTheme="light"
-        // switchable
-      >
-        <TooltipProvider>
-          <Toaster />
-          <Router />
-        </TooltipProvider>
+      <ThemeProvider defaultTheme="light">
+        <SearchProvider>
+          <TooltipProvider>
+            <Toaster position="top-center" />
+            <Router />
+          </TooltipProvider>
+        </SearchProvider>
       </ThemeProvider>
     </ErrorBoundary>
   );
