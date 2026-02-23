@@ -1,5 +1,5 @@
 // ============================================================
-// Omiyage Go - 商品管理ページ
+// Omiyage Go - Admin Facilities Management Page
 // ============================================================
 import { useAuth } from "@/_core/hooks/useAuth";
 import DashboardLayout from "@/components/DashboardLayout";
@@ -21,47 +21,29 @@ import {
   AlertDialogDescription,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { Plus, Edit2, Trash2, ArrowLeft } from "lucide-react";
+import { Plus, Edit2, Trash2, ArrowLeft, MapPin } from "lucide-react";
 import { useLocation } from "wouter";
 import { useState } from "react";
 import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
-import { useEffect } from "react";
 
-export default function AdminProducts() {
+export default function AdminFacilities() {
   const { user, loading } = useAuth();
   const [, navigate] = useLocation();
   const [deleteId, setDeleteId] = useState<string | null>(null);
-  const [isRefreshing, setIsRefreshing] = useState(false);
 
-  // 定期的にリスト更新（オプション）
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setIsRefreshing(true);
-      setTimeout(() => setIsRefreshing(false), 500);
-    }, 30000); // 30秒ごと
-
-    return () => clearInterval(interval);
-  }, []);
-
-  // 商品データを取得
-  const utils = trpc.useUtils();
-  const { data: products, isLoading: isLoadingProducts } = trpc.admin.products.list.useQuery();
-  const deleteMutation = trpc.admin.products.delete.useMutation({
-    onSuccess: () => {
-      // 商品リストを自動リフレッシュ
-      utils.admin.products.list.invalidate();
-    },
-  });
+  // 施設データを取得
+  const { data: facilities, isLoading: isLoadingFacilities } = trpc.admin.facilities.list.useQuery();
+  const deleteMutation = trpc.admin.facilities.delete.useMutation();
 
   // 削除処理
   const handleDelete = async (id: string) => {
     try {
       await deleteMutation.mutateAsync({ id });
-      toast.success("商品を削除しました");
+      toast.success("施設を削除しました");
     } catch (error) {
-      console.error("Error deleting product:", error);
-      toast.error("商品の削除に失敗しました");
+      console.error("Error deleting facility:", error);
+      toast.error("施設の削除に失敗しました");
     }
   };
 
@@ -86,8 +68,7 @@ export default function AdminProducts() {
     );
   }
 
-  // 商品リストをレンダリング
-  const displayProducts = products || [];
+  const displayFacilities = facilities || [];
 
   return (
     <DashboardLayout>
@@ -104,24 +85,24 @@ export default function AdminProducts() {
               <ArrowLeft className="w-4 h-4" />
             </Button>
             <div>
-              <h1 className="text-3xl font-bold tracking-tight">商品管理</h1>
+              <h1 className="text-3xl font-bold tracking-tight">施設管理</h1>
               <p className="text-muted-foreground mt-1">
-                お土産商品を追加・編集・削除します
+                駅・空港などの施設情報を管理します
               </p>
             </div>
           </div>
-          <Button onClick={() => navigate("/admin/products/new")}>
-            <Plus className="w-4 h-4 mr-2" />
-            新規商品
+          <Button onClick={() => navigate("/admin/facilities/new")} className="gap-2">
+            <Plus className="w-4 h-4" />
+            施設を追加
           </Button>
         </div>
 
-        {/* 商品一覧テーブル */}
+        {/* 施設一覧テーブル */}
         <Card>
           <CardHeader>
-            <CardTitle>商品一覧</CardTitle>
+            <CardTitle>施設一覧</CardTitle>
             <CardDescription>
-              全{displayProducts.length}件の商品が登録されています
+              全{displayFacilities.length}件の施設が登録されています
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -129,63 +110,63 @@ export default function AdminProducts() {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>画像</TableHead>
-                    <TableHead>商品名</TableHead>
-                    <TableHead>ブランド</TableHead>
-                    <TableHead>価格</TableHead>
+                    <TableHead>施設名</TableHead>
+                    <TableHead>地方</TableHead>
                     <TableHead>都道府県</TableHead>
+                    <TableHead>改札内</TableHead>
                     <TableHead className="text-right">操作</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {isLoadingProducts ? (
+                  {isLoadingFacilities ? (
                     <TableRow>
-                      <TableCell colSpan={6} className="text-center py-8">
+                      <TableCell colSpan={5} className="text-center py-8">
                         読み込み中...
                       </TableCell>
                     </TableRow>
-                  ) : displayProducts.length === 0 ? (
+                  ) : displayFacilities.length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
-                        商品がまだ登録されていません
+                      <TableCell colSpan={5} className="text-center py-8 text-muted-foreground">
+                        施設がまだ登録されていません
                       </TableCell>
                     </TableRow>
                   ) : (
-                    displayProducts.map((product: any) => (
-                    <TableRow key={product.id}>
-                      <TableCell>
-                        {product.imageUrl && (
-                          <img
-                            src={product.imageUrl}
-                            alt={product.name}
-                            className="w-10 h-10 rounded object-cover"
-                          />
-                        )}
-                      </TableCell>
-                      <TableCell className="font-medium">{product.name}</TableCell>
-                      <TableCell>{product.brand}</TableCell>
-                      <TableCell>¥{product.price.toLocaleString()}</TableCell>
-                      <TableCell>{product.prefecture}</TableCell>
-                      <TableCell className="text-right">
-                        <div className="flex items-center justify-end gap-2">
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => navigate(`/admin/products/${product.id}`)}
-                          >
-                            <Edit2 className="w-4 h-4" />
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => setDeleteId(product.id)}
-                          >
-                            <Trash2 className="w-4 h-4 text-destructive" />
-                          </Button>
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  ))
+                    displayFacilities.map((facility: any) => (
+                      <TableRow key={facility.id}>
+                        <TableCell className="font-medium">{facility.name}</TableCell>
+                        <TableCell>{facility.region}</TableCell>
+                        <TableCell>{facility.prefecture}</TableCell>
+                        <TableCell>
+                          {facility.insideGate ? (
+                            <span className="inline-flex items-center rounded-full bg-green-50 px-2 py-1 text-xs font-medium text-green-700">
+                              改札内
+                            </span>
+                          ) : (
+                            <span className="inline-flex items-center rounded-full bg-gray-50 px-2 py-1 text-xs font-medium text-gray-700">
+                              改札外
+                            </span>
+                          )}
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <div className="flex items-center justify-end gap-2">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => navigate(`/admin/facilities/${facility.id}`)}
+                            >
+                              <Edit2 className="w-4 h-4" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => setDeleteId(facility.id)}
+                            >
+                              <Trash2 className="w-4 h-4 text-destructive" />
+                            </Button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))
                   )}
                 </TableBody>
               </Table>
@@ -196,9 +177,9 @@ export default function AdminProducts() {
         {/* 削除確認ダイアログ */}
         <AlertDialog open={deleteId !== null} onOpenChange={(open) => !open && setDeleteId(null)}>
           <AlertDialogContent>
-            <AlertDialogTitle>商品を削除しますか？</AlertDialogTitle>
+            <AlertDialogTitle>施設を削除しますか？</AlertDialogTitle>
             <AlertDialogDescription>
-              この操作は取り消せません。商品を削除してもよろしいですか？
+              この操作は取り消せません。施設を削除してもよろしいですか？
             </AlertDialogDescription>
             <div className="flex gap-3 justify-end">
               <AlertDialogCancel>キャンセル</AlertDialogCancel>
@@ -210,7 +191,6 @@ export default function AdminProducts() {
                   }
                 }}
                 disabled={deleteMutation.isPending}
-                className="bg-destructive hover:bg-destructive/90"
               >
                 {deleteMutation.isPending ? "削除中..." : "削除"}
               </AlertDialogAction>

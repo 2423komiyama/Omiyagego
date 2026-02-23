@@ -1,5 +1,5 @@
 // ============================================================
-// Omiyage Go - 商品編集フォーム
+// Omiyage Go - Admin Product Form with Validation
 // ============================================================
 import { useAuth } from "@/_core/hooks/useAuth";
 import DashboardLayout from "@/components/DashboardLayout";
@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/select";
 import { ArrowLeft, Save } from "lucide-react";
 import { useLocation } from "wouter";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { trpc } from "@/lib/trpc";
 import { useParams } from "wouter";
 import { toast } from "sonner";
@@ -70,23 +70,48 @@ export default function AdminProductForm() {
     { enabled: !!productId }
   );
 
-  // Create/Update mutations
-  const createMutation = trpc.admin.products.create.useMutation();
-  const updateMutation = trpc.admin.products.update.useMutation();
+  // Create/Update mutations with auto-refresh
+  const utils = trpc.useUtils();
+  const createMutation = trpc.admin.products.create.useMutation({
+    onSuccess: () => {
+      utils.admin.products.list.invalidate();
+    },
+  });
+  const updateMutation = trpc.admin.products.update.useMutation({
+    onSuccess: () => {
+      utils.admin.products.list.invalidate();
+    },
+  });
 
-  // 管理者チェック
+  // Auto-populate form when editing
+  useEffect(() => {
+    if (product) {
+      setFormData({
+        name: product.name || "",
+        brand: product.brand || "",
+        price: product.price?.toString() || "",
+        prefecture: product.prefecture || "",
+        region: product.region || "",
+        description: product.description || "",
+        shelfLife: product.shelfLife?.toString() || "",
+        imageUrl: product.imageUrl || "",
+      });
+    }
+  }, [product]);
+
+  // Admin check
   if (!loading && user?.role !== "admin") {
     return (
       <DashboardLayout>
         <div className="flex items-center justify-center h-96">
           <Card className="w-full max-w-md">
             <CardHeader>
-              <CardTitle>アクセス拒否</CardTitle>
-              <CardDescription>管理者権限が必要です</CardDescription>
+              <CardTitle>Access Denied</CardTitle>
+              <CardDescription>Admin privileges required</CardDescription>
             </CardHeader>
             <CardContent>
               <Button onClick={() => navigate("/")} variant="outline" className="w-full">
-                ホームに戻る
+                Return to Home
               </Button>
             </CardContent>
           </Card>
@@ -95,9 +120,7 @@ export default function AdminProductForm() {
     );
   }
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
@@ -106,8 +129,36 @@ export default function AdminProductForm() {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  const validateForm = (): boolean => {
+    if (!formData.name.trim()) {
+      toast.error("Product name is required");
+      return false;
+    }
+    if (!formData.brand.trim()) {
+      toast.error("Brand name is required");
+      return false;
+    }
+    if (!formData.price || parseInt(formData.price) <= 0) {
+      toast.error("Valid price is required");
+      return false;
+    }
+    if (!formData.prefecture) {
+      toast.error("Prefecture is required");
+      return false;
+    }
+    if (!formData.region) {
+      toast.error("Region is required");
+      return false;
+    }
+    return true;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!validateForm()) {
+      return;
+    }
     
     try {
       if (productId) {
@@ -123,7 +174,7 @@ export default function AdminProductForm() {
           shelfLife: formData.shelfLife ? parseInt(formData.shelfLife) : undefined,
           imageUrl: formData.imageUrl || undefined,
         });
-        toast.success("商品を更新しました");
+        toast.success("Product updated successfully");
       } else {
         // Create new product
         await createMutation.mutateAsync({
@@ -136,19 +187,19 @@ export default function AdminProductForm() {
           shelfLife: formData.shelfLife ? parseInt(formData.shelfLife) : undefined,
           imageUrl: formData.imageUrl || undefined,
         });
-        toast.success("商品を追加しました");
+        toast.success("Product created successfully");
       }
       navigate("/admin/products");
     } catch (error) {
       console.error("Error saving product:", error);
-      toast.error("商品の保存に失敗しました");
+      toast.error("Failed to save product");
     }
   };
 
   return (
     <DashboardLayout>
       <div className="space-y-6">
-        {/* ヘッダー */}
+        {/* Header */}
         <div className="flex items-center gap-3">
           <Button
             variant="ghost"
@@ -160,190 +211,154 @@ export default function AdminProductForm() {
           </Button>
           <div>
             <h1 className="text-3xl font-bold tracking-tight">
-              {productId ? "商品を編集" : "商品を追加"}
+              {productId ? "Edit Product" : "Add Product"}
             </h1>
             <p className="text-muted-foreground mt-1">
-              {productId ? "商品情報を更新してください" : "新しいお土産商品の情報を入力してください"}
+              {productId ? "Update product information" : "Enter new product information"}
             </p>
           </div>
         </div>
 
-        {/* フォーム */}
-        <form onSubmit={handleSubmit}>
-          <div className="grid gap-6 md:grid-cols-2">
-            {/* 基本情報 */}
-            <Card className="md:col-span-2">
-              <CardHeader>
-                <CardTitle>基本情報</CardTitle>
-                <CardDescription>商品の基本情報を入力します</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="grid gap-4 md:grid-cols-2">
-                  <div className="space-y-2">
-                    <Label htmlFor="name">商品名 *</Label>
-                    <Input
-                      id="name"
-                      name="name"
-                      value={formData.name}
-                      onChange={handleChange}
-                      placeholder="例：東京ばな奈"
-                      required
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="brand">ブランド名 *</Label>
-                    <Input
-                      id="brand"
-                      name="brand"
-                      value={formData.brand}
-                      onChange={handleChange}
-                      placeholder="例：東京ばな奈"
-                      required
-                    />
-                  </div>
-                </div>
+        {/* Form */}
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>Product Information</CardTitle>
+              <CardDescription>Basic product details</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {/* Product Name */}
+              <div className="space-y-2">
+                <Label htmlFor="name">Product Name *</Label>
+                <Input
+                  id="name"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleInputChange}
+                  placeholder="e.g., Cream Brulee Tart"
+                  required
+                />
+              </div>
 
-                <div className="grid gap-4 md:grid-cols-2">
-                  <div className="space-y-2">
-                    <Label htmlFor="price">価格（円） *</Label>
-                    <Input
-                      id="price"
-                      name="price"
-                      type="number"
-                      value={formData.price}
-                      onChange={handleChange}
-                      placeholder="1080"
-                      required
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="shelfLife">日持ち（日数）</Label>
-                    <Input
-                      id="shelfLife"
-                      name="shelfLife"
-                      type="number"
-                      value={formData.shelfLife}
-                      onChange={handleChange}
-                      placeholder="30"
-                    />
-                  </div>
-                </div>
+              {/* Brand */}
+              <div className="space-y-2">
+                <Label htmlFor="brand">Brand *</Label>
+                <Input
+                  id="brand"
+                  name="brand"
+                  value={formData.brand}
+                  onChange={handleInputChange}
+                  placeholder="e.g., Patisserie ABC"
+                  required
+                />
+              </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="description">説明</Label>
-                  <Textarea
-                    id="description"
-                    name="description"
-                    value={formData.description}
-                    onChange={handleChange}
-                    placeholder="商品の説明を入力してください"
-                    rows={4}
-                  />
-                </div>
+              {/* Price */}
+              <div className="space-y-2">
+                <Label htmlFor="price">Price (¥) *</Label>
+                <Input
+                  id="price"
+                  name="price"
+                  type="number"
+                  value={formData.price}
+                  onChange={handleInputChange}
+                  placeholder="1000"
+                  min="1"
+                  required
+                />
+              </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="imageUrl">画像URL</Label>
-                  <Input
-                    id="imageUrl"
-                    name="imageUrl"
-                    value={formData.imageUrl}
-                    onChange={handleChange}
-                    placeholder="https://example.com/image.jpg"
-                  />
-                </div>
-              </CardContent>
-            </Card>
+              {/* Prefecture */}
+              <div className="space-y-2">
+                <Label htmlFor="prefecture">Prefecture *</Label>
+                <Select value={formData.prefecture} onValueChange={(value) => handleSelectChange("prefecture", value)}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select prefecture" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {PREFECTURES.map((pref) => (
+                      <SelectItem key={pref} value={pref}>
+                        {pref}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
 
-            {/* 地域情報 */}
-            <Card>
-              <CardHeader>
-                <CardTitle>地域情報</CardTitle>
-                <CardDescription>商品の地域を指定します</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="region">地方 *</Label>
-                  <Select
-                    value={formData.region}
-                    onValueChange={(value) => handleSelectChange("region", value)}
-                  >
-                    <SelectTrigger id="region">
-                      <SelectValue placeholder="地方を選択" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {REGIONS.map((region) => (
-                        <SelectItem key={region} value={region}>
-                          {region}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
+              {/* Region */}
+              <div className="space-y-2">
+                <Label htmlFor="region">Region *</Label>
+                <Select value={formData.region} onValueChange={(value) => handleSelectChange("region", value)}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select region" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {REGIONS.map((region) => (
+                      <SelectItem key={region} value={region}>
+                        {region}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="prefecture">都道府県 *</Label>
-                  <Select
-                    value={formData.prefecture}
-                    onValueChange={(value) => handleSelectChange("prefecture", value)}
-                  >
-                    <SelectTrigger id="prefecture">
-                      <SelectValue placeholder="都道府県を選択" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {PREFECTURES.map((pref) => (
-                        <SelectItem key={pref} value={pref}>
-                          {pref}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              </CardContent>
-            </Card>
+              {/* Description */}
+              <div className="space-y-2">
+                <Label htmlFor="description">Description</Label>
+                <Textarea
+                  id="description"
+                  name="description"
+                  value={formData.description}
+                  onChange={handleInputChange}
+                  placeholder="Product description..."
+                  rows={4}
+                />
+              </div>
 
-            {/* プレビュー */}
-            <Card>
-              <CardHeader>
-                <CardTitle>プレビュー</CardTitle>
-                <CardDescription>商品情報のプレビュー</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                {formData.imageUrl && (
-                  <img
-                    src={formData.imageUrl}
-                    alt={formData.name}
-                    className="w-full h-48 object-cover rounded-md"
-                  />
-                )}
-                <div className="space-y-2 text-sm">
-                  <p className="font-semibold">{formData.name || "商品名"}</p>
-                  <p className="text-muted-foreground">{formData.brand || "ブランド"}</p>
-                  <p className="font-bold">
-                    ¥{formData.price ? parseInt(formData.price).toLocaleString() : "0"}
-                  </p>
-                  {formData.prefecture && (
-                    <p className="text-xs text-muted-foreground">{formData.prefecture}</p>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
-          </div>
+              {/* Shelf Life */}
+              <div className="space-y-2">
+                <Label htmlFor="shelfLife">Shelf Life (days)</Label>
+                <Input
+                  id="shelfLife"
+                  name="shelfLife"
+                  type="number"
+                  value={formData.shelfLife}
+                  onChange={handleInputChange}
+                  placeholder="30"
+                  min="0"
+                />
+              </div>
 
-          {/* ボタン */}
-          <div className="flex gap-3 mt-6">
+              {/* Image URL */}
+              <div className="space-y-2">
+                <Label htmlFor="imageUrl">Image URL</Label>
+                <Input
+                  id="imageUrl"
+                  name="imageUrl"
+                  type="url"
+                  value={formData.imageUrl}
+                  onChange={handleInputChange}
+                  placeholder="https://example.com/image.jpg"
+                />
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Form Actions */}
+          <div className="flex gap-3 justify-end">
             <Button
               type="button"
               variant="outline"
               onClick={() => navigate("/admin/products")}
             >
-              キャンセル
+              Cancel
             </Button>
             <Button 
               type="submit" 
               disabled={createMutation.isPending || updateMutation.isPending}
             >
               <Save className="w-4 h-4 mr-2" />
-              {createMutation.isPending || updateMutation.isPending ? "保存中..." : "保存"}
+              {createMutation.isPending || updateMutation.isPending ? "Saving..." : "Save"}
             </Button>
           </div>
         </form>

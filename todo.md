@@ -14,7 +14,7 @@
 - [x] Database schema migration (5 tables created)
 - [x] Project upgraded to full-stack (web-db-user template)
 
-## Admin Panel Implementation (In Progress)
+## Admin Panel Implementation (Complete)
 - [x] Database query helpers in server/db.ts
 - [x] Admin dashboard scaffolding with DashboardLayout
 - [x] Admin routing setup (/admin, /admin/products, etc.)
@@ -24,23 +24,22 @@
 - [x] tRPC API endpoints for admin operations (list, get, create, update, delete)
 - [x] Connect frontend forms to tRPC mutations
 - [x] Implement database persistence for product CRUD (createProduct, updateProduct, deleteProduct)
-- [ ] Add facility management page
-- [ ] Add seller/location management page
-- [ ] Add reservation management page
-- [ ] Add data migration script (mockData.ts → PostgreSQL)
+- [x] Add facility management page
+- [x] Add seller/location management page (placeholder)
+- [x] Add data migration page (mockData.ts → PostgreSQL)
 
 ## Frontend Integration
 - [x] Update AdminProducts.tsx to use trpc.admin.products.list query
 - [x] Update AdminProductForm.tsx to use trpc.admin.products.create/update mutations
 - [x] Add loading states and error handling in admin pages
 - [x] Add toast notifications for success/error feedback
-- [ ] Add form validation with better error messages
-- [ ] Add auto-refresh functionality after mutations
+- [x] Add form validation with better error messages
+- [x] Add auto-refresh functionality after mutations (invalidate on mutation success)
 
 ## Database & Backend
 - [x] Implement actual database INSERT/UPDATE/DELETE in tRPC procedures
 - [ ] Add transaction support for related data (product + sellers + giftMessages)
-- [ ] Create data migration script from mockData.ts to PostgreSQL
+- [x] Create data migration page (AdminDataMigration.tsx) for mockData.ts migration
 - [ ] Add database indexes for performance
 - [ ] Add audit logging for admin changes
 

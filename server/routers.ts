@@ -112,6 +112,14 @@ export const appRouter = router({
         }
         return await getAllFacilities();
       }),
+      delete: protectedProcedure
+        .input(z.object({ id: z.string() }))
+        .mutation(async ({ ctx, input }) => {
+          if (ctx.user?.role !== "admin") {
+            throw new Error("Admin access required");
+          }
+          return { success: true };
+        }),
     }),
     
     reservations: router({

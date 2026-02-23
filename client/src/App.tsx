@@ -23,6 +23,9 @@ import SearchPage from "./pages/SearchPage";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminProducts from "./pages/AdminProducts";
 import AdminProductForm from "./pages/AdminProductForm";
+import AdminDataMigration from "./pages/AdminDataMigration";
+import AdminFacilities from "./pages/AdminFacilities";
+import AdminSellers from "./pages/AdminSellers";
 function Router() {
   // make sure to consider if you need authentication for certain routes
   return (
@@ -40,6 +43,9 @@ function Router() {
       <Route path="/admin/products" component={AdminProducts} />
       <Route path="/admin/products/new" component={AdminProductForm} />
       <Route path="/admin/products/:id" component={AdminProductForm} />
+      <Route path="/admin/migration" component={AdminDataMigration} />
+      <Route path="/admin/facilities" component={AdminFacilities} />
+      <Route path="/admin/sellers" component={AdminSellers} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>

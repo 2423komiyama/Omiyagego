@@ -6,7 +6,7 @@ import DashboardLayout from "@/components/DashboardLayout";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Plus, Package, MapPin, MessageSquare, ClipboardList } from "lucide-react";
+import { Plus, Package, MapPin, MessageSquare, ClipboardList, Database } from "lucide-react";
 import { useLocation } from "wouter";
 
 export default function AdminDashboard() {
@@ -200,6 +200,24 @@ export default function AdminDashboard() {
                 </Button>
               </TabsContent>
             </Tabs>
+          </CardContent>
+        </Card>
+
+        {/* データ管理 */}
+        <Card>
+          <CardHeader>
+            <CardTitle>データ管理</CardTitle>
+            <CardDescription>データ移行や一括操作</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Button
+              variant="outline"
+              className="w-full justify-start"
+              onClick={() => navigate("/admin/migration")}
+            >
+              <Database className="w-4 h-4 mr-2" />
+              mockDataからデータ移行
+            </Button>
           </CardContent>
         </Card>
 
