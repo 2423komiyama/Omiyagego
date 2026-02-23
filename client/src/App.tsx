@@ -19,6 +19,7 @@ import SellerDetail from "./pages/SellerDetail";
 import Favorites from "./pages/Favorites";
 import MyPage from "./pages/MyPage";
 import MapPage from "./pages/MapPage";
+import SearchPage from "./pages/SearchPage";
 
 function Router() {
   return (
@@ -26,7 +27,7 @@ function Router() {
       <Route path="/" component={Home} />
       <Route path="/conditions" component={Conditions} />
       <Route path="/results" component={Results} />
-      <Route path="/search" component={Results} />
+      <Route path="/search" component={SearchPage} />
       <Route path="/product/:id" component={ProductDetail} />
       <Route path="/seller/:id" component={SellerDetail} />
       <Route path="/favorites" component={Favorites} />
