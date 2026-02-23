@@ -1,7 +1,7 @@
 // ============================================================
 // Omiyage Go - マップ画面
 // デザイン哲学: 駅案内板スタイル - 「どこで買えるか」を地図で即把握
-// 機能: 全売り場ピン表示・施設/改札フィルタ・ボトムシート・商品詳細連携
+// 機能: 全売り場ピン表示・クラスタリング・施設/改札フィルタ・ボトムシート・商品詳細連携
 // ============================================================
 import { useRef, useState, useCallback, useEffect } from "react";
 import { useLocation } from "wouter";
@@ -9,8 +9,6 @@ import {
   MapPin,
   SlidersHorizontal,
   X,
-  ChevronUp,
-  ChevronDown,
   Navigation,
   Clock,
   Users,
@@ -50,7 +48,57 @@ const crowdColor = {
   多: "text-red-600",
 };
 
-// ピンの色（改札内:緑 / 改札外:橙）
+// ── クラスタリングロジック ──────────────────────────────────────
+// ズームレベルに応じて近接ピンをグループ化する純粋JS実装
+interface ClusterGroup {
+  center: { lat: number; lng: number };
+  items: SellerWithProduct[];
+}
+
+/**
+ * ズームレベルから1ピクセルあたりの緯度/経度を計算し、
+ * 近接閾値（ピクセル単位）内のマーカーをクラスタ化する
+ */
+function clusterSellers(
+  sellers: SellerWithProduct[],
+  zoom: number,
+  thresholdPx = 60
+): ClusterGroup[] {
+  // ズームレベルから1ピクセルあたりの度数を計算
+  // Google Maps: zoom=0 で全世界が256px
+  const metersPerPx = (156543.03392 * Math.cos(35.68 * (Math.PI / 180))) / Math.pow(2, zoom);
+  const degPerPx = metersPerPx / 111320;
+  const threshold = degPerPx * thresholdPx;
+
+  const clusters: ClusterGroup[] = [];
+  const assigned = new Set<number>();
+
+  sellers.forEach((item, i) => {
+    if (assigned.has(i)) return;
+
+    const group: SellerWithProduct[] = [item];
+    assigned.add(i);
+
+    sellers.forEach((other, j) => {
+      if (i === j || assigned.has(j)) return;
+      const dLat = Math.abs(item.seller.coords.lat - other.seller.coords.lat);
+      const dLng = Math.abs(item.seller.coords.lng - other.seller.coords.lng);
+      if (dLat < threshold && dLng < threshold) {
+        group.push(other);
+        assigned.add(j);
+      }
+    });
+
+    // クラスタ中心 = グループの重心
+    const centerLat = group.reduce((s, g) => s + g.seller.coords.lat, 0) / group.length;
+    const centerLng = group.reduce((s, g) => s + g.seller.coords.lng, 0) / group.length;
+    clusters.push({ center: { lat: centerLat, lng: centerLng }, items: group });
+  });
+
+  return clusters;
+}
+
+// 単体ピン要素
 function createPinElement(gateStatus: "改札内" | "改札外", isSelected: boolean) {
   const el = document.createElement("div");
   const color = gateStatus === "改札内" ? "#15803d" : "#ea580c";
@@ -70,10 +118,38 @@ function createPinElement(gateStatus: "改札内" | "改札外", isSelected: boo
   return el;
 }
 
+// クラスタバブル要素（複数件まとめ）
+function createClusterElement(count: number, hasInsideGate: boolean, hasOutsideGate: boolean) {
+  const el = document.createElement("div");
+  // 改札内のみ→緑、改札外のみ→橙、混在→グラデーション
+  let bg = "#15803d";
+  if (hasInsideGate && hasOutsideGate) bg = "#854d0e"; // 混在=茶
+  else if (hasOutsideGate) bg = "#ea580c";
+
+  const size = count >= 10 ? 48 : 40;
+  el.innerHTML = `
+    <div style="
+      width:${size}px;height:${size}px;
+      background:${bg};
+      border-radius:50%;
+      border:3px solid white;
+      box-shadow:0 2px 10px rgba(0,0,0,0.35);
+      display:flex;align-items:center;justify-content:center;
+      cursor:pointer;
+      transition:transform 0.15s;
+    ">
+      <span style="color:white;font-size:${count >= 10 ? 13 : 14}px;font-weight:900;line-height:1;">${count}</span>
+    </div>
+  `;
+  el.style.cursor = "pointer";
+  return el;
+}
+
 export default function MapPage() {
   const [, navigate] = useLocation();
   const mapRef = useRef<google.maps.Map | null>(null);
   const markersRef = useRef<google.maps.marker.AdvancedMarkerElement[]>([]);
+  const currentZoomRef = useRef<number>(13);
 
   // フィルタ状態
   const [facilityFilter, setFacilityFilter] = useState<FacilityId | "all">("all");
@@ -82,7 +158,6 @@ export default function MapPage() {
 
   // 選択中の売り場
   const [selectedSeller, setSelectedSeller] = useState<SellerWithProduct | null>(null);
-  const [bottomSheetExpanded, setBottomSheetExpanded] = useState(false);
 
   // フィルタ済み売り場
   const filteredSellers = ALL_SELLERS.filter(({ seller }) => {
@@ -92,32 +167,59 @@ export default function MapPage() {
     return true;
   });
 
-  // マーカーを再描画
+  // ── マーカー（クラスタ対応）を再描画 ──
   const renderMarkers = useCallback(
-    (map: google.maps.Map) => {
-      // 既存マーカーを削除
+    (map: google.maps.Map, zoom: number) => {
+      // 既存マーカーを全削除
       markersRef.current.forEach((m) => (m.map = null));
       markersRef.current = [];
 
-      filteredSellers.forEach(({ seller, product }) => {
-        const isSelected = selectedSeller?.seller.id === seller.id;
-        const pinEl = createPinElement(seller.gateStatus, isSelected);
+      const clusters = clusterSellers(filteredSellers, zoom);
 
-        const marker = new google.maps.marker.AdvancedMarkerElement({
-          map,
-          position: seller.coords,
-          title: seller.shopName,
-          content: pinEl,
-        });
+      clusters.forEach((cluster) => {
+        const isSingle = cluster.items.length === 1;
 
-        marker.addListener("click", () => {
-          setSelectedSeller({ seller, product });
-          setBottomSheetExpanded(false);
-          map.panTo(seller.coords);
-          map.setZoom(16);
-        });
+        if (isSingle) {
+          // 単体ピン
+          const { seller, product } = cluster.items[0];
+          const isSelected = selectedSeller?.seller.id === seller.id;
+          const pinEl = createPinElement(seller.gateStatus, isSelected);
 
-        markersRef.current.push(marker);
+          const marker = new google.maps.marker.AdvancedMarkerElement({
+            map,
+            position: seller.coords,
+            title: seller.shopName,
+            content: pinEl,
+          });
+
+          marker.addListener("click", () => {
+            setSelectedSeller({ seller, product });
+            map.panTo(seller.coords);
+            map.setZoom(Math.max(zoom, 16));
+          });
+
+          markersRef.current.push(marker);
+        } else {
+          // クラスタバブル
+          const hasInside = cluster.items.some((i) => i.seller.gateStatus === "改札内");
+          const hasOutside = cluster.items.some((i) => i.seller.gateStatus === "改札外");
+          const clusterEl = createClusterElement(cluster.items.length, hasInside, hasOutside);
+
+          const marker = new google.maps.marker.AdvancedMarkerElement({
+            map,
+            position: cluster.center,
+            title: `${cluster.items.length}件の売り場`,
+            content: clusterEl,
+          });
+
+          marker.addListener("click", () => {
+            // クラスタをクリック → ズームイン
+            map.panTo(cluster.center);
+            map.setZoom(Math.min(zoom + 2, 18));
+          });
+
+          markersRef.current.push(marker);
+        }
       });
     },
     [filteredSellers, selectedSeller]
@@ -127,25 +229,26 @@ export default function MapPage() {
   const handleMapReady = useCallback(
     (map: google.maps.Map) => {
       mapRef.current = map;
-
-      // 東京駅中心に設定
       map.setCenter({ lat: 35.6812, lng: 139.7671 });
       map.setZoom(13);
 
       // 交通レイヤー
       new google.maps.TransitLayer().setMap(map);
 
-      renderMarkers(map);
+      renderMarkers(map, 13);
+
+      // ズーム変更時にクラスタを再計算
+      map.addListener("zoom_changed", () => {
+        const z = map.getZoom() ?? 13;
+        currentZoomRef.current = z;
+        renderMarkers(map, z);
+      });
 
       // 現在地取得
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
           (pos) => {
-            const userPos = {
-              lat: pos.coords.latitude,
-              lng: pos.coords.longitude,
-            };
-            // 現在地マーカー
+            const userPos = { lat: pos.coords.latitude, lng: pos.coords.longitude };
             const userEl = document.createElement("div");
             userEl.innerHTML = `
               <div style="
@@ -163,9 +266,7 @@ export default function MapPage() {
               content: userEl,
             });
           },
-          () => {
-            // 位置情報拒否時は無視
-          }
+          () => {}
         );
       }
     },
@@ -175,7 +276,7 @@ export default function MapPage() {
   // フィルタ変更時にマーカーを更新
   useEffect(() => {
     if (mapRef.current) {
-      renderMarkers(mapRef.current);
+      renderMarkers(mapRef.current, currentZoomRef.current);
     }
   }, [filteredSellers, renderMarkers]);
 
@@ -303,7 +404,31 @@ export default function MapPage() {
               </div>
             </div>
 
-            {/* リセット */}
+            {/* クラスタ凡例 */}
+            <div className="bg-stone-50 rounded-lg px-3 py-2">
+              <p className="text-[10px] font-bold text-stone-500 mb-1.5">クラスタ凡例</p>
+              <div className="flex gap-3">
+                <div className="flex items-center gap-1.5">
+                  <div className="w-5 h-5 rounded-full bg-emerald-700 flex items-center justify-center">
+                    <span className="text-white text-[8px] font-black">N</span>
+                  </div>
+                  <span className="text-[10px] text-stone-600">改札内のみ</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <div className="w-5 h-5 rounded-full bg-orange-600 flex items-center justify-center">
+                    <span className="text-white text-[8px] font-black">N</span>
+                  </div>
+                  <span className="text-[10px] text-stone-600">改札外のみ</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <div className="w-5 h-5 rounded-full bg-yellow-800 flex items-center justify-center">
+                    <span className="text-white text-[8px] font-black">N</span>
+                  </div>
+                  <span className="text-[10px] text-stone-600">混在</span>
+                </div>
+              </div>
+            </div>
+
             {activeFilterCount > 0 && (
               <button
                 onClick={() => {
@@ -351,16 +476,15 @@ export default function MapPage() {
           <div className="w-3 h-3 rounded-full bg-orange-500" />
           <span className="text-[10px] font-bold text-stone-600">改札外</span>
         </div>
+        <div className="flex items-center gap-1.5">
+          <div className="w-3 h-3 rounded-full bg-yellow-800" />
+          <span className="text-[10px] font-bold text-stone-600">混在</span>
+        </div>
       </div>
 
       {/* ── ボトムシート（売り場選択時） ── */}
       {selectedSeller && (
-        <div
-          className={cn(
-            "absolute left-0 right-0 z-30 bg-white rounded-t-2xl shadow-2xl border-t border-stone-200 transition-all duration-300",
-            bottomSheetExpanded ? "bottom-16 max-h-[60vh] overflow-y-auto" : "bottom-16"
-          )}
-        >
+        <div className="absolute left-0 right-0 z-30 bg-white rounded-t-2xl shadow-2xl border-t border-stone-200 bottom-16">
           {/* ドラッグハンドル */}
           <div className="flex justify-center pt-2 pb-1">
             <div className="w-8 h-1 bg-stone-300 rounded-full" />
@@ -418,12 +542,7 @@ export default function MapPage() {
               </div>
               <div className="flex items-center gap-1">
                 <Users className="w-3.5 h-3.5 text-stone-400" />
-                <span
-                  className={cn(
-                    "text-xs font-bold",
-                    crowdColor[selectedSeller.seller.crowdLevel]
-                  )}
-                >
+                <span className={cn("text-xs font-bold", crowdColor[selectedSeller.seller.crowdLevel])}>
                   混雑{selectedSeller.seller.crowdLevel}
                 </span>
               </div>
@@ -462,9 +581,7 @@ export default function MapPage() {
                 Googleマップで開く
               </a>
               <button
-                onClick={() =>
-                  navigate(`/product/${selectedSeller.product.id}`)
-                }
+                onClick={() => navigate(`/product/${selectedSeller.product.id}`)}
                 className="flex-1 py-2.5 bg-emerald-700 text-white rounded-xl text-xs font-black flex items-center justify-center gap-1 hover:bg-emerald-800 transition-colors"
               >
                 商品詳細へ
@@ -476,16 +593,13 @@ export default function MapPage() {
       )}
 
       {/* 売り場なし時のメッセージ */}
-      {!selectedSeller && filteredSellers.length === 0 && (
+      {filteredSellers.length === 0 && (
         <div className="absolute bottom-20 left-4 right-4 z-10 bg-white rounded-xl shadow-md border border-stone-200 px-4 py-3 text-center">
           <p className="text-sm font-bold text-stone-600">
             条件に合う売り場が見つかりません
           </p>
           <button
-            onClick={() => {
-              setFacilityFilter("all");
-              setGateFilter("all");
-            }}
+            onClick={() => { setFacilityFilter("all"); setGateFilter("all"); }}
             className="mt-1 text-xs font-bold text-emerald-700"
           >
             フィルタをリセット

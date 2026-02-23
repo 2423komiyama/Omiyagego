@@ -17,6 +17,8 @@ import {
   Truck,
   CreditCard,
   AlertTriangle,
+  X,
+  Link,
 } from "lucide-react";
 import { AppLayout } from "@/components/omiyage/AppLayout";
 import { GuaranteeCard } from "@/components/omiyage/GuaranteeCard";
@@ -44,6 +46,7 @@ export default function ProductDetail() {
   const [copied, setCopied] = useState(false);
   const [storyExpanded, setStoryExpanded] = useState(false);
   const [showReserve, setShowReserve] = useState(false);
+  const [showShare, setShowShare] = useState(false);
 
   const product = PRODUCTS.find((p) => p.id === id);
 
@@ -126,10 +129,10 @@ export default function ProductDetail() {
             />
           </button>
           <button
-            onClick={() => toast.info("共有機能は準備中です")}
+            onClick={() => setShowShare(true)}
             className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-stone-100"
           >
-            <Share2 className="w-4.5 h-4.5 text-stone-400" />
+            <Share2 className="w-4.5 h-4.5 text-stone-500" />
           </button>
         </div>
       </div>
@@ -472,6 +475,14 @@ export default function ProductDetail() {
           onClose={() => setShowReserve(false)}
         />
       )}
+
+      {/* シェアモーダル */}
+      {showShare && (
+        <ShareModal
+          product={product}
+          onClose={() => setShowShare(false)}
+        />
+      )}
     </AppLayout>
   );
 }
@@ -676,6 +687,183 @@ function ReserveModal({ productName, onClose }: ReserveModalProps) {
               </button>
             </div>
           )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ── シェアモーダル ──────────────────────────────────────────────
+interface ShareModalProps {
+  product: (typeof PRODUCTS)[0];
+  onClose: () => void;
+}
+
+function ShareModal({ product, onClose }: ShareModalProps) {
+  const [urlCopied, setUrlCopied] = useState(false);
+
+  // シェア用テキスト（保証書の一言 + 価格 + 売り場）
+  const shareText = `【外さないお土産】${product.name}（${product.priceLabel}）\n${product.guaranteeOneLiner}\n📍 ${product.sellers[0]?.facilityName ?? ""} ${product.sellers[0]?.gateStatus ?? ""}\n\n#OmiyageGo #お土産`;
+
+  // 現在のページURL（プロトタイプではwindow.location.href）
+  const shareUrl = window.location.href;
+
+  // LINEシェア
+  const handleLineShare = () => {
+    const encoded = encodeURIComponent(`${shareText}\n${shareUrl}`);
+    window.open(`https://line.me/R/msg/text/?${encoded}`, "_blank", "noopener,noreferrer");
+    onClose();
+  };
+
+  // Xシェア
+  const handleXShare = () => {
+    const tweetText = encodeURIComponent(
+      `【外さないお土産】${product.name}（${product.priceLabel}）\n${product.guaranteeOneLiner}\n#OmiyageGo #お土産`
+    );
+    const tweetUrl = encodeURIComponent(shareUrl);
+    window.open(
+      `https://x.com/intent/tweet?text=${tweetText}&url=${tweetUrl}`,
+      "_blank",
+      "noopener,noreferrer"
+    );
+    onClose();
+  };
+
+  // URLコピー
+  const handleCopyUrl = () => {
+    navigator.clipboard.writeText(shareUrl).then(() => {
+      setUrlCopied(true);
+      toast.success("URLをコピーしました");
+      setTimeout(() => setUrlCopied(false), 2000);
+    });
+  };
+
+  // Web Share API（対応ブラウザのみ）
+  const handleNativeShare = () => {
+    if (navigator.share) {
+      navigator.share({
+        title: `${product.name} - Omiyage Go`,
+        text: shareText,
+        url: shareUrl,
+      }).catch(() => {});
+      onClose();
+    }
+  };
+
+  const canNativeShare = typeof navigator !== "undefined" && !!navigator.share;
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-end justify-center">
+      {/* オーバーレイ */}
+      <div
+        className="absolute inset-0 bg-stone-900/50 backdrop-blur-sm"
+        onClick={onClose}
+      />
+
+      {/* シートパネル */}
+      <div className="relative w-full max-w-md bg-white rounded-t-2xl shadow-2xl">
+        {/* ハンドル */}
+        <div className="flex justify-center pt-3 pb-1">
+          <div className="w-10 h-1 bg-stone-200 rounded-full" />
+        </div>
+
+        {/* 閉じるボタン */}
+        <button
+          onClick={onClose}
+          className="absolute top-3 right-4 w-8 h-8 flex items-center justify-center rounded-full bg-stone-100 hover:bg-stone-200"
+        >
+          <X className="w-4 h-4 text-stone-500" />
+        </button>
+
+        <div className="px-5 pb-8 pt-2">
+          <h2 className="text-base font-black text-stone-900 mb-1">この商品をシェア</h2>
+          <p className="text-xs text-stone-500 mb-4 line-clamp-1">{product.name}</p>
+
+          {/* シェアプレビュー */}
+          <div className="bg-stone-50 border border-stone-200 rounded-xl p-3 mb-5">
+            <div className="flex gap-3">
+              <img
+                src={product.imageUrl}
+                alt={product.name}
+                className="w-14 h-14 rounded-lg object-cover flex-shrink-0"
+              />
+              <div className="flex-1 min-w-0">
+                <p className="text-xs font-black text-stone-900 line-clamp-2 leading-snug">
+                  {product.name}
+                </p>
+                <p className="text-sm font-black text-emerald-700 mt-0.5">
+                  {product.priceLabel}
+                </p>
+                <p className="text-[10px] text-stone-500 mt-0.5 line-clamp-1">
+                  {product.guaranteeOneLiner}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* シェアボタン群 */}
+          <div className="grid grid-cols-3 gap-3 mb-4">
+            {/* LINE */}
+            <button
+              onClick={handleLineShare}
+              className="flex flex-col items-center gap-2 py-4 bg-[#06C755] rounded-2xl hover:opacity-90 active:scale-[0.97] transition-all"
+            >
+              {/* LINEロゴ（SVG） */}
+              <svg viewBox="0 0 40 40" className="w-8 h-8 fill-white" xmlns="http://www.w3.org/2000/svg">
+                <path d="M20 3C10.6 3 3 9.5 3 17.5c0 6.6 4.7 12.3 11.4 14.5.5.1.8.6.7 1.1l-.5 3.2c-.1.5.4.9.9.7 0 0 6.2-3.4 8.6-4.7.6-.3 1.3-.5 2-.5 8.4 0 14-5.8 14-13.3C40 9.5 29.4 3 20 3zm-6.5 15.5h-3.3c-.5 0-.9-.4-.9-.9v-6.8c0-.5.4-.9.9-.9s.9.4.9.9v5.9h2.4c.5 0 .9.4.9.9s-.4.9-.9.9zm3.2 0c-.5 0-.9-.4-.9-.9v-6.8c0-.5.4-.9.9-.9s.9.4.9.9v6.8c0 .5-.4.9-.9.9zm9.1 0c-.3 0-.6-.2-.8-.4l-3.4-4.6v4.1c0 .5-.4.9-.9.9s-.9-.4-.9-.9v-6.8c0-.5.4-.9.9-.9.3 0 .6.2.8.4l3.4 4.6v-4.1c0-.5.4-.9.9-.9s.9.4.9.9v6.8c0 .5-.4.9-.9.9zm5.5-5.1h-2.4v1.4h2.4c.5 0 .9.4.9.9s-.4.9-.9.9h-3.3c-.5 0-.9-.4-.9-.9v-6.8c0-.5.4-.9.9-.9h3.3c.5 0 .9.4.9.9s-.4.9-.9.9h-2.4v1.4h2.4c.5 0 .9.4.9.9s-.4.9-.9.9z"/>
+              </svg>
+              <span className="text-white text-xs font-black">LINE</span>
+            </button>
+
+            {/* X (Twitter) */}
+            <button
+              onClick={handleXShare}
+              className="flex flex-col items-center gap-2 py-4 bg-stone-900 rounded-2xl hover:opacity-90 active:scale-[0.97] transition-all"
+            >
+              {/* X ロゴ（SVG） */}
+              <svg viewBox="0 0 24 24" className="w-8 h-8 fill-white" xmlns="http://www.w3.org/2000/svg">
+                <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.73-8.835L1.254 2.25H8.08l4.259 5.63L18.244 2.25zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77z"/>
+              </svg>
+              <span className="text-white text-xs font-black">X (Twitter)</span>
+            </button>
+
+            {/* URLコピー */}
+            <button
+              onClick={handleCopyUrl}
+              className={cn(
+                "flex flex-col items-center gap-2 py-4 rounded-2xl hover:opacity-90 active:scale-[0.97] transition-all",
+                urlCopied ? "bg-emerald-700" : "bg-stone-100"
+              )}
+            >
+              {urlCopied ? (
+                <Check className="w-8 h-8 text-white" />
+              ) : (
+                <Link className="w-8 h-8 text-stone-600" />
+              )}
+              <span className={cn("text-xs font-black", urlCopied ? "text-white" : "text-stone-600")}>
+                {urlCopied ? "コピー済" : "URLコピー"}
+              </span>
+            </button>
+          </div>
+
+          {/* ネイティブシェア（対応ブラウザのみ） */}
+          {canNativeShare && (
+            <button
+              onClick={handleNativeShare}
+              className="w-full py-3 bg-stone-50 border border-stone-200 rounded-xl text-sm font-bold text-stone-600 flex items-center justify-center gap-2 hover:bg-stone-100 transition-colors"
+            >
+              <Share2 className="w-4 h-4" />
+              その他のアプリでシェア
+            </button>
+          )}
+
+          {/* シェアテキストプレビュー */}
+          <div className="mt-4 bg-stone-50 border border-stone-200 rounded-xl p-3">
+            <p className="text-[10px] font-bold text-stone-400 mb-1.5">シェアされるテキスト</p>
+            <p className="text-xs text-stone-600 whitespace-pre-line leading-relaxed">
+              {shareText}
+            </p>
+          </div>
         </div>
       </div>
     </div>
