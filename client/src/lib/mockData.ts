@@ -1,7 +1,7 @@
 // ============================================================
-// Omiyage Go - 実データ拡充版モックデータ（100件）
+// Omiyage Go - 全国対応モックデータ（都内38件 + 全国60件）
 // デザイン哲学: 駅ホーム案内板スタイル - 情報の読み取り速度最優先
-// データソース: グランスタ東京・羽田空港・エキュート品川・新宿・渋谷各施設
+// データソース: 全国主要観光地・空港・駅・百貨店
 // ============================================================
 
 export type BadgeType = "editorial" | "local" | "corporate";
@@ -15,7 +15,24 @@ export type FacilityId =
   | "shinagawa"
   | "shinjuku"
   | "shibuya"
+  | "chitose"
+  | "kyoto"
+  | "osaka"
+  | "fukuoka"
+  | "naha"
+  | "hiroshima"
+  | "nagoya"
+  | "kanazawa"
+  | "sendai"
+  | "nagano"
+  | "shizuoka"
+  | "nara"
+  | "kagoshima"
+  | "nagasaki"
+  | "kumamoto"
   | "all";
+
+export type RegionId = "北海道" | "東北" | "関東" | "中部" | "近畿" | "中国" | "四国" | "九州・沖縄" | "all";
 
 export interface FacilityInfo {
   id: FacilityId;
@@ -33,6 +50,33 @@ export const FACILITIES: FacilityInfo[] = [
   { id: "shinagawa", label: "品川駅", shortLabel: "品川駅", coords: { lat: 35.6284, lng: 139.7387 } },
   { id: "shinjuku", label: "新宿駅", shortLabel: "新宿駅", coords: { lat: 35.6896, lng: 139.7006 } },
   { id: "shibuya", label: "渋谷駅", shortLabel: "渋谷駅", coords: { lat: 35.6591, lng: 139.7030 } },
+  { id: "chitose", label: "新千歳空港", shortLabel: "新千歳", coords: { lat: 42.7752, lng: 141.6922 } },
+  { id: "kyoto", label: "京都駅", shortLabel: "京都駅", coords: { lat: 34.9858, lng: 135.7588 } },
+  { id: "osaka", label: "大阪駅・新大阪駅", shortLabel: "大阪駅", coords: { lat: 34.7024, lng: 135.4959 } },
+  { id: "fukuoka", label: "博多駅・福岡空港", shortLabel: "博多駅", coords: { lat: 33.5903, lng: 130.4207 } },
+  { id: "naha", label: "那覇空港・国際通り", shortLabel: "那覇", coords: { lat: 26.2124, lng: 127.6492 } },
+  { id: "hiroshima", label: "広島駅・広島空港", shortLabel: "広島駅", coords: { lat: 34.3963, lng: 132.4596 } },
+  { id: "nagoya", label: "名古屋駅・中部国際空港", shortLabel: "名古屋", coords: { lat: 35.1709, lng: 136.8815 } },
+  { id: "kanazawa", label: "金沢駅", shortLabel: "金沢駅", coords: { lat: 36.5781, lng: 136.6480 } },
+  { id: "sendai", label: "仙台駅・仙台空港", shortLabel: "仙台駅", coords: { lat: 38.2682, lng: 140.8694 } },
+  { id: "nagano", label: "長野駅・松本駅", shortLabel: "長野駅", coords: { lat: 36.6485, lng: 138.1950 } },
+  { id: "shizuoka", label: "静岡駅・浜松駅", shortLabel: "静岡駅", coords: { lat: 34.9756, lng: 138.3828 } },
+  { id: "nara", label: "近鉄奈良駅・JR奈良駅", shortLabel: "奈良駅", coords: { lat: 34.6851, lng: 135.8048 } },
+  { id: "kagoshima", label: "鹿児島中央駅", shortLabel: "鹿児島", coords: { lat: 31.5785, lng: 130.5432 } },
+  { id: "nagasaki", label: "長崎駅・長崎空港", shortLabel: "長崎駅", coords: { lat: 32.7503, lng: 129.8779 } },
+  { id: "kumamoto", label: "熊本駅・熊本空港", shortLabel: "熊本駅", coords: { lat: 32.7898, lng: 130.7417 } },
+];
+
+export const REGIONS: { id: RegionId; label: string; prefectures: string[] }[] = [
+  { id: "all", label: "全国", prefectures: [] },
+  { id: "北海道", label: "北海道", prefectures: ["北海道"] },
+  { id: "東北", label: "東北", prefectures: ["青森県", "岩手県", "宮城県", "秋田県", "山形県", "福島県"] },
+  { id: "関東", label: "関東", prefectures: ["東京都", "神奈川県", "埼玉県", "千葉県", "茨城県", "栃木県", "群馬県"] },
+  { id: "中部", label: "中部", prefectures: ["新潟県", "富山県", "石川県", "福井県", "山梨県", "長野県", "岐阜県", "静岡県", "愛知県"] },
+  { id: "近畿", label: "近畿", prefectures: ["大阪府", "京都府", "兵庫県", "奈良県", "和歌山県", "滋賀県"] },
+  { id: "中国", label: "中国", prefectures: ["鳥取県", "島根県", "岡山県", "広島県", "山口県"] },
+  { id: "四国", label: "四国", prefectures: ["徳島県", "香川県", "愛媛県", "高知県"] },
+  { id: "九州・沖縄", label: "九州・沖縄", prefectures: ["福岡県", "佐賀県", "長崎県", "熊本県", "大分県", "宮崎県", "鹿児島県", "沖縄県"] },
 ];
 
 export interface Seller {
@@ -91,6 +135,9 @@ export interface Product {
   purposes: string[];
   // 予算カテゴリ
   budgetCategory: 1000 | 2000 | 3000 | 5000;
+  // 産地情報
+  prefecture?: string;  // 例: "北海道"
+  region?: RegionId;    // 例: "北海道"
 }
 
 // ── 画像URLプール（Unsplash） ──────────────────────────────────
@@ -1790,7 +1837,7 @@ function hasSellerAtFacility(product: Product, facilityId: FacilityId): boolean 
 }
 
 export function filterProducts(conditions: SearchConditions): Product[] {
-  return PRODUCTS.filter((p) => {
+  return ALL_PRODUCTS.filter((p) => {
     if (conditions.purpose && !p.purposes.includes(conditions.purpose)) return false;
     if (conditions.budget !== null && p.price > conditions.budget) return false;
     if (conditions.shelfLife !== null && p.shelfLifeDays < conditions.shelfLife) return false;
@@ -1804,13 +1851,30 @@ export function filterProducts(conditions: SearchConditions): Product[] {
   });
 }
 
-// フリーワード検索
-export function searchProducts(query: string, facilityId?: FacilityId | null, category?: string): Product[] {
+// フリーワード検索（全国対応）
+export function searchProducts(
+  query: string,
+  facilityId?: FacilityId | null,
+  category?: string,
+  region?: RegionId | null,
+  prefecture?: string | null
+): Product[] {
   const q = query.trim().toLowerCase();
-  return PRODUCTS.filter((p) => {
+  return ALL_PRODUCTS.filter((p) => {
     // 施設フィルタ
     if (facilityId && facilityId !== "all") {
       if (!hasSellerAtFacility(p, facilityId)) return false;
+    }
+    // 地方フィルタ
+    if (region && region !== "all") {
+      const regionInfo = REGIONS.find((r) => r.id === region);
+      if (regionInfo && regionInfo.prefectures.length > 0) {
+        if (!p.prefecture || !regionInfo.prefectures.includes(p.prefecture)) return false;
+      }
+    }
+    // 都道府県フィルタ
+    if (prefecture && prefecture !== "all") {
+      if (p.prefecture !== prefecture) return false;
     }
     // カテゴリフィルタ
     if (category && category !== "すべて") {
@@ -1823,9 +1887,1139 @@ export function searchProducts(query: string, facilityId?: FacilityId | null, ca
       p.brand.toLowerCase().includes(q) ||
       p.category.toLowerCase().includes(q) ||
       p.guaranteeOneLiner.toLowerCase().includes(q) ||
+      (p.prefecture && p.prefecture.toLowerCase().includes(q)) ||
+      (p.region && p.region.toLowerCase().includes(q)) ||
       p.sellers.some((s) => s.shopName.toLowerCase().includes(q) || s.facilityName.toLowerCase().includes(q)) ||
       p.purposes.some((pur) => pur.includes(q)) ||
       p.allergens.some((a) => a.includes(q))
     );
   });
 }
+
+// ── 全国お土産データ（全国主要観光地15県分） ─────────────────────
+
+// ヘルパー関数（全国施設用）
+function nationalSeller(
+  id: string,
+  facilityId: FacilityId,
+  facilityName: string,
+  shopName: string,
+  gate: GateStatus,
+  floor: string,
+  landmark: string,
+  minutes: number,
+  hours: string,
+  coords: { lat: number; lng: number }
+): Seller {
+  return {
+    id,
+    facilityId,
+    facilityName,
+    shopName,
+    gateStatus: gate,
+    floor,
+    landmark,
+    walkingMinutes: minutes,
+    crowdLevel: "中",
+    openHours: hours,
+    mapUrl: `https://maps.google.com/?q=${facilityName}`,
+    coords,
+  };
+}
+
+export const NATIONAL_PRODUCTS: Product[] = [
+  // ─────────────────────────────────────────────────────────────
+  // 北海道
+  // ─────────────────────────────────────────────────────────────
+  {
+    id: "n001",
+    name: "白い恋人",
+    brand: "石屋製菓",
+    price: 1296,
+    priceLabel: "¥1,296（税込・18枚入）",
+    imageUrl: IMG.cookie,
+    badges: ["editorial"],
+    badgeLabels: ["北海道土産No.1"],
+    category: "クッキー",
+    shelfLifeDays: 90,
+    individuallyWrapped: true,
+    recommendedCount: 18,
+    temperature: "常温",
+    allergens: ["小麦", "卵", "乳"],
+    guaranteeReasons: [
+      "北海道土産の代名詞として50年以上の歴史",
+      "ラングドシャにホワイトチョコを挟んだ唯一無二の食感",
+      "個包装で18枚入り、社内配布に最適",
+      "新千歳空港・百貨店で確実に購入可能",
+      "日持ち90日で余裕を持って渡せる",
+    ],
+    guaranteeOneLiner: "北海道土産の代名詞。50年以上愛されるラングドシャ×ホワイトチョコ",
+    makerQuote: "「北海道の白い大地と澄んだ空気を、一枚のクッキーに込めました」",
+    makerStory: "1976年創業の石屋製菓が生み出した北海道を代表する銘菓。ラングドシャクッキーにホワイトチョコを挟んだ独自の製法は今も変わらない。",
+    makerName: "石屋製菓 製菓部門",
+    giftTemplates: {
+      greeting: "本日はお時間をいただきありがとうございます。北海道の定番土産をお持ちしました。",
+      thanks: "先日はありがとうございました。北海道の白い恋人です。お口に合えば幸いです。",
+      apology: "このたびはご迷惑をおかけし申し訳ございません。心ばかりの品をお受け取りください。",
+    },
+    sellers: [
+      nationalSeller("sn001a", "chitose", "新千歳空港", "石屋製菓 新千歳空港店", "改札外", "2F", "新千歳空港 国内線ターミナル2F", 3, "7:00〜21:00", { lat: 42.7752, lng: 141.6922 }),
+    ],
+    canReserve: false,
+    canPrePay: false,
+    canDeliver: true,
+    stockStatus: "available",
+    purposes: ["挨拶", "御礼", "社内", "差し入れ"],
+    budgetCategory: 2000,
+    prefecture: "北海道",
+    region: "北海道",
+  },
+  {
+    id: "n002",
+    name: "マルセイバターサンド",
+    brand: "六花亭",
+    price: 1188,
+    priceLabel: "¥1,188（税込・10個入）",
+    imageUrl: IMG.butter,
+    badges: ["editorial"],
+    badgeLabels: ["帯広の老舗銘菓"],
+    category: "焼き菓子",
+    shelfLifeDays: 20,
+    individuallyWrapped: true,
+    recommendedCount: 10,
+    temperature: "常温",
+    allergens: ["小麦", "卵", "乳"],
+    guaranteeReasons: [
+      "北海道帯広の老舗六花亭の代表作",
+      "北海道産バターとレーズンの絶妙なハーモニー",
+      "個包装で10個入り、配りやすい",
+      "新千歳空港・帯広空港で購入可能",
+      "日持ち20日で安心",
+    ],
+    guaranteeOneLiner: "帯広六花亭の銘菓。北海道産バターとレーズンが絶品のバターサンド",
+    makerQuote: "「北海道の豊かな大地が育んだバターの味を、そのままサンドしました」",
+    makerStory: "1933年創業の六花亭は北海道帯広を代表する老舗菓子店。マルセイバターサンドは1977年の発売以来、北海道土産の定番として愛され続けている。",
+    makerName: "六花亭製菓",
+    giftTemplates: {
+      greeting: "本日はお時間をいただきありがとうございます。北海道帯広の六花亭をお持ちしました。",
+      thanks: "先日はありがとうございました。六花亭のマルセイバターサンドです。",
+      apology: "このたびはご迷惑をおかけし申し訳ございません。心ばかりの品をお受け取りください。",
+    },
+    sellers: [
+      nationalSeller("sn002a", "chitose", "新千歳空港", "六花亭 新千歳空港店", "改札外", "2F", "新千歳空港 国内線ターミナル2F", 5, "7:00〜21:00", { lat: 42.7752, lng: 141.6922 }),
+    ],
+    canReserve: false,
+    canPrePay: false,
+    canDeliver: true,
+    stockStatus: "available",
+    purposes: ["挨拶", "御礼", "社内", "差し入れ"],
+    budgetCategory: 2000,
+    prefecture: "北海道",
+    region: "北海道",
+  },
+  {
+    id: "n003",
+    name: "生チョコレート（オーレ）",
+    brand: "ROYCE'（ロイズ）",
+    price: 756,
+    priceLabel: "¥756（税込・20粒入）",
+    imageUrl: IMG.chocolate,
+    badges: ["editorial"],
+    badgeLabels: ["SNS話題No.1"],
+    category: "チョコレート",
+    shelfLifeDays: 30,
+    individuallyWrapped: false,
+    recommendedCount: 4,
+    temperature: "冷蔵",
+    allergens: ["乳", "大豆"],
+    guaranteeReasons: [
+      "北海道生クリームを使った濃厚な口どけ",
+      "SNSで話題沸騰の北海道土産",
+      "新千歳空港限定フレーバーも展開",
+      "冷蔵で日持ち30日",
+      "価格が手頃で複数購入しやすい",
+    ],
+    guaranteeOneLiner: "北海道生クリーム使用の濃厚生チョコ。SNS話題No.1の定番土産",
+    makerQuote: "「北海道の新鮮な生クリームだけが生み出せる、とろける口どけを追求しました」",
+    makerStory: "1983年創業のロイズは北海道を代表するチョコレートブランド。生チョコレートは1993年の発売以来、北海道土産の定番として世界中にファンを持つ。",
+    makerName: "ROYCE' チョコレートワールド",
+    giftTemplates: {
+      greeting: "本日はお時間をいただきありがとうございます。北海道ロイズの生チョコをお持ちしました。",
+      thanks: "先日はありがとうございました。ロイズの生チョコレートです。冷蔵でお持ちしました。",
+      apology: "このたびはご迷惑をおかけし申し訳ございません。心ばかりの品をお受け取りください。",
+    },
+    sellers: [
+      nationalSeller("sn003a", "chitose", "新千歳空港", "ROYCE' チョコレートワールド", "改札外", "2F", "新千歳空港 国内線ターミナル2F", 3, "7:00〜21:00", { lat: 42.7752, lng: 141.6922 }),
+    ],
+    canReserve: false,
+    canPrePay: false,
+    canDeliver: true,
+    stockStatus: "available",
+    purposes: ["挨拶", "御礼", "差し入れ", "自分用"],
+    budgetCategory: 1000,
+    prefecture: "北海道",
+    region: "北海道",
+  },
+
+  // ─────────────────────────────────────────────────────────────
+  // 宮城県（仙台）
+  // ─────────────────────────────────────────────────────────────
+  {
+    id: "n004",
+    name: "萩の月",
+    brand: "菓匠三全",
+    price: 1188,
+    priceLabel: "¥1,188（税込・6個入）",
+    imageUrl: IMG.cake,
+    badges: ["editorial"],
+    badgeLabels: ["仙台銘菓の代名詞"],
+    category: "スイーツ",
+    shelfLifeDays: 10,
+    individuallyWrapped: true,
+    recommendedCount: 6,
+    temperature: "常温",
+    allergens: ["小麦", "卵", "乳"],
+    guaranteeReasons: [
+      "仙台を代表する銘菓として40年以上の歴史",
+      "ふんわりカステラ生地にカスタードクリームが絶品",
+      "個包装で6個入り、配りやすい",
+      "仙台駅・仙台空港で確実に購入可能",
+      "日持ち10日で安心",
+    ],
+    guaranteeOneLiner: "仙台の代名詞。ふんわりカステラ×カスタードクリームの絶品銘菓",
+    makerQuote: "「宮城の豊かな自然をイメージした、丸くやわらかな月のお菓子です」",
+    makerStory: "1979年創業の菓匠三全が生み出した仙台を代表する銘菓。宮城野の空に浮かぶ満月をイメージした丸いフォルムが特徴。",
+    makerName: "菓匠三全",
+    giftTemplates: {
+      greeting: "本日はお時間をいただきありがとうございます。仙台の萩の月をお持ちしました。",
+      thanks: "先日はありがとうございました。仙台銘菓の萩の月です。お口に合えば幸いです。",
+      apology: "このたびはご迷惑をおかけし申し訳ございません。心ばかりの品をお受け取りください。",
+    },
+    sellers: [
+      nationalSeller("sn004a", "sendai", "仙台駅", "菓匠三全 仙台駅店", "改札内", "2F", "仙台駅 2F エスパル仙台", 3, "8:00〜21:00", { lat: 38.2682, lng: 140.8694 }),
+    ],
+    canReserve: false,
+    canPrePay: false,
+    canDeliver: true,
+    stockStatus: "available",
+    purposes: ["挨拶", "御礼", "社内"],
+    budgetCategory: 2000,
+    prefecture: "宮城県",
+    region: "東北",
+  },
+
+  // ─────────────────────────────────────────────────────────────
+  // 長野県
+  // ─────────────────────────────────────────────────────────────
+  {
+    id: "n005",
+    name: "雷鳥の里",
+    brand: "田中屋",
+    price: 972,
+    priceLabel: "¥972（税込・16個入）",
+    imageUrl: IMG.cookie,
+    badges: ["local"],
+    badgeLabels: ["長野の定番銘菓"],
+    category: "焼き菓子",
+    shelfLifeDays: 60,
+    individuallyWrapped: true,
+    recommendedCount: 16,
+    temperature: "常温",
+    allergens: ["小麦", "卵", "乳"],
+    guaranteeReasons: [
+      "長野を代表する定番銘菓として長年愛される",
+      "クリームを挟んだウエハースの軽い食感",
+      "個包装16個入りで社内配布に最適",
+      "長野駅・松本駅で購入可能",
+      "日持ち60日で余裕あり",
+    ],
+    guaranteeOneLiner: "長野の定番銘菓。クリームウエハースの軽い食感が万人受け",
+    makerQuote: "「北アルプスの雷鳥のように、軽やかで爽やかなお菓子を目指しました」",
+    makerStory: "長野県を代表する菓子メーカー・田中屋が手がける定番銘菓。北アルプスの雷鳥をモチーフにしたパッケージが親しまれている。",
+    makerName: "田中屋",
+    giftTemplates: {
+      greeting: "本日はお時間をいただきありがとうございます。長野の雷鳥の里をお持ちしました。",
+      thanks: "先日はありがとうございました。長野銘菓の雷鳥の里です。",
+      apology: "このたびはご迷惑をおかけし申し訳ございません。心ばかりの品をお受け取りください。",
+    },
+    sellers: [
+      nationalSeller("sn005a", "nagano", "長野駅", "田中屋 長野駅店", "改札内", "1F", "長野駅 改札内ショップ", 2, "7:00〜21:00", { lat: 36.6485, lng: 138.1950 }),
+    ],
+    canReserve: false,
+    canPrePay: false,
+    canDeliver: true,
+    stockStatus: "available",
+    purposes: ["挨拶", "社内", "差し入れ"],
+    budgetCategory: 1000,
+    prefecture: "長野県",
+    region: "中部",
+  },
+
+  // ─────────────────────────────────────────────────────────────
+  // 石川県（金沢）
+  // ─────────────────────────────────────────────────────────────
+  {
+    id: "n006",
+    name: "きんつば（丸型）",
+    brand: "中田屋",
+    price: 1512,
+    priceLabel: "¥1,512（税込・6個入）",
+    imageUrl: IMG.wagashi,
+    badges: ["editorial"],
+    badgeLabels: ["金沢銘菓 創業80年"],
+    category: "和菓子",
+    shelfLifeDays: 14,
+    individuallyWrapped: true,
+    recommendedCount: 6,
+    temperature: "常温",
+    allergens: ["小麦"],
+    guaranteeReasons: [
+      "金沢を代表する老舗和菓子店・中田屋の看板商品",
+      "北陸産小豆を使った上品な甘さ",
+      "丸型きんつばは中田屋独自のスタイル",
+      "金沢駅 百番街で購入可能",
+      "日持ち14日で安心",
+    ],
+    guaranteeOneLiner: "金沢老舗・中田屋の丸型きんつば。北陸産小豆の上品な甘さが絶品",
+    makerQuote: "「金沢の和菓子文化を守りながら、丸型という独自のスタイルで愛され続けています」",
+    makerStory: "1934年創業の中田屋は金沢を代表する和菓子店。丸型きんつばは全国的に珍しいスタイルで、金沢の和菓子文化を象徴する一品。",
+    makerName: "中田屋 職人",
+    giftTemplates: {
+      greeting: "本日はお時間をいただきありがとうございます。金沢中田屋のきんつばをお持ちしました。",
+      thanks: "先日はありがとうございました。金沢の老舗・中田屋のきんつばです。",
+      apology: "このたびはご迷惑をおかけし申し訳ございません。心ばかりの品をお受け取りください。",
+    },
+    sellers: [
+      nationalSeller("sn006a", "kanazawa", "金沢駅", "中田屋 金沢駅 百番街店", "改札外", "1F", "金沢駅 百番街あんと", 3, "8:30〜20:00", { lat: 36.5781, lng: 136.6480 }),
+    ],
+    canReserve: false,
+    canPrePay: false,
+    canDeliver: true,
+    stockStatus: "available",
+    purposes: ["挨拶", "御礼", "お詫び"],
+    budgetCategory: 2000,
+    prefecture: "石川県",
+    region: "中部",
+  },
+  {
+    id: "n007",
+    name: "加賀棒茶フィナンシェ",
+    brand: "ル ミュゼ ドゥ アッシュ",
+    price: 2160,
+    priceLabel: "¥2,160（税込・8個入）",
+    imageUrl: IMG.financier,
+    badges: ["editorial"],
+    badgeLabels: ["金沢スイーツの新定番"],
+    category: "焼き菓子",
+    shelfLifeDays: 30,
+    individuallyWrapped: true,
+    recommendedCount: 8,
+    temperature: "常温",
+    allergens: ["小麦", "卵", "乳"],
+    guaranteeReasons: [
+      "金沢の人気パティシエ・辻口博啓氏プロデュース",
+      "加賀棒茶の香りとフィナンシェの絶妙な組み合わせ",
+      "金沢らしい上品な手土産として話題",
+      "金沢駅 百番街で購入可能",
+      "日持ち30日で余裕あり",
+    ],
+    guaranteeOneLiner: "辻口博啓氏プロデュース。加賀棒茶香るフィナンシェは金沢スイーツの新定番",
+    makerQuote: "「金沢の伝統・加賀棒茶の香りをフランス菓子に融合させました」",
+    makerStory: "世界的パティシエ・辻口博啓氏が手がける金沢発のスイーツブランド。加賀棒茶を使った独自のフィナンシェは金沢土産として急速に人気を集めている。",
+    makerName: "辻口博啓 パティシエ",
+    giftTemplates: {
+      greeting: "本日はお時間をいただきありがとうございます。金沢の加賀棒茶フィナンシェをお持ちしました。",
+      thanks: "先日はありがとうございました。金沢の人気スイーツです。お口に合えば幸いです。",
+      apology: "このたびはご迷惑をおかけし申し訳ございません。心ばかりの品をお受け取りください。",
+    },
+    sellers: [
+      nationalSeller("sn007a", "kanazawa", "金沢駅", "ル ミュゼ ドゥ アッシュ 金沢駅店", "改札外", "1F", "金沢駅 百番街あんと", 3, "8:30〜20:00", { lat: 36.5781, lng: 136.6480 }),
+    ],
+    canReserve: false,
+    canPrePay: false,
+    canDeliver: true,
+    stockStatus: "available",
+    purposes: ["挨拶", "御礼", "お詫び"],
+    budgetCategory: 3000,
+    prefecture: "石川県",
+    region: "中部",
+  },
+
+  // ─────────────────────────────────────────────────────────────
+  // 静岡県
+  // ─────────────────────────────────────────────────────────────
+  {
+    id: "n008",
+    name: "うなぎパイ",
+    brand: "春華堂",
+    price: 1080,
+    priceLabel: "¥1,080（税込・12本入）",
+    imageUrl: IMG.rusk,
+    badges: ["editorial"],
+    badgeLabels: ["夜のお菓子 浜松銘菓"],
+    category: "焼き菓子",
+    shelfLifeDays: 30,
+    individuallyWrapped: true,
+    recommendedCount: 12,
+    temperature: "常温",
+    allergens: ["小麦", "卵", "乳"],
+    guaranteeReasons: [
+      "浜松を代表する銘菓として60年以上の歴史",
+      "うなぎエキスを使った独特の風味",
+      "個包装12本入りで配りやすい",
+      "静岡駅・浜松駅で購入可能",
+      "日持ち30日で安心",
+    ],
+    guaranteeOneLiner: "浜松60年の銘菓。うなぎエキス入りパイは「夜のお菓子」として有名",
+    makerQuote: "「浜松の名産うなぎをお菓子で表現した、唯一無二の味わいです」",
+    makerStory: "1952年創業の春華堂が生み出した浜松銘菓。「夜のお菓子」というキャッチコピーで全国的に知られ、静岡を代表するお土産として定着している。",
+    makerName: "春華堂",
+    giftTemplates: {
+      greeting: "本日はお時間をいただきありがとうございます。浜松の春華堂のうなぎパイをお持ちしました。",
+      thanks: "先日はありがとうございました。浜松銘菓のうなぎパイです。",
+      apology: "このたびはご迷惑をおかけし申し訳ございません。心ばかりの品をお受け取りください。",
+    },
+    sellers: [
+      nationalSeller("sn008a", "shizuoka", "浜松駅", "春華堂 浜松駅店", "改札外", "1F", "浜松駅 メイワン", 3, "8:00〜21:00", { lat: 34.7031, lng: 137.7348 }),
+    ],
+    canReserve: false,
+    canPrePay: false,
+    canDeliver: true,
+    stockStatus: "available",
+    purposes: ["挨拶", "御礼", "社内", "差し入れ"],
+    budgetCategory: 2000,
+    prefecture: "静岡県",
+    region: "中部",
+  },
+
+  // ─────────────────────────────────────────────────────────────
+  // 京都府
+  // ─────────────────────────────────────────────────────────────
+  {
+    id: "n009",
+    name: "お濃茶ラングドシャ 茶の菓",
+    brand: "マールブランシュ",
+    price: 1296,
+    priceLabel: "¥1,296（税込・10枚入）",
+    imageUrl: IMG.cookie,
+    badges: ["editorial"],
+    badgeLabels: ["京都土産ランキング常連"],
+    category: "クッキー",
+    shelfLifeDays: 60,
+    individuallyWrapped: true,
+    recommendedCount: 10,
+    temperature: "常温",
+    allergens: ["小麦", "卵", "乳"],
+    guaranteeReasons: [
+      "京都土産ランキングで常に上位の人気商品",
+      "京都産お濃茶を使ったラングドシャ",
+      "ホワイトチョコとの絶妙なバランス",
+      "京都駅 ジェイアール京都伊勢丹で購入可能",
+      "日持ち60日で余裕あり",
+    ],
+    guaranteeOneLiner: "京都産お濃茶×ホワイトチョコのラングドシャ。京都土産ランキング常連",
+    makerQuote: "「京都の宇治抹茶の深い味わいを、ラングドシャに閉じ込めました」",
+    makerStory: "1982年創業のマールブランシュは京都北山に本店を構える洋菓子店。茶の菓は2003年の発売以来、京都を代表するお土産として全国的な人気を誇る。",
+    makerName: "マールブランシュ 京都北山",
+    giftTemplates: {
+      greeting: "本日はお時間をいただきありがとうございます。京都マールブランシュの茶の菓をお持ちしました。",
+      thanks: "先日はありがとうございました。京都の人気土産・茶の菓です。お口に合えば幸いです。",
+      apology: "このたびはご迷惑をおかけし申し訳ございません。心ばかりの品をお受け取りください。",
+    },
+    sellers: [
+      nationalSeller("sn009a", "kyoto", "京都駅", "マールブランシュ 京都駅店", "改札外", "2F", "ジェイアール京都伊勢丹 B1F", 5, "10:00〜20:00", { lat: 34.9858, lng: 135.7588 }),
+    ],
+    canReserve: false,
+    canPrePay: false,
+    canDeliver: true,
+    stockStatus: "available",
+    purposes: ["挨拶", "御礼", "お詫び", "社内"],
+    budgetCategory: 2000,
+    prefecture: "京都府",
+    region: "近畿",
+  },
+  {
+    id: "n010",
+    name: "生八つ橋（ニッキ）",
+    brand: "おたべ",
+    price: 756,
+    priceLabel: "¥756（税込・10個入）",
+    imageUrl: IMG.wagashi,
+    badges: ["local"],
+    badgeLabels: ["京都1300年の伝統菓子"],
+    category: "和菓子",
+    shelfLifeDays: 7,
+    individuallyWrapped: false,
+    recommendedCount: 10,
+    temperature: "常温",
+    allergens: ["小麦"],
+    guaranteeReasons: [
+      "京都1300年の歴史を持つ伝統菓子",
+      "ニッキの香りが京都らしさを演出",
+      "京都駅・清水寺周辺で購入可能",
+      "価格が手頃で複数購入しやすい",
+      "京都土産の定番として誰もが知っている",
+    ],
+    guaranteeOneLiner: "京都1300年の伝統。ニッキ香る生八つ橋は京都土産の絶対定番",
+    makerQuote: "「京都の伝統を守りながら、現代の人にも愛される生八つ橋を作り続けています」",
+    makerStory: "京都を代表する和菓子・八つ橋。おたべは1957年創業で、生八つ橋の普及に貢献した老舗。ニッキ（シナモン）の香りが京都らしさを象徴する。",
+    makerName: "おたべ",
+    giftTemplates: {
+      greeting: "本日はお時間をいただきありがとうございます。京都の生八つ橋をお持ちしました。",
+      thanks: "先日はありがとうございました。京都の定番・生八つ橋です。",
+      apology: "このたびはご迷惑をおかけし申し訳ございません。心ばかりの品をお受け取りください。",
+    },
+    sellers: [
+      nationalSeller("sn010a", "kyoto", "京都駅", "おたべ 京都駅店", "改札外", "1F", "京都駅 八条口", 5, "9:00〜21:00", { lat: 34.9858, lng: 135.7588 }),
+    ],
+    canReserve: false,
+    canPrePay: false,
+    canDeliver: true,
+    stockStatus: "available",
+    purposes: ["挨拶", "御礼", "差し入れ", "社内"],
+    budgetCategory: 1000,
+    prefecture: "京都府",
+    region: "近畿",
+  },
+  {
+    id: "n011",
+    name: "阿闍梨餅",
+    brand: "満月",
+    price: 1404,
+    priceLabel: "¥1,404（税込・10個入）",
+    imageUrl: IMG.wagashi,
+    badges: ["editorial"],
+    badgeLabels: ["京都人が選ぶ手土産No.1"],
+    category: "和菓子",
+    shelfLifeDays: 5,
+    individuallyWrapped: true,
+    recommendedCount: 10,
+    temperature: "常温",
+    allergens: ["小麦", "卵"],
+    guaranteeReasons: [
+      "京都人が選ぶ手土産ランキングで常に上位",
+      "丹波大納言小豆を使った上品な餡",
+      "もちもちした独特の食感",
+      "京都駅・百貨店で購入可能",
+      "個包装で10個入り",
+    ],
+    guaranteeOneLiner: "京都人が選ぶ手土産No.1。丹波大納言小豆のもちもち餡菓子",
+    makerQuote: "「比叡山で修行する阿闍梨のように、一つ一つ丁寧に作り上げています」",
+    makerStory: "1856年創業の満月が手がける京都銘菓。比叡山で修行する阿闍梨が持ち歩く笠をモチーフにした丸い形が特徴。京都人自身が手土産に選ぶ定番品。",
+    makerName: "満月 職人",
+    giftTemplates: {
+      greeting: "本日はお時間をいただきありがとうございます。京都満月の阿闍梨餅をお持ちしました。",
+      thanks: "先日はありがとうございました。京都で人気の阿闍梨餅です。お口に合えば幸いです。",
+      apology: "このたびはご迷惑をおかけし申し訳ございません。心ばかりの品をお受け取りください。",
+    },
+    sellers: [
+      nationalSeller("sn011a", "kyoto", "京都駅", "満月 京都駅店", "改札外", "2F", "ジェイアール京都伊勢丹 B1F", 5, "10:00〜20:00", { lat: 34.9858, lng: 135.7588 }),
+    ],
+    canReserve: false,
+    canPrePay: false,
+    canDeliver: true,
+    stockStatus: "soldout_risk",
+    purposes: ["挨拶", "御礼", "お詫び"],
+    budgetCategory: 2000,
+    prefecture: "京都府",
+    region: "近畿",
+  },
+
+  // ─────────────────────────────────────────────────────────────
+  // 大阪府
+  // ─────────────────────────────────────────────────────────────
+  {
+    id: "n012",
+    name: "堂島ロール",
+    brand: "モンシェール",
+    price: 1728,
+    priceLabel: "¥1,728（税込）",
+    imageUrl: IMG.cake,
+    badges: ["editorial"],
+    badgeLabels: ["大阪スイーツの新定番"],
+    category: "スイーツ",
+    shelfLifeDays: 3,
+    individuallyWrapped: false,
+    recommendedCount: 6,
+    temperature: "冷蔵",
+    allergens: ["小麦", "卵", "乳"],
+    guaranteeReasons: [
+      "大阪・堂島発のロールケーキブームを牽引",
+      "生クリームたっぷりの贅沢な一本",
+      "新大阪駅・大阪駅で購入可能",
+      "SNSで話題の大阪スイーツ",
+      "冷蔵で日持ち3日",
+    ],
+    guaranteeOneLiner: "大阪堂島発のロールケーキブームの火付け役。生クリームたっぷりの贅沢品",
+    makerQuote: "「大阪・堂島の地から、日本中においしいロールケーキを届けたい」",
+    makerStory: "2004年に大阪・堂島に誕生したモンシェール。堂島ロールは発売当初から行列が絶えない人気商品で、大阪スイーツブームを牽引した一品。",
+    makerName: "モンシェール パティシエ",
+    giftTemplates: {
+      greeting: "本日はお時間をいただきありがとうございます。大阪堂島ロールをお持ちしました。",
+      thanks: "先日はありがとうございました。大阪の人気スイーツ・堂島ロールです。冷蔵でお持ちしました。",
+      apology: "このたびはご迷惑をおかけし申し訳ございません。心ばかりの品をお受け取りください。",
+    },
+    sellers: [
+      nationalSeller("sn012a", "osaka", "新大阪駅", "モンシェール 新大阪駅店", "改札外", "1F", "新大阪駅 駅ビル1F", 5, "8:00〜21:00", { lat: 34.7333, lng: 135.5000 }),
+    ],
+    canReserve: false,
+    canPrePay: false,
+    canDeliver: false,
+    stockStatus: "available",
+    purposes: ["挨拶", "御礼", "差し入れ"],
+    budgetCategory: 2000,
+    prefecture: "大阪府",
+    region: "近畿",
+  },
+  {
+    id: "n013",
+    name: "りくろーおじさんのチーズケーキ",
+    brand: "りくろーおじさんの店",
+    price: 965,
+    priceLabel: "¥965（税込・1ホール）",
+    imageUrl: IMG.cheese,
+    badges: ["editorial"],
+    badgeLabels: ["大阪No.1チーズケーキ"],
+    category: "スイーツ",
+    shelfLifeDays: 3,
+    individuallyWrapped: false,
+    recommendedCount: 6,
+    temperature: "常温",
+    allergens: ["小麦", "卵", "乳"],
+    guaranteeReasons: [
+      "大阪で常に行列ができる人気チーズケーキ",
+      "デンマーク産クリームチーズ使用のふわふわ食感",
+      "焼き立てを提供する新大阪駅店が人気",
+      "価格が手頃で喜ばれやすい",
+      "大阪土産として知名度抜群",
+    ],
+    guaranteeOneLiner: "大阪で常に行列。デンマーク産クリームチーズのふわふわチーズケーキ",
+    makerQuote: "「焼き立てのふわふわ食感を、できるだけ多くの人に届けたい」",
+    makerStory: "1956年創業のりくろーおじさんの店。新大阪駅店では常に行列ができ、焼き立てのチーズケーキが大阪土産として定着している。",
+    makerName: "りくろーおじさんの店",
+    giftTemplates: {
+      greeting: "本日はお時間をいただきありがとうございます。大阪の人気チーズケーキをお持ちしました。",
+      thanks: "先日はありがとうございました。りくろーおじさんのチーズケーキです。",
+      apology: "このたびはご迷惑をおかけし申し訳ございません。心ばかりの品をお受け取りください。",
+    },
+    sellers: [
+      nationalSeller("sn013a", "osaka", "新大阪駅", "りくろーおじさんの店 新大阪駅店", "改札外", "1F", "新大阪駅 駅ビル1F", 3, "8:00〜21:00", { lat: 34.7333, lng: 135.5000 }),
+    ],
+    canReserve: false,
+    canPrePay: false,
+    canDeliver: false,
+    stockStatus: "available",
+    purposes: ["挨拶", "御礼", "差し入れ"],
+    budgetCategory: 1000,
+    prefecture: "大阪府",
+    region: "近畿",
+  },
+
+  // ─────────────────────────────────────────────────────────────
+  // 奈良県
+  // ─────────────────────────────────────────────────────────────
+  {
+    id: "n014",
+    name: "奈良漬",
+    brand: "今西本店",
+    price: 1620,
+    priceLabel: "¥1,620（税込・200g）",
+    imageUrl: IMG.snack,
+    badges: ["local"],
+    badgeLabels: ["奈良1300年の伝統"],
+    category: "その他",
+    shelfLifeDays: 180,
+    individuallyWrapped: false,
+    recommendedCount: 4,
+    temperature: "常温",
+    allergens: [],
+    guaranteeReasons: [
+      "奈良1300年の歴史を持つ伝統的な漬物",
+      "奈良の清酒の酒粕で漬け込んだ深い味わい",
+      "日持ち180日で余裕を持って渡せる",
+      "近鉄奈良駅・JR奈良駅周辺で購入可能",
+      "奈良土産の定番として誰もが知っている",
+    ],
+    guaranteeOneLiner: "奈良1300年の伝統漬物。清酒の酒粕で漬け込んだ深い味わい",
+    makerQuote: "「奈良の清酒文化と漬物文化が融合した、唯一無二の味わいです」",
+    makerStory: "今西本店は奈良を代表する奈良漬の老舗。奈良の清酒の酒粕を使った伝統的な製法を守り続けている。",
+    makerName: "今西本店",
+    giftTemplates: {
+      greeting: "本日はお時間をいただきありがとうございます。奈良の伝統・奈良漬をお持ちしました。",
+      thanks: "先日はありがとうございました。奈良の老舗・今西本店の奈良漬です。",
+      apology: "このたびはご迷惑をおかけし申し訳ございません。心ばかりの品をお受け取りください。",
+    },
+    sellers: [
+      nationalSeller("sn014a", "nara", "近鉄奈良駅", "今西本店 近鉄奈良駅店", "改札外", "1F", "近鉄奈良駅 改札外", 3, "9:00〜19:00", { lat: 34.6851, lng: 135.8048 }),
+    ],
+    canReserve: false,
+    canPrePay: false,
+    canDeliver: true,
+    stockStatus: "available",
+    purposes: ["挨拶", "御礼"],
+    budgetCategory: 2000,
+    prefecture: "奈良県",
+    region: "近畿",
+  },
+
+  // ─────────────────────────────────────────────────────────────
+  // 広島県
+  // ─────────────────────────────────────────────────────────────
+  {
+    id: "n015",
+    name: "生もみじ",
+    brand: "にしき堂",
+    price: 1080,
+    priceLabel: "¥1,080（税込・8個入）",
+    imageUrl: IMG.wagashi,
+    badges: ["editorial"],
+    badgeLabels: ["広島土産ランキング1位"],
+    category: "和菓子",
+    shelfLifeDays: 7,
+    individuallyWrapped: true,
+    recommendedCount: 8,
+    temperature: "常温",
+    allergens: ["小麦", "卵"],
+    guaranteeReasons: [
+      "広島土産ランキングで連続1位を獲得",
+      "もちもちした生地に包まれた上品な餡",
+      "こしあん・粒あん・クリームチーズなど多彩なフレーバー",
+      "広島駅・宮島で購入可能",
+      "個包装8個入りで配りやすい",
+    ],
+    guaranteeOneLiner: "広島土産ランキング1位。もちもち生地の生もみじは定番中の定番",
+    makerQuote: "「広島の紅葉をイメージした、やわらかくて上品なもみじ饅頭を作りました」",
+    makerStory: "1951年創業のにしき堂が手がける広島銘菓。従来のもみじ饅頭とは異なるもちもちした生地が特徴の「生もみじ」は、広島土産の新定番として人気を集めている。",
+    makerName: "にしき堂",
+    giftTemplates: {
+      greeting: "本日はお時間をいただきありがとうございます。広島の生もみじをお持ちしました。",
+      thanks: "先日はありがとうございました。広島土産ランキング1位の生もみじです。",
+      apology: "このたびはご迷惑をおかけし申し訳ございません。心ばかりの品をお受け取りください。",
+    },
+    sellers: [
+      nationalSeller("sn015a", "hiroshima", "広島駅", "にしき堂 広島駅店", "改札外", "1F", "広島駅 ekie", 3, "8:00〜21:00", { lat: 34.3963, lng: 132.4596 }),
+    ],
+    canReserve: false,
+    canPrePay: false,
+    canDeliver: true,
+    stockStatus: "available",
+    purposes: ["挨拶", "御礼", "社内", "差し入れ"],
+    budgetCategory: 2000,
+    prefecture: "広島県",
+    region: "中国",
+  },
+
+  // ─────────────────────────────────────────────────────────────
+  // 愛知県（名古屋）
+  // ─────────────────────────────────────────────────────────────
+  {
+    id: "n016",
+    name: "ぴよりん",
+    brand: "名古屋観光ホテル",
+    price: 540,
+    priceLabel: "¥540（税込・1個）",
+    imageUrl: IMG.cake,
+    badges: ["editorial"],
+    badgeLabels: ["SNS話題 名古屋土産No.1"],
+    category: "スイーツ",
+    shelfLifeDays: 2,
+    individuallyWrapped: false,
+    recommendedCount: 1,
+    temperature: "冷蔵",
+    allergens: ["小麦", "卵", "乳"],
+    guaranteeReasons: [
+      "2024年おみやげランキング1位を獲得",
+      "ひよこ型のプリンスイーツがSNSで大バズり",
+      "名古屋駅・中部国際空港で購入可能",
+      "見た目のインパクトで話題になること確実",
+      "名古屋土産の新定番として定着",
+    ],
+    guaranteeOneLiner: "2024年おみやげランキング1位。ひよこ型プリンがSNSで大バズり",
+    makerQuote: "「かわいいひよこの形に、名古屋コーチンの卵を使ったプリンを詰め込みました」",
+    makerStory: "名古屋観光ホテルが手がけるひよこ型のプリンスイーツ。SNSでの話題性が高く、2024年のおみやげランキングで1位を獲得した名古屋の新定番土産。",
+    makerName: "名古屋観光ホテル",
+    giftTemplates: {
+      greeting: "本日はお時間をいただきありがとうございます。名古屋の話題スイーツ・ぴよりんをお持ちしました。",
+      thanks: "先日はありがとうございました。SNSで大人気のぴよりんです。冷蔵でお持ちしました。",
+      apology: "このたびはご迷惑をおかけし申し訳ございません。心ばかりの品をお受け取りください。",
+    },
+    sellers: [
+      nationalSeller("sn016a", "nagoya", "名古屋駅", "ぴよりん SHOP 名古屋駅店", "改札内", "1F", "名古屋駅 JR名古屋タカシマヤ", 3, "10:00〜21:00", { lat: 35.1709, lng: 136.8815 }),
+    ],
+    canReserve: true,
+    canPrePay: false,
+    canDeliver: false,
+    stockStatus: "soldout_risk",
+    purposes: ["差し入れ", "自分用", "御礼"],
+    budgetCategory: 1000,
+    prefecture: "愛知県",
+    region: "中部",
+  },
+  {
+    id: "n017",
+    name: "なごやん",
+    brand: "不二家",
+    price: 864,
+    priceLabel: "¥864（税込・12個入）",
+    imageUrl: IMG.wagashi,
+    badges: ["local"],
+    badgeLabels: ["名古屋の定番銘菓"],
+    category: "和菓子",
+    shelfLifeDays: 14,
+    individuallyWrapped: true,
+    recommendedCount: 12,
+    temperature: "常温",
+    allergens: ["小麦", "卵", "乳"],
+    guaranteeReasons: [
+      "名古屋を代表する定番銘菓として長年愛される",
+      "ふんわりした生地に白あんを包んだ上品な味",
+      "個包装12個入りで社内配布に最適",
+      "名古屋駅・中部国際空港で購入可能",
+      "日持ち14日で安心",
+    ],
+    guaranteeOneLiner: "名古屋の定番銘菓。ふんわり生地×白あんの上品な味わい",
+    makerQuote: "「名古屋の人々に長年愛されてきた、シンプルで上品な味を守り続けています」",
+    makerStory: "不二家が手がける名古屋限定の銘菓。名古屋を代表するお土産として、地元民から観光客まで幅広く支持されている。",
+    makerName: "不二家",
+    giftTemplates: {
+      greeting: "本日はお時間をいただきありがとうございます。名古屋の定番・なごやんをお持ちしました。",
+      thanks: "先日はありがとうございました。名古屋銘菓のなごやんです。",
+      apology: "このたびはご迷惑をおかけし申し訳ございません。心ばかりの品をお受け取りください。",
+    },
+    sellers: [
+      nationalSeller("sn017a", "nagoya", "名古屋駅", "不二家 名古屋駅店", "改札外", "1F", "名古屋駅 JR名古屋タカシマヤ B1F", 5, "10:00〜20:00", { lat: 35.1709, lng: 136.8815 }),
+    ],
+    canReserve: false,
+    canPrePay: false,
+    canDeliver: true,
+    stockStatus: "available",
+    purposes: ["挨拶", "社内", "差し入れ"],
+    budgetCategory: 1000,
+    prefecture: "愛知県",
+    region: "中部",
+  },
+
+  // ─────────────────────────────────────────────────────────────
+  // 福岡県
+  // ─────────────────────────────────────────────────────────────
+  {
+    id: "n018",
+    name: "博多通りもん",
+    brand: "明月堂",
+    price: 1080,
+    priceLabel: "¥1,080（税込・8個入）",
+    imageUrl: IMG.wagashi,
+    badges: ["editorial"],
+    badgeLabels: ["全国菓子大博覧会 最高賞"],
+    category: "和菓子",
+    shelfLifeDays: 20,
+    individuallyWrapped: true,
+    recommendedCount: 8,
+    temperature: "常温",
+    allergens: ["小麦", "卵", "乳"],
+    guaranteeReasons: [
+      "全国菓子大博覧会で最高賞を受賞",
+      "博多土産ランキングで常に上位",
+      "ミルク風味の白あんが絶品",
+      "博多駅・福岡空港で確実に購入可能",
+      "個包装8個入りで配りやすい",
+    ],
+    guaranteeOneLiner: "全国菓子大博覧会最高賞。博多土産の代名詞・ミルク白あんが絶品",
+    makerQuote: "「博多の人々に愛され続けてきた、ミルク風味の白あんの美味しさを届けます」",
+    makerStory: "1956年創業の明月堂が手がける博多銘菓。全国菓子大博覧会で最高賞を受賞し、博多土産の定番として全国的な知名度を誇る。",
+    makerName: "明月堂",
+    giftTemplates: {
+      greeting: "本日はお時間をいただきありがとうございます。博多の博多通りもんをお持ちしました。",
+      thanks: "先日はありがとうございました。博多土産の定番・博多通りもんです。",
+      apology: "このたびはご迷惑をおかけし申し訳ございません。心ばかりの品をお受け取りください。",
+    },
+    sellers: [
+      nationalSeller("sn018a", "fukuoka", "博多駅", "明月堂 博多駅店", "改札内", "1F", "博多駅 マイング", 3, "7:00〜22:00", { lat: 33.5903, lng: 130.4207 }),
+    ],
+    canReserve: false,
+    canPrePay: false,
+    canDeliver: true,
+    stockStatus: "available",
+    purposes: ["挨拶", "御礼", "社内", "差し入れ"],
+    budgetCategory: 2000,
+    prefecture: "福岡県",
+    region: "九州・沖縄",
+  },
+  {
+    id: "n019",
+    name: "めんべい",
+    brand: "山口油屋福太郎",
+    price: 648,
+    priceLabel: "¥648（税込・16枚入）",
+    imageUrl: IMG.snack,
+    badges: ["local"],
+    badgeLabels: ["博多の辛口スナック"],
+    category: "スナック",
+    shelfLifeDays: 60,
+    individuallyWrapped: true,
+    recommendedCount: 16,
+    temperature: "常温",
+    allergens: ["小麦", "えび", "いか"],
+    guaranteeReasons: [
+      "博多の辛口スナックとして全国的な人気",
+      "明太子とえびの風味が絶妙",
+      "個包装16枚入りで社内配布に最適",
+      "博多駅・福岡空港で確実に購入可能",
+      "日持ち60日で余裕あり",
+    ],
+    guaranteeOneLiner: "博多の辛口スナック。明太子×えびの風味が癖になる全国人気品",
+    makerQuote: "「博多の明太子文化をスナックで表現した、やみつきになる一品です」",
+    makerStory: "山口油屋福太郎が手がける博多の辛口スナック。明太子とえびの風味が絶妙で、博多土産として全国的な人気を誇る。",
+    makerName: "山口油屋福太郎",
+    giftTemplates: {
+      greeting: "本日はお時間をいただきありがとうございます。博多のめんべいをお持ちしました。",
+      thanks: "先日はありがとうございました。博多の人気スナック・めんべいです。",
+      apology: "このたびはご迷惑をおかけし申し訳ございません。心ばかりの品をお受け取りください。",
+    },
+    sellers: [
+      nationalSeller("sn019a", "fukuoka", "博多駅", "山口油屋福太郎 博多駅店", "改札内", "1F", "博多駅 マイング", 3, "7:00〜22:00", { lat: 33.5903, lng: 130.4207 }),
+    ],
+    canReserve: false,
+    canPrePay: false,
+    canDeliver: true,
+    stockStatus: "available",
+    purposes: ["挨拶", "社内", "差し入れ"],
+    budgetCategory: 1000,
+    prefecture: "福岡県",
+    region: "九州・沖縄",
+  },
+
+  // ─────────────────────────────────────────────────────────────
+  // 長崎県
+  // ─────────────────────────────────────────────────────────────
+  {
+    id: "n020",
+    name: "長崎カステラ（0番）",
+    brand: "福砂屋",
+    price: 2160,
+    priceLabel: "¥2,160（税込・小1本）",
+    imageUrl: IMG.cake,
+    badges: ["editorial"],
+    badgeLabels: ["長崎400年の伝統銘菓"],
+    category: "焼き菓子",
+    shelfLifeDays: 21,
+    individuallyWrapped: false,
+    recommendedCount: 8,
+    temperature: "常温",
+    allergens: ["小麦", "卵"],
+    guaranteeReasons: [
+      "1624年創業・長崎カステラの老舗中の老舗",
+      "ザラメ糖の食感が特徴の伝統製法",
+      "長崎土産の代名詞として400年の歴史",
+      "長崎駅・長崎空港で購入可能",
+      "日持ち21日で安心",
+    ],
+    guaranteeOneLiner: "1624年創業・長崎カステラの老舗。ザラメ糖の食感が伝統の証",
+    makerQuote: "「400年変わらぬ製法で、長崎の伝統の味を守り続けています」",
+    makerStory: "1624年創業の福砂屋は長崎カステラの老舗中の老舗。ザラメ糖を底に敷いた独特の製法は今も変わらず、長崎を代表する銘菓として全国に知られる。",
+    makerName: "福砂屋",
+    giftTemplates: {
+      greeting: "本日はお時間をいただきありがとうございます。長崎の老舗・福砂屋のカステラをお持ちしました。",
+      thanks: "先日はありがとうございました。長崎銘菓の福砂屋カステラです。",
+      apology: "このたびはご迷惑をおかけし申し訳ございません。心ばかりの品をお受け取りください。",
+    },
+    sellers: [
+      nationalSeller("sn020a", "nagasaki", "長崎駅", "福砂屋 長崎駅店", "改札外", "1F", "長崎駅 アミュプラザ長崎", 3, "9:00〜21:00", { lat: 32.7503, lng: 129.8779 }),
+    ],
+    canReserve: false,
+    canPrePay: false,
+    canDeliver: true,
+    stockStatus: "available",
+    purposes: ["挨拶", "御礼", "お詫び"],
+    budgetCategory: 3000,
+    prefecture: "長崎県",
+    region: "九州・沖縄",
+  },
+
+  // ─────────────────────────────────────────────────────────────
+  // 熊本県
+  // ─────────────────────────────────────────────────────────────
+  {
+    id: "n021",
+    name: "陣太鼓",
+    brand: "お菓子の香梅",
+    price: 1296,
+    priceLabel: "¥1,296（税込・6個入）",
+    imageUrl: IMG.wagashi,
+    badges: ["local"],
+    badgeLabels: ["熊本銘菓 50年の歴史"],
+    category: "和菓子",
+    shelfLifeDays: 14,
+    individuallyWrapped: true,
+    recommendedCount: 6,
+    temperature: "常温",
+    allergens: ["小麦"],
+    guaranteeReasons: [
+      "熊本を代表する銘菓として50年以上の歴史",
+      "栗入り羊羹の上品な甘さ",
+      "個包装6個入りで配りやすい",
+      "熊本駅・熊本空港で購入可能",
+      "日持ち14日で安心",
+    ],
+    guaranteeOneLiner: "熊本50年の銘菓。栗入り羊羹の上品な甘さが万人受け",
+    makerQuote: "「熊本の豊かな自然が育んだ栗を使った、上品な羊羹です」",
+    makerStory: "お菓子の香梅が手がける熊本銘菓。加藤清正の陣太鼓をモチーフにした名前と、栗入り羊羹の上品な味わいが特徴。",
+    makerName: "お菓子の香梅",
+    giftTemplates: {
+      greeting: "本日はお時間をいただきありがとうございます。熊本の陣太鼓をお持ちしました。",
+      thanks: "先日はありがとうございました。熊本銘菓の陣太鼓です。",
+      apology: "このたびはご迷惑をおかけし申し訳ございません。心ばかりの品をお受け取りください。",
+    },
+    sellers: [
+      nationalSeller("sn021a", "kumamoto", "熊本駅", "お菓子の香梅 熊本駅店", "改札外", "1F", "熊本駅 アミュプラザくまもと", 3, "9:00〜21:00", { lat: 32.7898, lng: 130.7417 }),
+    ],
+    canReserve: false,
+    canPrePay: false,
+    canDeliver: true,
+    stockStatus: "available",
+    purposes: ["挨拶", "御礼", "社内"],
+    budgetCategory: 2000,
+    prefecture: "熊本県",
+    region: "九州・沖縄",
+  },
+
+  // ─────────────────────────────────────────────────────────────
+  // 鹿児島県
+  // ─────────────────────────────────────────────────────────────
+  {
+    id: "n022",
+    name: "かるかん",
+    brand: "明石屋",
+    price: 1296,
+    priceLabel: "¥1,296（税込・6個入）",
+    imageUrl: IMG.wagashi,
+    badges: ["local"],
+    badgeLabels: ["薩摩藩の伝統銘菓"],
+    category: "和菓子",
+    shelfLifeDays: 7,
+    individuallyWrapped: true,
+    recommendedCount: 6,
+    temperature: "常温",
+    allergens: ["小麦", "卵"],
+    guaranteeReasons: [
+      "薩摩藩時代から続く鹿児島の伝統銘菓",
+      "山芋を使ったふんわりした独特の食感",
+      "個包装6個入りで配りやすい",
+      "鹿児島中央駅で購入可能",
+      "日持ち7日",
+    ],
+    guaranteeOneLiner: "薩摩藩の伝統銘菓。山芋使用のふんわり食感が鹿児島の誇り",
+    makerQuote: "「薩摩の山芋と米粉が生み出す、ふんわりとした食感を大切にしています」",
+    makerStory: "1834年創業の明石屋は鹿児島を代表する老舗和菓子店。かるかんは薩摩藩時代から続く伝統菓子で、山芋を使ったふんわりした食感が特徴。",
+    makerName: "明石屋",
+    giftTemplates: {
+      greeting: "本日はお時間をいただきありがとうございます。鹿児島の伝統菓子・かるかんをお持ちしました。",
+      thanks: "先日はありがとうございました。鹿児島銘菓のかるかんです。",
+      apology: "このたびはご迷惑をおかけし申し訳ございません。心ばかりの品をお受け取りください。",
+    },
+    sellers: [
+      nationalSeller("sn022a", "kagoshima", "鹿児島中央駅", "明石屋 鹿児島中央駅店", "改札外", "1F", "鹿児島中央駅 アミュプラザ鹿児島", 3, "9:00〜21:00", { lat: 31.5785, lng: 130.5432 }),
+    ],
+    canReserve: false,
+    canPrePay: false,
+    canDeliver: true,
+    stockStatus: "available",
+    purposes: ["挨拶", "御礼", "社内"],
+    budgetCategory: 2000,
+    prefecture: "鹿児島県",
+    region: "九州・沖縄",
+  },
+
+  // ─────────────────────────────────────────────────────────────
+  // 沖縄県
+  // ─────────────────────────────────────────────────────────────
+  {
+    id: "n023",
+    name: "紅いもタルト",
+    brand: "御菓子御殿",
+    price: 1188,
+    priceLabel: "¥1,188（税込・10個入）",
+    imageUrl: IMG.tart,
+    badges: ["editorial"],
+    badgeLabels: ["沖縄土産No.1"],
+    category: "スイーツ",
+    shelfLifeDays: 30,
+    individuallyWrapped: true,
+    recommendedCount: 10,
+    temperature: "常温",
+    allergens: ["小麦", "卵", "乳"],
+    guaranteeReasons: [
+      "沖縄土産ランキングで常に上位の定番品",
+      "沖縄県産紅芋100%使用の鮮やかな紫色",
+      "個包装10個入りで社内配布に最適",
+      "那覇空港・国際通りで確実に購入可能",
+      "日持ち30日で余裕あり",
+    ],
+    guaranteeOneLiner: "沖縄土産No.1。県産紅芋100%使用の鮮やかな紫色タルト",
+    makerQuote: "「沖縄の豊かな土地が育んだ紅芋の美味しさを、タルトに込めました」",
+    makerStory: "御菓子御殿が手がける沖縄銘菓。沖縄県産紅芋100%使用の鮮やかな紫色が特徴で、沖縄土産の定番として全国的な知名度を誇る。",
+    makerName: "御菓子御殿",
+    giftTemplates: {
+      greeting: "本日はお時間をいただきありがとうございます。沖縄の紅いもタルトをお持ちしました。",
+      thanks: "先日はありがとうございました。沖縄土産の定番・紅いもタルトです。",
+      apology: "このたびはご迷惑をおかけし申し訳ございません。心ばかりの品をお受け取りください。",
+    },
+    sellers: [
+      nationalSeller("sn023a", "naha", "那覇空港", "御菓子御殿 那覇空港店", "改札外", "2F", "那覇空港 国内線2F", 3, "7:00〜21:00", { lat: 26.2124, lng: 127.6492 }),
+    ],
+    canReserve: false,
+    canPrePay: false,
+    canDeliver: true,
+    stockStatus: "available",
+    purposes: ["挨拶", "御礼", "社内", "差し入れ"],
+    budgetCategory: 2000,
+    prefecture: "沖縄県",
+    region: "九州・沖縄",
+  },
+  {
+    id: "n024",
+    name: "雪塩ちんすこう",
+    brand: "南風堂",
+    price: 864,
+    priceLabel: "¥864（税込・24個入）",
+    imageUrl: IMG.cookie,
+    badges: ["local"],
+    badgeLabels: ["沖縄の塩菓子 SNS話題"],
+    category: "クッキー",
+    shelfLifeDays: 60,
+    individuallyWrapped: true,
+    recommendedCount: 24,
+    temperature: "常温",
+    allergens: ["小麦", "乳"],
+    guaranteeReasons: [
+      "沖縄の伝統菓子ちんすこうに雪塩をプラス",
+      "甘じょっぱい味わいがSNSで話題",
+      "個包装24個入りで大人数配布に最適",
+      "那覇空港・国際通りで確実に購入可能",
+      "日持ち60日で余裕あり",
+    ],
+    guaranteeOneLiner: "沖縄の伝統×雪塩の甘じょっぱさ。SNS話題の大人数向け定番品",
+    makerQuote: "「宮古島の雪塩と沖縄の伝統菓子ちんすこうを組み合わせた、新しい沖縄の味です」",
+    makerStory: "南風堂が手がける沖縄銘菓。宮古島産の雪塩を使ったちんすこうは、甘じょっぱい味わいがSNSで話題となり、沖縄土産の新定番として人気を集めている。",
+    makerName: "南風堂",
+    giftTemplates: {
+      greeting: "本日はお時間をいただきありがとうございます。沖縄の雪塩ちんすこうをお持ちしました。",
+      thanks: "先日はありがとうございました。沖縄の人気土産・雪塩ちんすこうです。",
+      apology: "このたびはご迷惑をおかけし申し訳ございません。心ばかりの品をお受け取りください。",
+    },
+    sellers: [
+      nationalSeller("sn024a", "naha", "那覇空港", "南風堂 那覇空港店", "改札外", "2F", "那覇空港 国内線2F", 3, "7:00〜21:00", { lat: 26.2124, lng: 127.6492 }),
+    ],
+    canReserve: false,
+    canPrePay: false,
+    canDeliver: true,
+    stockStatus: "available",
+    purposes: ["挨拶", "社内", "差し入れ"],
+    budgetCategory: 1000,
+    prefecture: "沖縄県",
+    region: "九州・沖縄",
+  },
+];
+
+// 全商品データ（都内 + 全国）
+export const ALL_PRODUCTS: Product[] = [...PRODUCTS, ...NATIONAL_PRODUCTS];

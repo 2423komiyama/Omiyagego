@@ -1,26 +1,28 @@
 // ============================================================
-// Omiyage Go - 「探す」フリーワード検索画面
+// Omiyage Go - 「探す」フリーワード検索画面（全国対応版）
 // デザイン哲学: 駅案内板スタイル - 検索速度最優先
-// 機能: リアルタイム検索・施設フィルタ・カテゴリフィルタ・価格帯フィルタ
+// 機能: リアルタイム検索・施設フィルタ・地方フィルタ・カテゴリフィルタ・価格帯フィルタ
 // ============================================================
-import { useState, useMemo, useRef, useEffect } from "react";
+import { useState, useMemo, useRef } from "react";
 import { AppLayout } from "@/components/omiyage/AppLayout";
 import { ProductCard } from "@/components/omiyage/ProductCard";
 import {
-  PRODUCTS,
   FACILITIES,
+  REGIONS,
   CATEGORY_LIST,
   searchProducts,
   type FacilityId,
+  type RegionId,
 } from "@/lib/mockData";
-import { Search, X, SlidersHorizontal, ChevronDown, ChevronUp } from "lucide-react";
+import { Search, X, SlidersHorizontal, ChevronDown, ChevronUp, MapPin } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useLocation } from "wouter";
 
 // ── 人気キーワード ──────────────────────────────────────────────
 const POPULAR_KEYWORDS = [
-  "バター", "チョコレート", "フィナンシェ", "クッキー", "和菓子",
-  "個包装", "日持ち", "改札内", "羽田空港", "東京駅",
+  "白い恋人", "バターサンド", "チョコレート", "フィナンシェ", "クッキー",
+  "和菓子", "個包装", "日持ち", "改札内", "羽田空港", "東京駅",
+  "北海道", "京都", "大阪", "沖縄", "博多",
 ];
 
 // ── 価格帯フィルタ ──────────────────────────────────────────────
@@ -49,12 +51,26 @@ const SORT_OPTIONS = [
   { id: "shelf_desc", label: "日持ちが長い順" },
 ];
 
+// ── 地方タブ ──────────────────────────────────────────────────
+const REGION_TABS = [
+  { id: "all" as RegionId, label: "全国" },
+  { id: "北海道" as RegionId, label: "北海道" },
+  { id: "東北" as RegionId, label: "東北" },
+  { id: "関東" as RegionId, label: "関東" },
+  { id: "中部" as RegionId, label: "中部" },
+  { id: "近畿" as RegionId, label: "近畿" },
+  { id: "中国" as RegionId, label: "中国" },
+  { id: "四国" as RegionId, label: "四国" },
+  { id: "九州・沖縄" as RegionId, label: "九州・沖縄" },
+];
+
 export default function SearchPage() {
   const [, navigate] = useLocation();
   const inputRef = useRef<HTMLInputElement>(null);
 
   // 検索状態
   const [query, setQuery] = useState("");
+  const [selectedRegion, setSelectedRegion] = useState<RegionId>("all");
   const [selectedFacility, setSelectedFacility] = useState<FacilityId | null>(null);
   const [selectedCategory, setSelectedCategory] = useState("すべて");
   const [selectedPriceMax, setSelectedPriceMax] = useState<number>(Infinity);
@@ -64,9 +80,41 @@ export default function SearchPage() {
   const [showFilters, setShowFilters] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
 
+  // 地方に応じた施設リスト
+  const filteredFacilities = useMemo(() => {
+    if (selectedRegion === "all") return FACILITIES.filter((f) => f.id !== "all");
+    const regionInfo = REGIONS.find((r) => r.id === selectedRegion);
+    if (!regionInfo) return FACILITIES.filter((f) => f.id !== "all");
+    // 地方に対応する施設IDを返す（簡易マッピング）
+    const regionFacilityMap: Record<string, FacilityId[]> = {
+      "北海道": ["chitose"],
+      "東北": ["sendai"],
+      "関東": ["tokyo", "haneda_t1", "haneda_t2", "haneda_t3", "shinagawa", "shinjuku", "shibuya"],
+      "中部": ["nagoya", "kanazawa", "nagano", "shizuoka"],
+      "近畿": ["kyoto", "osaka", "nara"],
+      "中国": ["hiroshima"],
+      "四国": [],
+      "九州・沖縄": ["fukuoka", "naha", "kagoshima", "nagasaki", "kumamoto"],
+    };
+    const ids = regionFacilityMap[selectedRegion] ?? [];
+    return FACILITIES.filter((f) => ids.includes(f.id as FacilityId));
+  }, [selectedRegion]);
+
+  // 地方変更時に施設フィルタをリセット
+  const handleRegionChange = (region: RegionId) => {
+    setSelectedRegion(region);
+    setSelectedFacility(null);
+  };
+
   // 検索結果
   const results = useMemo(() => {
-    let list = searchProducts(query, selectedFacility, selectedCategory);
+    let list = searchProducts(
+      query,
+      selectedFacility,
+      selectedCategory,
+      selectedRegion !== "all" ? selectedRegion : null,
+      null
+    );
     // 価格フィルタ
     if (selectedPriceMax !== Infinity) {
       list = list.filter((p) => p.price <= selectedPriceMax);
@@ -94,10 +142,11 @@ export default function SearchPage() {
         break;
     }
     return list;
-  }, [query, selectedFacility, selectedCategory, selectedPriceMax, selectedShelfMin, individuallyWrapped, sortId]);
+  }, [query, selectedRegion, selectedFacility, selectedCategory, selectedPriceMax, selectedShelfMin, individuallyWrapped, sortId]);
 
   // アクティブなフィルタ数
   const activeFilterCount = [
+    selectedRegion !== "all",
     selectedFacility !== null,
     selectedCategory !== "すべて",
     selectedPriceMax !== Infinity,
@@ -107,6 +156,7 @@ export default function SearchPage() {
 
   const clearAll = () => {
     setQuery("");
+    setSelectedRegion("all");
     setSelectedFacility(null);
     setSelectedCategory("すべて");
     setSelectedPriceMax(Infinity);
@@ -139,7 +189,7 @@ export default function SearchPage() {
               onChange={(e) => setQuery(e.target.value)}
               onFocus={() => setIsFocused(true)}
               onBlur={() => setTimeout(() => setIsFocused(false), 150)}
-              placeholder="商品名・ブランド・施設名で検索"
+              placeholder="商品名・ブランド・都道府県・施設名で検索"
               className="flex-1 bg-transparent text-sm text-stone-900 placeholder-stone-400 outline-none"
             />
             {hasQuery && (
@@ -158,7 +208,7 @@ export default function SearchPage() {
             <button
               onClick={() => setShowFilters(!showFilters)}
               className={cn(
-                "flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold border transition-colors",
+                "flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold border transition-colors flex-shrink-0",
                 showFilters || activeFilterCount > 0
                   ? "bg-emerald-700 text-white border-emerald-700"
                   : "bg-white text-stone-600 border-stone-200"
@@ -199,11 +249,34 @@ export default function SearchPage() {
         {/* ── フィルタパネル（展開） ── */}
         {showFilters && (
           <div className="px-4 pb-4 bg-stone-50 border-t border-stone-100 space-y-4">
+            {/* 地方 */}
+            <div>
+              <p className="text-xs font-bold text-stone-500 uppercase tracking-wide mt-3 mb-2">地方</p>
+              <div className="flex flex-wrap gap-1.5">
+                {REGION_TABS.map((r) => (
+                  <button
+                    key={r.id}
+                    onClick={() => handleRegionChange(r.id)}
+                    className={cn(
+                      "px-3 py-1.5 rounded-full text-xs font-medium border transition-colors",
+                      selectedRegion === r.id
+                        ? "bg-emerald-700 text-white border-emerald-700"
+                        : "bg-white text-stone-600 border-stone-200"
+                    )}
+                  >
+                    {r.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
             {/* 施設 */}
             <div>
-              <p className="text-xs font-bold text-stone-500 uppercase tracking-wide mt-3 mb-2">施設</p>
+              <p className="text-xs font-bold text-stone-500 uppercase tracking-wide mb-2">
+                施設 {selectedRegion !== "all" && <span className="text-emerald-600">（{selectedRegion}）</span>}
+              </p>
               <div className="flex flex-wrap gap-1.5">
-                {FACILITIES.filter((f) => f.id !== "all").map((f) => (
+                {filteredFacilities.length > 0 ? filteredFacilities.map((f) => (
                   <button
                     key={f.id}
                     onClick={() => setSelectedFacility(selectedFacility === f.id ? null : f.id)}
@@ -216,7 +289,9 @@ export default function SearchPage() {
                   >
                     {f.shortLabel}
                   </button>
-                ))}
+                )) : (
+                  <p className="text-xs text-stone-400">この地方の施設データは準備中です</p>
+                )}
               </div>
             </div>
 
@@ -337,8 +412,86 @@ export default function SearchPage() {
         </div>
       )}
 
+      {/* ── 地方タブ（クイック切り替え） ── */}
+      {!showFilters && (
+        <div className="bg-white border-b border-stone-100">
+          <div className="px-4 py-2 overflow-x-auto">
+            <div className="flex gap-1.5">
+              {REGION_TABS.map((r) => (
+                <button
+                  key={r.id}
+                  onClick={() => handleRegionChange(r.id)}
+                  className={cn(
+                    "whitespace-nowrap px-3 py-1.5 rounded-full text-xs font-bold border transition-colors flex-shrink-0",
+                    selectedRegion === r.id
+                      ? "bg-emerald-700 text-white border-emerald-700"
+                      : "bg-white text-stone-600 border-stone-200"
+                  )}
+                >
+                  {r.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* 施設クイックフィルタ（地方選択時のみ表示） */}
+          {filteredFacilities.length > 0 && (
+            <div className="px-4 pb-2 overflow-x-auto">
+              <div className="flex gap-1.5">
+                <button
+                  onClick={() => setSelectedFacility(null)}
+                  className={cn(
+                    "whitespace-nowrap px-3 py-1.5 rounded-full text-xs font-medium border transition-colors flex-shrink-0",
+                    selectedFacility === null
+                      ? "bg-stone-800 text-white border-stone-800"
+                      : "bg-white text-stone-500 border-stone-200"
+                  )}
+                >
+                  <MapPin className="w-3 h-3 inline mr-1" />
+                  すべての施設
+                </button>
+                {filteredFacilities.map((f) => (
+                  <button
+                    key={f.id}
+                    onClick={() => setSelectedFacility(selectedFacility === f.id ? null : f.id)}
+                    className={cn(
+                      "whitespace-nowrap px-3 py-1.5 rounded-full text-xs font-medium border transition-colors flex-shrink-0",
+                      selectedFacility === f.id
+                        ? "bg-emerald-700 text-white border-emerald-700"
+                        : "bg-white text-stone-600 border-stone-200"
+                    )}
+                  >
+                    {f.shortLabel}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* カテゴリクイックフィルタ */}
+          <div className="px-4 pb-3 overflow-x-auto">
+            <div className="flex gap-1.5">
+              {CATEGORY_LIST.map((cat) => (
+                <button
+                  key={cat}
+                  onClick={() => setSelectedCategory(cat)}
+                  className={cn(
+                    "whitespace-nowrap px-3 py-1.5 rounded-full text-xs font-medium border transition-colors flex-shrink-0",
+                    selectedCategory === cat
+                      ? "bg-amber-500 text-white border-amber-500"
+                      : "bg-white text-stone-600 border-stone-200"
+                  )}
+                >
+                  {cat}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* ── 検索結果ヘッダー ── */}
-      <div className="px-4 pt-4 pb-2 flex items-center justify-between">
+      <div className="px-4 pt-3 pb-2 flex items-center justify-between">
         <div>
           {hasQuery ? (
             <p className="text-sm font-bold text-stone-800">
@@ -346,11 +499,13 @@ export default function SearchPage() {
             </p>
           ) : (
             <p className="text-sm font-bold text-stone-800">
-              {selectedFacility
+              {selectedRegion !== "all"
+                ? `${selectedRegion}のお土産`
+                : selectedFacility
                 ? `${FACILITIES.find((f) => f.id === selectedFacility)?.shortLabel} のお土産`
                 : selectedCategory !== "すべて"
                 ? `${selectedCategory} 一覧`
-                : "すべてのお土産"}
+                : "全国のお土産"}
             </p>
           )}
           <p className="text-xs text-stone-500 mt-0.5">{results.length}件</p>
@@ -364,61 +519,6 @@ export default function SearchPage() {
           </button>
         )}
       </div>
-
-      {/* ── 施設クイックフィルタ（スクロール） ── */}
-      {!showFilters && (
-        <div className="px-4 pb-3 overflow-x-auto">
-          <div className="flex gap-2">
-            <button
-              onClick={() => setSelectedFacility(null)}
-              className={cn(
-                "whitespace-nowrap px-3 py-1.5 rounded-full text-xs font-medium border transition-colors flex-shrink-0",
-                selectedFacility === null
-                  ? "bg-emerald-700 text-white border-emerald-700"
-                  : "bg-white text-stone-600 border-stone-200"
-              )}
-            >
-              すべて
-            </button>
-            {FACILITIES.filter((f) => f.id !== "all").map((f) => (
-              <button
-                key={f.id}
-                onClick={() => setSelectedFacility(selectedFacility === f.id ? null : f.id)}
-                className={cn(
-                  "whitespace-nowrap px-3 py-1.5 rounded-full text-xs font-medium border transition-colors flex-shrink-0",
-                  selectedFacility === f.id
-                    ? "bg-emerald-700 text-white border-emerald-700"
-                    : "bg-white text-stone-600 border-stone-200"
-                )}
-              >
-                {f.shortLabel}
-              </button>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* ── カテゴリクイックフィルタ ── */}
-      {!showFilters && (
-        <div className="px-4 pb-3 overflow-x-auto">
-          <div className="flex gap-2">
-            {CATEGORY_LIST.map((cat) => (
-              <button
-                key={cat}
-                onClick={() => setSelectedCategory(cat)}
-                className={cn(
-                  "whitespace-nowrap px-3 py-1.5 rounded-full text-xs font-medium border transition-colors flex-shrink-0",
-                  selectedCategory === cat
-                    ? "bg-amber-500 text-white border-amber-500"
-                    : "bg-white text-stone-600 border-stone-200"
-                )}
-              >
-                {cat}
-              </button>
-            ))}
-          </div>
-        </div>
-      )}
 
       {/* ── 検索結果リスト ── */}
       <div className="px-4 pb-24 space-y-3">
