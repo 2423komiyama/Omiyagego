@@ -20,8 +20,11 @@ import Favorites from "./pages/Favorites";
 import MyPage from "./pages/MyPage";
 import MapPage from "./pages/MapPage";
 import SearchPage from "./pages/SearchPage";
-
+import AdminDashboard from "./pages/AdminDashboard";
+import AdminProducts from "./pages/AdminProducts";
+import AdminProductForm from "./pages/AdminProductForm";
 function Router() {
+  // make sure to consider if you need authentication for certain routes
   return (
     <Switch>
       <Route path="/" component={Home} />
@@ -33,6 +36,10 @@ function Router() {
       <Route path="/favorites" component={Favorites} />
       <Route path="/mypage" component={MyPage} />
       <Route path="/map" component={MapPage} />
+      <Route path="/admin" component={AdminDashboard} />
+      <Route path="/admin/products" component={AdminProducts} />
+      <Route path="/admin/products/new" component={AdminProductForm} />
+      <Route path="/admin/products/:id" component={AdminProductForm} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>
