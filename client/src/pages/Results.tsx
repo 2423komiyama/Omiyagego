@@ -9,7 +9,7 @@ import { AppLayout } from "@/components/omiyage/AppLayout";
 import { ProductCard } from "@/components/omiyage/ProductCard";
 import { ConstraintChip } from "@/components/omiyage/Badges";
 import { useSearch } from "@/contexts/SearchContext";
-import { filterProducts, PRODUCTS } from "@/lib/mockData";
+import { filterProducts, PRODUCTS, FACILITIES } from "@/lib/mockData";
 import { cn } from "@/lib/utils";
 
 type SortType = "guarantee" | "near" | "crowd";
@@ -64,6 +64,10 @@ export default function Results() {
   if (conditions.individuallyWrapped === true) activeChips.push({ label: "個包装必須", key: "individuallyWrapped" });
   if (conditions.count) activeChips.push({ label: `${conditions.count}人向け`, key: "count" });
   if (conditions.temperature) activeChips.push({ label: conditions.temperature, key: "temperature" });
+  if (conditions.facilityId && conditions.facilityId !== "all") {
+    const facility = FACILITIES.find((f) => f.id === conditions.facilityId);
+    if (facility) activeChips.push({ label: facility.shortLabel, key: "facilityId" });
+  }
 
   return (
     <AppLayout>

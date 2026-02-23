@@ -22,6 +22,7 @@ import { AppLayout } from "@/components/omiyage/AppLayout";
 import { GuaranteeCard } from "@/components/omiyage/GuaranteeCard";
 import { RecommendBadge, ConstraintChip, LocationTag, StockBanner } from "@/components/omiyage/Badges";
 import { PRODUCTS } from "@/lib/mockData";
+import { useFavorites } from "@/contexts/FavoritesContext";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 
@@ -36,7 +37,7 @@ const GIFT_TAB_LABELS: Record<GiftTab, string> = {
 export default function ProductDetail() {
   const { id } = useParams<{ id: string }>();
   const [, navigate] = useLocation();
-  const [isFavorite, setIsFavorite] = useState(false);
+  const { isFavorite: checkFavorite, toggleFavorite } = useFavorites();
   const [giftTab, setGiftTab] = useState<GiftTab>("greeting");
   const [copied, setCopied] = useState(false);
   const [storyExpanded, setStoryExpanded] = useState(false);
@@ -96,15 +97,15 @@ export default function ProductDetail() {
         <div className="flex items-center gap-2">
           <button
             onClick={() => {
-              setIsFavorite(!isFavorite);
-              toast.success(isFavorite ? "お気に入りを解除しました" : "お気に入りに追加しました");
+              toggleFavorite(product.id);
+              toast.success(checkFavorite(product.id) ? "お気に入りを解除しました" : "お気に入りに追加しました");
             }}
             className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-stone-100"
           >
             <Heart
               className={cn(
                 "w-5 h-5 transition-colors",
-                isFavorite ? "fill-red-500 text-red-500" : "text-stone-400"
+                checkFavorite(product.id) ? "fill-red-500 text-red-500" : "text-stone-400"
               )}
             />
           </button>

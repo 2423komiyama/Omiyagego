@@ -8,23 +8,25 @@ import { Search, MapPin, ChevronRight, Wifi, WifiOff } from "lucide-react";
 import { AppLayout } from "@/components/omiyage/AppLayout";
 import { ProductCard } from "@/components/omiyage/ProductCard";
 import { useSearch } from "@/contexts/SearchContext";
-import { PURPOSE_LIST, PRODUCTS } from "@/lib/mockData";
+import { PURPOSE_LIST, PRODUCTS, FACILITIES, type FacilityId } from "@/lib/mockData";
 import { cn } from "@/lib/utils";
 
 const HERO_IMAGE =
   "https://private-us-east-1.manuscdn.com/sessionFile/PzmyGBA8B4SwIi3RcwaikB/sandbox/hveQjdnUbdiIB1lgDKtpHG-img-1_1771832768000_na1fn_aGVyby1iYW5uZXI.jpg?x-oss-process=image/resize,w_1920,h_1920/format,webp/quality,q_80&Expires=1798761600&Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvUHpteUdCQThCNFN3SWkzUmN3YWlrQi9zYW5kYm94L2h2ZVFqZG5VYmRpSUIxbGdES3RwSEctaW1nLTFfMTc3MTgzMjc2ODAwMF9uYTFmbl9hR1Z5YnkxaVlXNXVaWEkuanBnP3gtb3NzLXByb2Nlc3M9aW1hZ2UvcmVzaXplLHdfMTkyMCxoXzE5MjAvZm9ybWF0LHdlYnAvcXVhbGl0eSxxXzgwIiwiQ29uZGl0aW9uIjp7IkRhdGVMZXNzVGhhbiI6eyJBV1M6RXBvY2hUaW1lIjoxNzk4NzYxNjAwfX19XX0_&Key-Pair-Id=K2HSFNDJXOU9YS&Signature=b8wDwdVugzhFKEkJ8D0XoHbodWxeVv2hqI6YJCsAYqC7bYO0jGta~F6LrFZRURgxjGGBxJVRICBO6WcbRN5HEaKXGOhoFvmUnEptS6t1iyBXWdUWEsgMertjjCnwlr7siwhyoPC8L52STb2dBzP8Yv56ISE6RjIOvt6MMrVexWymW7JnKQE-eOF5omFxXXodEP5rmcu2gco2sM9QAtHANoHbPCDfa9Ef26RkO54FdiGZNAKiznac4xOkef213tOz6hH858LZ2z1jrP3u6rJIYuvuO5Pqdx2CSRSXpGtW-iYKVJqPxlNYF3IMG6zrlH-DR71xyOxIUhZeKTauCtdMjw__";
 
-const FACILITIES = ["東京駅", "羽田空港", "品川駅", "新宿駅", "渋谷駅"];
-
 export default function Home() {
   const [, navigate] = useLocation();
-  const { updateCondition } = useSearch();
+  const { updateCondition, conditions } = useSearch();
   const [searchText, setSearchText] = useState("");
   const [locationEnabled] = useState(true);
 
   const handlePurposeSelect = (purposeId: string) => {
     updateCondition("purpose", purposeId);
     navigate("/conditions");
+  };
+
+  const handleFacilitySelect = (facilityId: FacilityId) => {
+    updateCondition("facilityId", facilityId === conditions.facilityId ? null : facilityId);
   };
 
   const handleSearch = (e: React.FormEvent) => {
@@ -102,16 +104,18 @@ export default function Home() {
             <h2 className="text-sm font-bold text-stone-700">施設を選ぶ</h2>
           </div>
           <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
-            <button className="flex-shrink-0 flex items-center gap-1.5 px-3 py-2 bg-emerald-700 text-white rounded-lg text-sm font-bold">
-              <MapPin className="w-3.5 h-3.5" />
-              現在地周辺
-            </button>
-            {FACILITIES.map((f) => (
+            {FACILITIES.filter((f) => f.id !== "all").map((facility) => (
               <button
-                key={f}
-                className="flex-shrink-0 px-3 py-2 bg-white border border-stone-200 text-stone-700 rounded-lg text-sm font-medium hover:border-emerald-400 hover:text-emerald-700 transition-colors"
+                key={facility.id}
+                onClick={() => handleFacilitySelect(facility.id)}
+                className={cn(
+                  "flex-shrink-0 px-3 py-2 rounded-lg text-sm font-bold transition-all",
+                  conditions.facilityId === facility.id
+                    ? "bg-emerald-700 text-white"
+                    : "bg-white border border-stone-200 text-stone-700 hover:border-emerald-400 hover:text-emerald-700"
+                )}
               >
-                {f}
+                {facility.shortLabel}
               </button>
             ))}
           </div>

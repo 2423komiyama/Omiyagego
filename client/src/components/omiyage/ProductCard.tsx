@@ -6,6 +6,9 @@ import { cn } from "@/lib/utils";
 import { useLocation } from "wouter";
 import type { Product } from "@/lib/mockData";
 import { RecommendBadge, ConstraintChip, BuyNowTag } from "./Badges";
+import { useFavorites } from "@/contexts/FavoritesContext";
+import { Heart } from "lucide-react";
+import { toast } from "sonner";
 
 interface ProductCardProps {
   product: Product;
@@ -14,6 +17,8 @@ interface ProductCardProps {
 
 export function ProductCard({ product, className }: ProductCardProps) {
   const [, navigate] = useLocation();
+  const { isFavorite, toggleFavorite } = useFavorites();
+  const fav = isFavorite(product.id);
 
   const getChips = (p: Product) => {
     const chips: string[] = [];
@@ -60,17 +65,33 @@ export function ProductCard({ product, className }: ProductCardProps) {
 
           {/* 右側情報 */}
           <div className="flex-1 min-w-0">
-            {/* バッジ */}
-            <div className="flex flex-wrap gap-1 mb-1.5">
-              {product.badges.map((badge, i) => (
-                <RecommendBadge
-                  key={badge}
-                  type={badge}
-                  label={product.badgeLabels[i]}
+            {/* お気に入りボタン */}
+            <div className="flex items-start justify-between mb-1.5">
+              <div className="flex flex-wrap gap-1">
+                {product.badges.map((badge, i) => (
+                  <RecommendBadge
+                    key={badge}
+                    type={badge}
+                    label={product.badgeLabels[i]}
+                  />
+                ))}
+              </div>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  toggleFavorite(product.id);
+                  toast.success(fav ? "お気に入りを解除" : "お気に入りに追加");
+                }}
+                className="w-7 h-7 flex items-center justify-center rounded-lg hover:bg-stone-100 flex-shrink-0"
+              >
+                <Heart
+                  className={cn(
+                    "w-4 h-4 transition-colors",
+                    fav ? "fill-red-400 text-red-400" : "text-stone-300"
+                  )}
                 />
-              ))}
+              </button>
             </div>
-
             {/* 商品名 */}
             <h3 className="text-sm font-bold text-stone-900 leading-snug line-clamp-2">
               {product.name}

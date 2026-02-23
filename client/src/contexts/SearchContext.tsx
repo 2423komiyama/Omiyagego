@@ -21,6 +21,7 @@ const defaultConditions: SearchConditions = {
   individuallyWrapped: null,
   count: null,
   temperature: null,
+  facilityId: null,
 };
 
 const SearchContext = createContext<SearchContextType | null>(null);

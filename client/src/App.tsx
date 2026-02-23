@@ -9,6 +9,7 @@ import { Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { SearchProvider } from "./contexts/SearchContext";
+import { FavoritesProvider } from "./contexts/FavoritesContext";
 import Home from "./pages/Home";
 import Conditions from "./pages/Conditions";
 import Results from "./pages/Results";
@@ -39,10 +40,12 @@ function App() {
     <ErrorBoundary>
       <ThemeProvider defaultTheme="light">
         <SearchProvider>
-          <TooltipProvider>
-            <Toaster position="top-center" />
-            <Router />
-          </TooltipProvider>
+          <FavoritesProvider>
+            <TooltipProvider>
+              <Toaster position="top-center" />
+              <Router />
+            </TooltipProvider>
+          </FavoritesProvider>
         </SearchProvider>
       </ThemeProvider>
     </ErrorBoundary>

@@ -1,15 +1,84 @@
 // ============================================================
-// Omiyage Go - モックデータ定義
+// Omiyage Go - モックデータ定義（拡充版）
 // デザイン哲学: 駅ホーム案内板スタイル - 情報の読み取り速度最優先
 // ============================================================
 
 export type BadgeType = "editorial" | "local" | "corporate";
 export type TemperatureType = "常温" | "冷蔵" | "冷凍";
 export type GateStatus = "改札内" | "改札外";
+export type FacilityId =
+  | "tokyo"
+  | "haneda_t1"
+  | "haneda_t2"
+  | "haneda_t3"
+  | "shinagawa"
+  | "shinjuku"
+  | "shibuya"
+  | "all";
+
+export interface FacilityInfo {
+  id: FacilityId;
+  label: string;
+  shortLabel: string;
+  coords: { lat: number; lng: number };
+}
+
+export const FACILITIES: FacilityInfo[] = [
+  {
+    id: "all",
+    label: "すべての施設",
+    shortLabel: "すべて",
+    coords: { lat: 35.6812, lng: 139.7671 },
+  },
+  {
+    id: "tokyo",
+    label: "東京駅",
+    shortLabel: "東京駅",
+    coords: { lat: 35.6812, lng: 139.7671 },
+  },
+  {
+    id: "haneda_t1",
+    label: "羽田空港 第1ターミナル",
+    shortLabel: "羽田T1",
+    coords: { lat: 35.5494, lng: 139.7798 },
+  },
+  {
+    id: "haneda_t2",
+    label: "羽田空港 第2ターミナル",
+    shortLabel: "羽田T2",
+    coords: { lat: 35.5494, lng: 139.7798 },
+  },
+  {
+    id: "haneda_t3",
+    label: "羽田空港 第3ターミナル（国際線）",
+    shortLabel: "羽田T3",
+    coords: { lat: 35.5494, lng: 139.7798 },
+  },
+  {
+    id: "shinagawa",
+    label: "品川駅",
+    shortLabel: "品川駅",
+    coords: { lat: 35.6284, lng: 139.7387 },
+  },
+  {
+    id: "shinjuku",
+    label: "新宿駅",
+    shortLabel: "新宿駅",
+    coords: { lat: 35.6896, lng: 139.7006 },
+  },
+  {
+    id: "shibuya",
+    label: "渋谷駅",
+    shortLabel: "渋谷駅",
+    coords: { lat: 35.6591, lng: 139.7030 },
+  },
+];
 
 export interface Seller {
   id: string;
+  facilityId: FacilityId;
   facilityName: string;
+  shopName: string;
   gateStatus: GateStatus;
   floor: string;
   landmark: string;
@@ -17,6 +86,7 @@ export interface Seller {
   crowdLevel: "少" | "中" | "多";
   openHours: string;
   mapUrl: string;
+  coords: { lat: number; lng: number };
 }
 
 export interface Product {
@@ -61,6 +131,7 @@ export interface Product {
 }
 
 export const PRODUCTS: Product[] = [
+  // ─── 商品1: 東京和菓子 彩り詰め合わせ ───────────────────────
   {
     id: "p001",
     name: "東京和菓子 彩り詰め合わせ",
@@ -99,7 +170,9 @@ export const PRODUCTS: Product[] = [
     sellers: [
       {
         id: "s001",
+        facilityId: "tokyo",
         facilityName: "東京駅 八重洲地下街",
+        shopName: "東京和菓子本舗 東京駅店",
         gateStatus: "改札内",
         floor: "B1F",
         landmark: "中央改札から徒歩8分・和菓子コーナー",
@@ -107,6 +180,21 @@ export const PRODUCTS: Product[] = [
         crowdLevel: "中",
         openHours: "8:00〜21:00",
         mapUrl: "https://maps.google.com/?q=東京駅八重洲地下街",
+        coords: { lat: 35.6793, lng: 139.7698 },
+      },
+      {
+        id: "s001b",
+        facilityId: "shinagawa",
+        facilityName: "品川駅 エキュート品川",
+        shopName: "東京和菓子本舗 品川店",
+        gateStatus: "改札内",
+        floor: "1F",
+        landmark: "中央改札内・北通路沿い",
+        walkingMinutes: 3,
+        crowdLevel: "少",
+        openHours: "7:00〜22:00",
+        mapUrl: "https://maps.google.com/?q=品川駅エキュート",
+        coords: { lat: 35.6284, lng: 139.7387 },
       },
     ],
     canReserve: true,
@@ -116,6 +204,8 @@ export const PRODUCTS: Product[] = [
     purposes: ["挨拶", "御礼", "社内", "差し入れ"],
     budgetCategory: 3000,
   },
+
+  // ─── 商品2: プレミアムバタークッキー ───────────────────────
   {
     id: "p002",
     name: "プレミアムバタークッキー詰め合わせ",
@@ -153,7 +243,9 @@ export const PRODUCTS: Product[] = [
     sellers: [
       {
         id: "s002",
+        facilityId: "haneda_t1",
         facilityName: "羽田空港 第1ターミナル",
+        shopName: "ラ・メゾン・ドゥース 羽田T1店",
         gateStatus: "改札内",
         floor: "2F",
         landmark: "保安検査場通過後・スイーツコーナー",
@@ -161,10 +253,13 @@ export const PRODUCTS: Product[] = [
         crowdLevel: "少",
         openHours: "6:00〜20:00",
         mapUrl: "https://maps.google.com/?q=羽田空港第1ターミナル",
+        coords: { lat: 35.5494, lng: 139.7798 },
       },
       {
         id: "s003",
+        facilityId: "tokyo",
         facilityName: "東京駅 グランスタ",
+        shopName: "ラ・メゾン・ドゥース 東京駅店",
         gateStatus: "改札内",
         floor: "B1F",
         landmark: "丸の内地下中央口付近",
@@ -172,6 +267,21 @@ export const PRODUCTS: Product[] = [
         crowdLevel: "多",
         openHours: "8:00〜22:00",
         mapUrl: "https://maps.google.com/?q=東京駅グランスタ",
+        coords: { lat: 35.6812, lng: 139.7671 },
+      },
+      {
+        id: "s003b",
+        facilityId: "haneda_t2",
+        facilityName: "羽田空港 第2ターミナル",
+        shopName: "ラ・メゾン・ドゥース 羽田T2店",
+        gateStatus: "改札内",
+        floor: "2F",
+        landmark: "保安検査場通過後・北ウィング",
+        walkingMinutes: 7,
+        crowdLevel: "少",
+        openHours: "6:00〜20:00",
+        mapUrl: "https://maps.google.com/?q=羽田空港第2ターミナル",
+        coords: { lat: 35.5494, lng: 139.7798 },
       },
     ],
     canReserve: true,
@@ -181,6 +291,8 @@ export const PRODUCTS: Product[] = [
     purposes: ["挨拶", "御礼", "社内", "差し入れ", "自分用"],
     budgetCategory: 2000,
   },
+
+  // ─── 商品3: 東京人形焼 ───────────────────────────────────
   {
     id: "p003",
     name: "東京人形焼 30個入り",
@@ -218,7 +330,9 @@ export const PRODUCTS: Product[] = [
     sellers: [
       {
         id: "s004",
+        facilityId: "tokyo",
         facilityName: "東京駅 エキュート東京",
+        shopName: "浅草人形焼本舗 東京駅店",
         gateStatus: "改札内",
         floor: "1F",
         landmark: "京葉線乗り換え通路沿い",
@@ -226,6 +340,21 @@ export const PRODUCTS: Product[] = [
         crowdLevel: "中",
         openHours: "7:00〜22:00",
         mapUrl: "https://maps.google.com/?q=東京駅エキュート",
+        coords: { lat: 35.6793, lng: 139.7668 },
+      },
+      {
+        id: "s004b",
+        facilityId: "shinjuku",
+        facilityName: "新宿駅 NEWoMan",
+        shopName: "浅草人形焼本舗 新宿店",
+        gateStatus: "改札外",
+        floor: "2F",
+        landmark: "新南口直結・フードコート",
+        walkingMinutes: 2,
+        crowdLevel: "中",
+        openHours: "8:00〜22:00",
+        mapUrl: "https://maps.google.com/?q=新宿NEWoMan",
+        coords: { lat: 35.6896, lng: 139.7006 },
       },
     ],
     canReserve: false,
@@ -235,6 +364,8 @@ export const PRODUCTS: Product[] = [
     purposes: ["挨拶", "差し入れ", "社内"],
     budgetCategory: 3000,
   },
+
+  // ─── 商品4: 京都抹茶大福 ────────────────────────────────
   {
     id: "p004",
     name: "京都抹茶大福 詰め合わせ",
@@ -272,7 +403,9 @@ export const PRODUCTS: Product[] = [
     sellers: [
       {
         id: "s005",
+        facilityId: "tokyo",
         facilityName: "東京駅 グランスタ東京",
+        shopName: "宇治抹茶菓子処 東京駅店",
         gateStatus: "改札内",
         floor: "B1F",
         landmark: "丸の内地下南口付近・和菓子エリア",
@@ -280,6 +413,21 @@ export const PRODUCTS: Product[] = [
         crowdLevel: "多",
         openHours: "8:00〜22:00",
         mapUrl: "https://maps.google.com/?q=東京駅グランスタ東京",
+        coords: { lat: 35.6812, lng: 139.7671 },
+      },
+      {
+        id: "s005b",
+        facilityId: "haneda_t3",
+        facilityName: "羽田空港 第3ターミナル（国際線）",
+        shopName: "宇治抹茶菓子処 羽田国際線店",
+        gateStatus: "改札内",
+        floor: "4F",
+        landmark: "出国審査後・ジャパンプロムナード",
+        walkingMinutes: 8,
+        crowdLevel: "少",
+        openHours: "7:00〜21:00",
+        mapUrl: "https://maps.google.com/?q=羽田空港第3ターミナル",
+        coords: { lat: 35.5494, lng: 139.7798 },
       },
     ],
     canReserve: true,
@@ -289,6 +437,8 @@ export const PRODUCTS: Product[] = [
     purposes: ["挨拶", "御礼", "お詫び", "自分用"],
     budgetCategory: 5000,
   },
+
+  // ─── 商品5: 銀座チョコレートアソート ─────────────────────
   {
     id: "p005",
     name: "銀座チョコレートアソート",
@@ -327,7 +477,9 @@ export const PRODUCTS: Product[] = [
     sellers: [
       {
         id: "s006",
+        facilityId: "tokyo",
         facilityName: "東京駅 グランスタ東京",
+        shopName: "ショコラ銀座 東京駅店",
         gateStatus: "改札内",
         floor: "B1F",
         landmark: "丸の内地下中央口・スイーツゾーン",
@@ -335,17 +487,35 @@ export const PRODUCTS: Product[] = [
         crowdLevel: "中",
         openHours: "8:00〜22:00",
         mapUrl: "https://maps.google.com/?q=東京駅グランスタ東京",
+        coords: { lat: 35.6812, lng: 139.7671 },
       },
       {
         id: "s007",
-        facilityName: "銀座本店",
-        gateStatus: "改札外",
+        facilityId: "shinagawa",
+        facilityName: "品川駅 エキュート品川サウス",
+        shopName: "ショコラ銀座 品川店",
+        gateStatus: "改札内",
         floor: "1F",
-        landmark: "銀座4丁目交差点から徒歩3分",
-        walkingMinutes: 15,
+        landmark: "南改札内・スイーツコーナー",
+        walkingMinutes: 2,
         crowdLevel: "少",
-        openHours: "10:00〜20:00",
-        mapUrl: "https://maps.google.com/?q=銀座ショコラ",
+        openHours: "7:00〜22:00",
+        mapUrl: "https://maps.google.com/?q=品川駅エキュートサウス",
+        coords: { lat: 35.6284, lng: 139.7387 },
+      },
+      {
+        id: "s007b",
+        facilityId: "haneda_t1",
+        facilityName: "羽田空港 第1ターミナル",
+        shopName: "ショコラ銀座 羽田T1店",
+        gateStatus: "改札内",
+        floor: "2F",
+        landmark: "保安検査後・南ウィング",
+        walkingMinutes: 6,
+        crowdLevel: "少",
+        openHours: "6:00〜21:00",
+        mapUrl: "https://maps.google.com/?q=羽田空港第1ターミナル",
+        coords: { lat: 35.5494, lng: 139.7798 },
       },
     ],
     canReserve: true,
@@ -355,7 +525,126 @@ export const PRODUCTS: Product[] = [
     purposes: ["挨拶", "御礼", "お詫び"],
     budgetCategory: 5000,
   },
+
+  // ─── 商品6: 新宿限定 抹茶ロールケーキ ────────────────────
+  {
+    id: "p006",
+    name: "新宿限定 抹茶ロールケーキ",
+    price: 1500,
+    priceLabel: "¥1,500（税込）",
+    imageUrl:
+      "https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=800&q=80",
+    badges: ["local"],
+    badgeLabels: ["地元定番"],
+    shelfLifeDays: 2,
+    individuallyWrapped: false,
+    recommendedCount: 5,
+    temperature: "冷蔵",
+    allergens: ["小麦", "乳", "卵"],
+    guaranteeReasons: [
+      "新宿駅直結で購入から手渡しまでが最短",
+      "当日製造の新鮮なロールケーキ",
+      "抹茶スイーツとして話題性が高い",
+    ],
+    guaranteeOneLiner: "新宿駅直結・当日製造で、少人数への特別な差し入れに",
+    makerQuote:
+      "「毎朝手作りするロールケーキ。新鮮さが一番の贈り物です」",
+    makerStory:
+      "新宿駅直結のNEWoManに出店する洋菓子店。毎朝仕込む生地と地元産の抹茶を使ったロールケーキが人気。",
+    makerName: "パティスリー新宿 オーナー 中村 優子",
+    giftTemplates: {
+      greeting:
+        "本日はお時間をいただきありがとうございます。新宿の抹茶ロールケーキをお持ちしました。当日中にお召し上がりください。",
+      thanks:
+        "先日はありがとうございました。新宿の人気スイーツです。冷蔵でお召し上がりください。",
+      apology:
+        "このたびはご迷惑をおかけし申し訳ございません。心ばかりですが、お詫びの品をお受け取りください。",
+    },
+    sellers: [
+      {
+        id: "s008",
+        facilityId: "shinjuku",
+        facilityName: "新宿駅 NEWoMan",
+        shopName: "パティスリー新宿 NEWoMan店",
+        gateStatus: "改札外",
+        floor: "2F",
+        landmark: "新南口直結・スイーツフロア",
+        walkingMinutes: 2,
+        crowdLevel: "中",
+        openHours: "8:00〜22:00",
+        mapUrl: "https://maps.google.com/?q=新宿NEWoMan",
+        coords: { lat: 35.6896, lng: 139.7006 },
+      },
+    ],
+    canReserve: false,
+    canPrePay: false,
+    canDeliver: false,
+    stockStatus: "available",
+    purposes: ["差し入れ", "自分用", "御礼"],
+    budgetCategory: 2000,
+  },
+
+  // ─── 商品7: 渋谷 フルーツゼリー ──────────────────────────
+  {
+    id: "p007",
+    name: "渋谷 フルーツゼリー詰め合わせ",
+    price: 2200,
+    priceLabel: "¥2,200（税込）",
+    imageUrl:
+      "https://images.unsplash.com/photo-1587314168485-3236d6710814?w=800&q=80",
+    badges: ["editorial"],
+    badgeLabels: ["編集部推薦"],
+    shelfLifeDays: 14,
+    individuallyWrapped: true,
+    recommendedCount: 10,
+    temperature: "常温",
+    allergens: [],
+    guaranteeReasons: [
+      "アレルギー対応（主要7品目不使用）",
+      "全個包装で配りやすい",
+      "常温14日保存で持ち運びしやすい",
+      "鮮やかな見た目で喜ばれやすい",
+    ],
+    guaranteeOneLiner: "アレルギー対応・個包装で、幅広い方への手土産に",
+    makerQuote:
+      "「アレルギーのある方にも安心して食べていただけるゼリーを作りたかった」",
+    makerStory:
+      "渋谷ヒカリエに出店するフルーツゼリー専門店。国産フルーツのみを使用し、アレルギー対応に徹底的にこだわっています。",
+    makerName: "フルーツゼリー工房 渡辺 健一",
+    giftTemplates: {
+      greeting:
+        "本日はお時間をいただきありがとうございます。渋谷のフルーツゼリーをお持ちしました。お口に合えば幸いです。",
+      thanks:
+        "先日はありがとうございました。渋谷で人気のフルーツゼリーです。よろしければどうぞ。",
+      apology:
+        "このたびはご迷惑をおかけし申し訳ございません。心ばかりですが、お詫びの品をお受け取りください。",
+    },
+    sellers: [
+      {
+        id: "s009",
+        facilityId: "shibuya",
+        facilityName: "渋谷駅 渋谷ヒカリエ",
+        shopName: "フルーツゼリー工房 ヒカリエ店",
+        gateStatus: "改札外",
+        floor: "3F",
+        landmark: "渋谷ヒカリエ ShinQs 3F",
+        walkingMinutes: 5,
+        crowdLevel: "中",
+        openHours: "10:00〜21:00",
+        mapUrl: "https://maps.google.com/?q=渋谷ヒカリエ",
+        coords: { lat: 35.6591, lng: 139.7030 },
+      },
+    ],
+    canReserve: true,
+    canPrePay: false,
+    canDeliver: true,
+    stockStatus: "available",
+    purposes: ["挨拶", "御礼", "差し入れ", "社内"],
+    budgetCategory: 3000,
+  },
 ];
+
+// ── 選択肢データ ──────────────────────────────────────────────
 
 export const PURPOSE_LIST = [
   { id: "挨拶", label: "挨拶", icon: "🤝", description: "初対面・訪問時" },
@@ -381,10 +670,10 @@ export const SHELF_LIFE_OPTIONS = [
 ];
 
 export const COUNT_OPTIONS = [
+  { value: 5, label: "5人" },
   { value: 10, label: "10人" },
   { value: 20, label: "20人" },
   { value: 30, label: "30人" },
-  { value: 50, label: "50人" },
 ];
 
 export const TEMPERATURE_OPTIONS: TemperatureType[] = ["常温", "冷蔵", "冷凍"];
@@ -396,6 +685,13 @@ export interface SearchConditions {
   individuallyWrapped: boolean | null;
   count: number | null;
   temperature: TemperatureType | null;
+  facilityId: FacilityId | null;
+}
+
+// 施設フィルタ: 商品が指定施設で購入できるかチェック
+function hasSellerAtFacility(product: Product, facilityId: FacilityId): boolean {
+  if (facilityId === "all") return true;
+  return product.sellers.some((s) => s.facilityId === facilityId);
 }
 
 export function filterProducts(conditions: SearchConditions): Product[] {
@@ -423,6 +719,12 @@ export function filterProducts(conditions: SearchConditions): Product[] {
     // 温度帯フィルタ
     if (conditions.temperature !== null && p.temperature !== conditions.temperature) {
       return false;
+    }
+    // 施設フィルタ
+    if (conditions.facilityId && conditions.facilityId !== "all") {
+      if (!hasSellerAtFacility(p, conditions.facilityId)) {
+        return false;
+      }
     }
     return true;
   });
