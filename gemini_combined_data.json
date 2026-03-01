@@ -1,0 +1,1177 @@
+{
+  "metadata": {
+    "project": "Omiyage Go",
+    "total_items": 52,
+    "last_updated": "2026-03-01",
+    "data_source": "Gemini-generated"
+  },
+  "facilities": [
+    {
+      "id": "f-001",
+      "name": "東京駅",
+      "prefecture": "東京都",
+      "region": "関東",
+      "latitude": 35.681236,
+      "longitude": 139.767125
+    },
+    {
+      "id": "f-002",
+      "name": "新大阪駅",
+      "prefecture": "大阪府",
+      "region": "近畿",
+      "latitude": 34.733444,
+      "longitude": 135.50025
+    },
+    {
+      "id": "f-003",
+      "name": "博多駅",
+      "prefecture": "福岡県",
+      "region": "九州",
+      "latitude": 33.589722,
+      "longitude": 130.420833
+    },
+    {
+      "id": "f-004",
+      "name": "新千歳空港",
+      "prefecture": "北海道",
+      "region": "北海道",
+      "latitude": 42.775221,
+      "longitude": 141.692375
+    },
+    {
+      "id": "f-005",
+      "name": "羽田空港 第3ターミナル",
+      "prefecture": "東京都",
+      "region": "関東",
+      "latitude": 35.544485,
+      "longitude": 139.768651
+    }
+  ],
+  "products": [
+    {
+      "id": "p-001",
+      "name": "白い恋人",
+      "brand": "石屋製菓",
+      "description": "北海道土産の王道。サクサクのラングドシャでホワイトチョコをサンドした銘菓。",
+      "price": 950,
+      "prefecture": "北海道",
+      "region": "北海道",
+      "category": "スイーツ",
+      "shelfLife": 180,
+      "isIndividualPackaged": true,
+      "servingSize": 12,
+      "guaranteeReason": [
+        "圧倒的な知名度",
+        "万人受けする味"
+      ],
+      "makerStory": "雪の降る日に創業者が放った一言が名前の由来です。",
+      "badges": [
+        "bestseller"
+      ]
+    },
+    {
+      "id": "p-002",
+      "name": "萩の月",
+      "brand": "菓匠三全",
+      "description": "仙台名物。ふんわりカステラ生地でカスタードクリームを包んだ傑作。",
+      "price": 1000,
+      "prefecture": "宮城県",
+      "region": "東北",
+      "category": "スイーツ",
+      "shelfLife": 14,
+      "isIndividualPackaged": true,
+      "servingSize": 5,
+      "guaranteeReason": [
+        "仙台の象徴",
+        "リッチな口溶け"
+      ],
+      "makerStory": "宮城野の空に浮かぶ満月をイメージして誕生しました。",
+      "badges": [
+        "bestseller",
+        "editorial"
+      ]
+    },
+    {
+      "id": "p-003",
+      "name": "赤福餅",
+      "brand": "赤福",
+      "description": "伊勢名物。お餅の上にこしあんをのせた、300年以上愛される味。",
+      "price": 900,
+      "prefecture": "三重県",
+      "region": "近畿",
+      "category": "和菓子",
+      "shelfLife": 2,
+      "isIndividualPackaged": false,
+      "servingSize": 8,
+      "guaranteeReason": [
+        "伊勢参りの定番",
+        "こしあんの滑らかさ"
+      ],
+      "makerStory": "五十鈴川の清流をイメージした三本の筋が特徴です。",
+      "badges": [
+        "bestseller"
+      ]
+    },
+    {
+      "id": "p-004",
+      "name": "博多通りもん",
+      "brand": "明月堂",
+      "description": "福岡名物。ミルクの香りがする優しい皮ととろける白餡の和洋折衷菓子。",
+      "price": 1150,
+      "prefecture": "福岡県",
+      "region": "九州",
+      "category": "和菓子",
+      "shelfLife": 50,
+      "isIndividualPackaged": true,
+      "servingSize": 8,
+      "guaranteeReason": [
+        "モンドセレクション金賞",
+        "外さない味"
+      ],
+      "makerStory": "博多っ子が愛する、西洋の素材を取り入れた新しい味です。",
+      "badges": [
+        "bestseller"
+      ]
+    },
+    {
+      "id": "p-005",
+      "name": "鳩サブレー",
+      "brand": "豊島屋",
+      "description": "鎌倉名物。バターたっぷりの大きな鳩型ビスケット。世代を超えて愛される味。",
+      "price": 1080,
+      "prefecture": "神奈川県",
+      "region": "関東",
+      "category": "スイーツ",
+      "shelfLife": 40,
+      "isIndividualPackaged": true,
+      "servingSize": 8,
+      "guaranteeReason": [
+        "鎌倉土産の決定版",
+        "素朴な美味しさ"
+      ],
+      "makerStory": "明治時代、フランスのビスケットを再現しようと生まれました。",
+      "badges": [
+        "bestseller"
+      ]
+    },
+    {
+      "id": "p-006",
+      "name": "信玄餅",
+      "brand": "桔梗屋",
+      "description": "山梨名物。きな粉をまぶした餅に、特製の黒蜜をかけていただくスタイル。",
+      "price": 1200,
+      "prefecture": "山梨県",
+      "region": "中部",
+      "category": "和菓子",
+      "shelfLife": 15,
+      "isIndividualPackaged": true,
+      "servingSize": 6,
+      "guaranteeReason": [
+        "食べる楽しさ",
+        "お土産の定番"
+      ],
+      "makerStory": "武田信玄が非常食としていた餅がルーツと言われています。",
+      "badges": [
+        "local",
+        "bestseller"
+      ]
+    },
+    {
+      "id": "p-007",
+      "name": "うなぎパイ",
+      "brand": "春華堂",
+      "description": "浜松名物。「夜のお菓子」として知られる、うなぎエキス入りの銘菓。",
+      "price": 1000,
+      "prefecture": "静岡県",
+      "region": "中部",
+      "category": "スイーツ",
+      "shelfLife": 60,
+      "isIndividualPackaged": true,
+      "servingSize": 12,
+      "guaranteeReason": [
+        "浜松のシンボル",
+        "サクサクの食感"
+      ],
+      "makerStory": "一家団欒のひとときに食べてほしいという願いが込められています。",
+      "badges": [
+        "bestseller"
+      ]
+    },
+    {
+      "id": "p-008",
+      "name": "マルセイバターサンド",
+      "brand": "六花亭",
+      "description": "北海道。ホワイトチョコとレーズン、バターを合わせたクリームをサンド。",
+      "price": 1450,
+      "prefecture": "北海道",
+      "region": "北海道",
+      "category": "スイーツ",
+      "shelfLife": 10,
+      "isIndividualPackaged": true,
+      "servingSize": 10,
+      "guaranteeReason": [
+        "濃厚な味わい",
+        "熱狂的なファン"
+      ],
+      "makerStory": "十勝開拓の祖・依田勉三率いる晩成社のバターが由来です。",
+      "badges": [
+        "bestseller",
+        "editorial"
+      ]
+    },
+    {
+      "id": "p-009",
+      "name": "かもめの玉子",
+      "brand": "さいとう製菓",
+      "description": "岩手県。黄身餡をホワイトチョコでコーティングした、卵型の可愛いお菓子。",
+      "price": 900,
+      "prefecture": "岩手県",
+      "region": "東北",
+      "category": "和菓子",
+      "shelfLife": 30,
+      "isIndividualPackaged": true,
+      "servingSize": 9,
+      "guaranteeReason": [
+        "見た目の可愛さ",
+        "三陸の定番"
+      ],
+      "makerStory": "三陸の海を飛ぶカモメをイメージして作られました。",
+      "badges": [
+        "local",
+        "bestseller"
+      ]
+    },
+    {
+      "id": "p-010",
+      "name": "東京ばな奈",
+      "brand": "グレープストーン",
+      "description": "東京土産の代表。バナナ型のスポンジにたっぷりのカスタード。",
+      "price": 1100,
+      "prefecture": "東京都",
+      "region": "関東",
+      "category": "スイーツ",
+      "shelfLife": 7,
+      "isIndividualPackaged": true,
+      "servingSize": 8,
+      "guaranteeReason": [
+        "東京観光の証",
+        "ふんわり食感"
+      ],
+      "makerStory": "誰もが親しみやすいバナナを、お洒落な東京スイーツにしました。",
+      "badges": [
+        "bestseller"
+      ]
+    },
+    {
+      "id": "p-011",
+      "name": "白い恋人 36枚入（缶入）",
+      "brand": "石屋製菓",
+      "description": "美しい雪の結晶が描かれたデザイン缶。贈答用として圧倒的な信頼を誇る北海道の至宝。",
+      "price": 3065,
+      "prefecture": "北海道",
+      "region": "北海道",
+      "category": "スイーツ",
+      "shelfLife": 180,
+      "isIndividualPackaged": true,
+      "servingSize": 36,
+      "guaranteeReason": [
+        "ブランドの安心感",
+        "缶の美しさ"
+      ],
+      "makerStory": "冬の北海道の景色を菓子に。創業以来変わらぬレシピで世界のファンを魅了しています。",
+      "badges": [
+        "premium",
+        "bestseller"
+      ]
+    },
+    {
+      "id": "p-012",
+      "name": "プレミアム牛たん 詰合せ",
+      "brand": "たんや善治郎",
+      "description": "仙台名物。職人が手切りした極厚の牛たん。お酒を嗜む方への贈り物に最適。",
+      "price": 5400,
+      "prefecture": "宮城県",
+      "region": "東北",
+      "category": "肉製品",
+      "shelfLife": 180,
+      "isIndividualPackaged": true,
+      "servingSize": 3,
+      "guaranteeReason": [
+        "高級感",
+        "産直の味"
+      ],
+      "makerStory": "手焼きにこだわり、炭火の香ばしさをそのまま真空パックに閉じ込めました。",
+      "badges": [
+        "premium",
+        "local"
+      ]
+    },
+    {
+      "id": "p-013",
+      "name": "特撰 りんごジュース 6本ギフト",
+      "brand": "シャイニー",
+      "description": "青森県産りんごのみを使用。酸味と甘みのバランスが完璧な高級ジュースセット。",
+      "price": 3240,
+      "prefecture": "青森県",
+      "region": "東北",
+      "category": "飲料",
+      "shelfLife": 365,
+      "isIndividualPackaged": true,
+      "servingSize": 6,
+      "guaranteeReason": [
+        "天然素材100%",
+        "健康志向"
+      ],
+      "makerStory": "青森の厳しい冬を越えた、糖度の高い完熟りんごだけを贅沢に搾りました。",
+      "badges": [
+        "local",
+        "premium"
+      ]
+    },
+    {
+      "id": "p-014",
+      "name": "小形羊羹 14本入",
+      "brand": "とらや",
+      "description": "東京・赤坂の老舗。切らずに食べられる便利なサイズ。とらやの伝統的な味わいはそのまま。",
+      "price": 4320,
+      "prefecture": "東京都",
+      "region": "関東",
+      "category": "和菓子",
+      "shelfLife": 365,
+      "isIndividualPackaged": true,
+      "servingSize": 14,
+      "guaranteeReason": [
+        "日本最高峰のブランド",
+        "日持ちが非常に良い"
+      ],
+      "makerStory": "五世紀以上にわたり、日本の和菓子文化を牽引し続けています。",
+      "badges": [
+        "premium",
+        "editorial"
+      ]
+    },
+    {
+      "id": "p-015",
+      "name": "加賀銘菓 詰合せ（特撰）",
+      "brand": "森八",
+      "description": "日本三大銘菓「長生殿」を含むセット。茶道文化が息づく金沢の品格漂う和菓子。",
+      "price": 5400,
+      "prefecture": "石川県",
+      "region": "北陸",
+      "category": "和菓子",
+      "shelfLife": 15,
+      "isIndividualPackaged": true,
+      "servingSize": 12,
+      "guaranteeReason": [
+        "歴史的価値",
+        "茶人御用達"
+      ],
+      "makerStory": "寛永二年創業。加賀藩御用菓子司として、職人の手技を今に伝えています。",
+      "badges": [
+        "local",
+        "premium"
+      ]
+    },
+    {
+      "id": "p-016",
+      "name": "フルーツポンチ 3瓶セット",
+      "brand": "千疋屋総本店",
+      "description": "世界が認める果物の名店。旬の果実をシロップに漬け込んだ宝石のようなギフト。",
+      "price": 6480,
+      "prefecture": "東京都",
+      "region": "関東",
+      "category": "スイーツ",
+      "shelfLife": 180,
+      "isIndividualPackaged": true,
+      "servingSize": 3,
+      "guaranteeReason": [
+        "圧倒的な高級感",
+        "老舗の信頼"
+      ],
+      "makerStory": "1834年創業。日本初のフルーツ専門店として最高級を追求しています。",
+      "badges": [
+        "premium",
+        "bestseller"
+      ]
+    },
+    {
+      "id": "p-017",
+      "name": "宇治抹茶スイーツ 詰合せ",
+      "brand": "祇園辻利",
+      "description": "濃厚な抹茶ロール、せんべい、フィナンシェ。香り高い抹茶尽くしの豪華セット。",
+      "price": 3780,
+      "prefecture": "京都府",
+      "region": "近畿",
+      "category": "スイーツ",
+      "shelfLife": 30,
+      "isIndividualPackaged": true,
+      "servingSize": 18,
+      "guaranteeReason": [
+        "京都ブランド",
+        "本物の抹茶"
+      ],
+      "makerStory": "伝統の茶葉を現代のスイーツへと昇華させました。",
+      "badges": [
+        "local",
+        "editorial"
+      ]
+    },
+    {
+      "id": "p-018",
+      "name": "明石蛸 旨煮・柔らか煮セット",
+      "brand": "明石海峡直送便",
+      "description": "明石の急流で育った身の引き締まった蛸。秘伝の出汁で丁寧に煮上げた逸品。",
+      "price": 4320,
+      "prefecture": "兵庫県",
+      "region": "近畿",
+      "category": "海産物",
+      "shelfLife": 60,
+      "isIndividualPackaged": true,
+      "servingSize": 2,
+      "guaranteeReason": [
+        "稀少な素材",
+        "本格的な味わい"
+      ],
+      "makerStory": "最高の鮮度をそのままお届けするために職人が腕を振るいます。",
+      "badges": [
+        "local",
+        "premium"
+      ]
+    },
+    {
+      "id": "p-019",
+      "name": "特選辛子明太子 木箱入",
+      "brand": "稚加榮",
+      "description": "料亭が作る明太子。厳選された原卵のみを使用し、出汁と日本酒で仕上げた上品な味。",
+      "price": 5400,
+      "prefecture": "福岡県",
+      "region": "九州",
+      "category": "海産物",
+      "shelfLife": 14,
+      "isIndividualPackaged": false,
+      "servingSize": 1,
+      "guaranteeReason": [
+        "木箱による贈答仕様",
+        "料亭の味"
+      ],
+      "makerStory": "博多の老舗料亭。おもてなしの心を込めた、一線を画す明太子です。",
+      "badges": [
+        "premium",
+        "local"
+      ]
+    },
+    {
+      "id": "p-020",
+      "name": "長崎カステラ 桐箱入",
+      "brand": "文明堂総本店",
+      "description": "伝統を守り抜いた極上のカステラ。高級感あふれる桐箱入りはお祝いに最適。",
+      "price": 3240,
+      "prefecture": "長崎県",
+      "region": "九州",
+      "category": "スイーツ",
+      "shelfLife": 15,
+      "isIndividualPackaged": false,
+      "servingSize": 1,
+      "guaranteeReason": [
+        "格式高いパッケージ",
+        "無添加の安心"
+      ],
+      "makerStory": "長崎が世界に誇る名門。カステラ一番の看板を守り続けています。",
+      "badges": [
+        "bestseller",
+        "premium"
+      ]
+    },
+    {
+      "id": "p-021",
+      "name": "札幌おかき Oh! 焼とうきび",
+      "brand": "YOSHIMI",
+      "description": "札幌大通公園の名物「焼きとうきび」を再現。香ばしい醤油とコーンの甘みが絶妙。",
+      "price": 780,
+      "prefecture": "北海道",
+      "region": "北海道",
+      "category": "スナック",
+      "shelfLife": 120,
+      "isIndividualPackaged": true,
+      "servingSize": 6,
+      "guaranteeReason": [
+        "本物のコーン使用",
+        "サクサク食感"
+      ],
+      "badges": [
+        "local",
+        "bestseller"
+      ]
+    },
+    {
+      "id": "p-022",
+      "name": "じゃがピリカ",
+      "brand": "カルビー",
+      "description": "北海道産の3色のじゃがいもをサイコロ状にした、見た目も可愛いスナック。",
+      "price": 1100,
+      "prefecture": "北海道",
+      "region": "北海道",
+      "category": "スナック",
+      "shelfLife": 150,
+      "isIndividualPackaged": true,
+      "servingSize": 10,
+      "guaranteeReason": [
+        "天然の色彩",
+        "素材の甘み"
+      ],
+      "badges": [
+        "local",
+        "editorial"
+      ]
+    },
+    {
+      "id": "p-023",
+      "name": "亀田の柿の種 牡蠣の種",
+      "brand": "アジカル",
+      "description": "宮城限定。松島産の牡蠣エキスを使用。おつまみにぴったりの濃厚な味わい。",
+      "price": 950,
+      "prefecture": "宮城県",
+      "region": "東北",
+      "category": "スナック",
+      "shelfLife": 180,
+      "isIndividualPackaged": true,
+      "servingSize": 5,
+      "guaranteeReason": [
+        "地域限定フレーバー",
+        "酒の肴に最適"
+      ],
+      "badges": [
+        "local",
+        "bestseller"
+      ]
+    },
+    {
+      "id": "p-024",
+      "name": "静岡わさびポテトチップス",
+      "brand": "田丸屋本店",
+      "description": "わさびの老舗が監修。ツーンとくる本格的な辛さが特徴の大人のポテトチップス。",
+      "price": 450,
+      "prefecture": "静岡県",
+      "region": "中部",
+      "category": "スナック",
+      "shelfLife": 120,
+      "isIndividualPackaged": false,
+      "servingSize": 1,
+      "guaranteeReason": [
+        "老舗監修",
+        "本物の刺激"
+      ],
+      "badges": [
+        "local",
+        "editorial"
+      ]
+    },
+    {
+      "id": "p-025",
+      "name": "手羽先せんべい",
+      "brand": "石昆",
+      "description": "名古屋名物・手羽先の甘辛いタレとコショウの刺激を再現したおせんべい。",
+      "price": 1080,
+      "prefecture": "愛知県",
+      "region": "中部",
+      "category": "せんべい",
+      "shelfLife": 90,
+      "isIndividualPackaged": true,
+      "servingSize": 15,
+      "guaranteeReason": [
+        "名古屋めし再現",
+        "ビールに合う"
+      ],
+      "badges": [
+        "bestseller",
+        "local"
+      ]
+    },
+    {
+      "id": "p-026",
+      "name": "瀬戸内れもん味イカ天",
+      "brand": "まるか食品",
+      "description": "一口サイズのイカ天に瀬戸内レモンの酸味をプラス。爽やかな風味で大人気。",
+      "price": 324,
+      "prefecture": "広島県",
+      "region": "中国",
+      "category": "スナック",
+      "shelfLife": 180,
+      "isIndividualPackaged": false,
+      "servingSize": 1,
+      "guaranteeReason": [
+        "瀬戸内ブランド認定",
+        "やみつきになる味"
+      ],
+      "badges": [
+        "bestseller",
+        "editorial"
+      ]
+    },
+    {
+      "id": "p-027",
+      "name": "揚げぴっぴ（塩味）",
+      "brand": "めりけんや",
+      "description": "讃岐うどんを揚げたお菓子。サクサクと軽い食感が止まらない香川の味。",
+      "price": 540,
+      "prefecture": "香川県",
+      "region": "四国",
+      "category": "スナック",
+      "shelfLife": 90,
+      "isIndividualPackaged": false,
+      "servingSize": 1,
+      "guaranteeReason": [
+        "うどん県ならでは",
+        "素朴な味わい"
+      ],
+      "badges": [
+        "local",
+        "bestseller"
+      ]
+    },
+    {
+      "id": "p-028",
+      "name": "ジャガビー 明太子味",
+      "brand": "カルビー",
+      "description": "九州限定。ジャガイモの味を活かしたスティックにピリ辛明太子の粒をプラス。",
+      "price": 980,
+      "prefecture": "福岡県",
+      "region": "九州",
+      "category": "スナック",
+      "shelfLife": 120,
+      "isIndividualPackaged": true,
+      "servingSize": 5,
+      "guaranteeReason": [
+        "九州限定",
+        "本格派の味付け"
+      ],
+      "badges": [
+        "bestseller",
+        "local"
+      ]
+    },
+    {
+      "id": "p-029",
+      "name": "オリオン ビアナッツ",
+      "brand": "サン食品",
+      "description": "沖縄のビールに合うように作られたナッツ。3種の味がミックスされた人気商品。",
+      "price": 1200,
+      "prefecture": "沖縄県",
+      "region": "沖縄",
+      "category": "スナック",
+      "shelfLife": 180,
+      "isIndividualPackaged": true,
+      "servingSize": 20,
+      "guaranteeReason": [
+        "ビールとの相性100%",
+        "圧倒的コスパ"
+      ],
+      "badges": [
+        "local",
+        "bestseller"
+      ]
+    },
+    {
+      "id": "p-030",
+      "name": "北一硝子 醤油差し",
+      "brand": "北一硝子",
+      "description": "小樽の象徴。液だれしにくい設計と、美しいクリスタルガラスの輝き。",
+      "price": 2800,
+      "prefecture": "北海道",
+      "region": "北海道",
+      "category": "工芸品",
+      "shelfLife": 36500,
+      "isIndividualPackaged": true,
+      "servingSize": 1,
+      "guaranteeReason": [
+        "機能美",
+        "小樽ブランド"
+      ],
+      "makerStory": "小樽の港町文化を今に伝えるガラス工房の傑作です。",
+      "badges": [
+        "local",
+        "editorial"
+      ]
+    },
+    {
+      "id": "p-031",
+      "name": "会津塗 夫婦椀",
+      "brand": "会津漆器",
+      "description": "福島県の伝統。華やかな蒔絵が施され、使うほどに艶が増す丈夫な漆器。",
+      "price": 8800,
+      "prefecture": "福島県",
+      "region": "東北",
+      "category": "工芸品",
+      "shelfLife": 36500,
+      "isIndividualPackaged": true,
+      "servingSize": 2,
+      "guaranteeReason": [
+        "縁起物",
+        "堅牢な造り"
+      ],
+      "badges": [
+        "local",
+        "editorial"
+      ]
+    },
+    {
+      "id": "p-032",
+      "name": "江戸切子 ぐい呑み",
+      "brand": "江戸切子館",
+      "description": "東京の伝統工芸。繊細なカットが生み出す光の屈折が日本酒を演出します。",
+      "price": 13200,
+      "prefecture": "東京都",
+      "region": "関東",
+      "category": "工芸品",
+      "shelfLife": 36500,
+      "isIndividualPackaged": true,
+      "servingSize": 1,
+      "guaranteeReason": [
+        "職人技の極致",
+        "ギフトの最高峰"
+      ],
+      "badges": [
+        "editorial",
+        "premium"
+      ]
+    },
+    {
+      "id": "p-033",
+      "name": "九谷焼 豆皿セット",
+      "brand": "九谷焼組合",
+      "description": "「九谷五彩」と呼ばれる鮮やかな色彩が特徴。食卓を彩る小さな芸術品。",
+      "price": 5500,
+      "prefecture": "石川県",
+      "region": "北陸",
+      "category": "工芸品",
+      "shelfLife": 36500,
+      "isIndividualPackaged": true,
+      "servingSize": 5,
+      "guaranteeReason": [
+        "鮮やかな色彩",
+        "デザイン性"
+      ],
+      "badges": [
+        "local",
+        "bestseller"
+      ]
+    },
+    {
+      "id": "p-034",
+      "name": "今治タオル ギフト",
+      "brand": "今治タオル",
+      "description": "愛媛の誇り。圧倒的な吸水性と柔らかさ。世界基準の品質を誇るタオル。",
+      "price": 3850,
+      "prefecture": "愛媛県",
+      "region": "四国",
+      "category": "工芸品",
+      "shelfLife": 3650,
+      "isIndividualPackaged": true,
+      "servingSize": 1,
+      "guaranteeReason": [
+        "圧倒的吸水性",
+        "信頼のマーク"
+      ],
+      "badges": [
+        "bestseller",
+        "editorial"
+      ]
+    },
+    {
+      "id": "p-035",
+      "name": "有田焼 コーヒーカップ",
+      "brand": "香蘭社",
+      "description": "佐賀県有田町。透き通るような白磁に気品あるデザインが映える名品。",
+      "price": 7700,
+      "prefecture": "佐賀県",
+      "region": "九州",
+      "category": "工芸品",
+      "shelfLife": 36500,
+      "isIndividualPackaged": true,
+      "servingSize": 1,
+      "guaranteeReason": [
+        "日本初の磁器",
+        "宮内庁御用達"
+      ],
+      "badges": [
+        "editorial",
+        "local"
+      ]
+    },
+    {
+      "id": "p-036",
+      "name": "知覧茶 特選セット",
+      "brand": "知覧農園",
+      "description": "鹿児島県。豊かな香りと深い甘みが特徴。日本一の生産量を誇る茶処が贈る、色鮮やかな高級煎茶。",
+      "price": 2160,
+      "prefecture": "鹿児島県",
+      "region": "九州",
+      "category": "飲料",
+      "shelfLife": 365,
+      "isIndividualPackaged": true,
+      "servingSize": 2,
+      "guaranteeReason": [
+        "全国ブランド",
+        "鮮やかな水色"
+      ],
+      "makerStory": "南国の太陽と霧深い大地が、茶葉の旨味を最大限に引き出します。",
+      "badges": [
+        "local",
+        "editorial"
+      ]
+    },
+    {
+      "id": "p-037",
+      "name": "狭山茶 詰め合わせ",
+      "brand": "新井園本店",
+      "description": "埼玉県。「色は静岡、香りは宇治よ、味は狭山でとどめさす」と歌われる、濃厚な味わいのお茶。",
+      "price": 1620,
+      "prefecture": "埼玉県",
+      "region": "関東",
+      "category": "飲料",
+      "shelfLife": 365,
+      "isIndividualPackaged": true,
+      "servingSize": 2,
+      "guaranteeReason": [
+        "関東を代表する銘茶",
+        "強いコク"
+      ],
+      "makerStory": "独自の「狭山火入れ」により、独特の香ばしさと深い甘みを引き出しています。",
+      "badges": [
+        "local",
+        "bestseller"
+      ]
+    },
+    {
+      "id": "p-038",
+      "name": "横浜サイダー 6本セット",
+      "brand": "坪井食品",
+      "description": "横浜開港の歴史を感じさせるレトロなラベル。キリッとした強炭酸とスッキリした甘さ。",
+      "price": 1500,
+      "prefecture": "神奈川県",
+      "region": "関東",
+      "category": "飲料",
+      "shelfLife": 365,
+      "isIndividualPackaged": true,
+      "servingSize": 6,
+      "guaranteeReason": [
+        "レトロなデザイン",
+        "ご当地感"
+      ],
+      "makerStory": "日本サイダー発祥の地・横浜のプライドを込めた、懐かしくも新しい味です。",
+      "badges": [
+        "local",
+        "editorial"
+      ]
+    },
+    {
+      "id": "p-039",
+      "name": "湘南ゴールド サイダー",
+      "brand": "川崎飲料",
+      "description": "神奈川県産の幻のオレンジ「湘南ゴールド」を使用。爽やかな香りが弾けるプレミアムサイダー。",
+      "price": 250,
+      "prefecture": "神奈川県",
+      "region": "関東",
+      "category": "飲料",
+      "shelfLife": 365,
+      "isIndividualPackaged": false,
+      "servingSize": 1,
+      "guaranteeReason": [
+        "希少フルーツ使用",
+        "圧倒的な爽快感"
+      ],
+      "makerStory": "12年の歳月をかけて誕生した湘南ゴールドの魅力を、手軽なボトルに閉じ込めました。",
+      "badges": [
+        "local",
+        "bestseller"
+      ]
+    },
+    {
+      "id": "p-040",
+      "name": "稲庭うどん 徳用セット",
+      "brand": "佐藤養助商店",
+      "description": "秋田県。細いながらもしっかりとしたコシと、滑らかな喉越しが特徴の日本三大うどんの一つ。",
+      "price": 3240,
+      "prefecture": "秋田県",
+      "region": "東北",
+      "category": "麺類",
+      "shelfLife": 730,
+      "isIndividualPackaged": true,
+      "servingSize": 10,
+      "guaranteeReason": [
+        "贈答の定番",
+        "圧倒的喉越し"
+      ],
+      "makerStory": "万延元年創業以来、一子相伝の技を守り続ける手綯い製法です。",
+      "badges": [
+        "bestseller",
+        "premium"
+      ]
+    },
+    {
+      "id": "p-041",
+      "name": "信州そば（生そば）",
+      "brand": "小諸七兵衛",
+      "description": "長野県。豊かなそばの香りと喉越しの良さが自慢。そばつゆと本わさびもセットになった本格派。",
+      "price": 2700,
+      "prefecture": "長野県",
+      "region": "中部",
+      "category": "麺類",
+      "shelfLife": 10,
+      "isIndividualPackaged": true,
+      "servingSize": 4,
+      "guaranteeReason": [
+        "信州の誇り",
+        "打ちたての香り"
+      ],
+      "makerStory": "信州の清らかな水と澄んだ空気が、そば本来の味を育てます。",
+      "badges": [
+        "local",
+        "bestseller"
+      ]
+    },
+    {
+      "id": "p-042",
+      "name": "讃岐うどん（半生）",
+      "brand": "うどん本陣山田家",
+      "description": "香川県。これぞ讃岐と言わしめる、強いコシとモチモチの食感。名店の味をご家庭で。",
+      "price": 1620,
+      "prefecture": "香川県",
+      "region": "四国",
+      "category": "麺類",
+      "shelfLife": 60,
+      "isIndividualPackaged": true,
+      "servingSize": 4,
+      "guaranteeReason": [
+        "うどん県の本気",
+        "行列店の味"
+      ],
+      "makerStory": "1日に4,000人が訪れる名店の味を、独自の製法で再現しました。",
+      "badges": [
+        "bestseller",
+        "local"
+      ]
+    },
+    {
+      "id": "p-043",
+      "name": "出雲そば（乾麺）",
+      "brand": "児玉製麺",
+      "description": "島根県。そば殻まで一緒に挽き込む「挽きぐるみ」製法。黒っぽい色と強い香りが特徴。",
+      "price": 1080,
+      "prefecture": "島根県",
+      "region": "中国",
+      "category": "麺類",
+      "shelfLife": 365,
+      "isIndividualPackaged": true,
+      "servingSize": 5,
+      "guaranteeReason": [
+        "独特の風味",
+        "出雲大社ゆかり"
+      ],
+      "makerStory": "縁結びの地・出雲で、古くから愛されてきた力強いそばの味です。",
+      "badges": [
+        "local",
+        "editorial"
+      ]
+    },
+    {
+      "id": "p-044",
+      "name": "博多長浜ラーメン（3食入）",
+      "brand": "一蘭",
+      "description": "福岡県。世界中にファンを持つ名店の味が、特製の赤い秘伝の粉付きでお土産に。",
+      "price": 1296,
+      "prefecture": "福岡県",
+      "region": "九州",
+      "category": "麺類",
+      "shelfLife": 180,
+      "isIndividualPackaged": true,
+      "servingSize": 3,
+      "guaranteeReason": [
+        "世界的知名度",
+        "こだわりの豚骨"
+      ],
+      "makerStory": "とんこつラーメンを研究し続ける一蘭が、家庭用として完成させた自信作です。",
+      "badges": [
+        "bestseller",
+        "premium"
+      ]
+    },
+    {
+      "id": "p-045",
+      "name": "のっぽパン",
+      "brand": "バンデロール",
+      "description": "静岡県。キリンのイラストが目印。34cmの長いパンにミルククリームが詰まった静岡のソウルフード。",
+      "price": 160,
+      "prefecture": "静岡県",
+      "region": "中部",
+      "category": "スイーツ",
+      "shelfLife": 3,
+      "isIndividualPackaged": true,
+      "servingSize": 1,
+      "guaranteeReason": [
+        "圧倒的な懐かしさ",
+        "SNS映え"
+      ],
+      "makerStory": "昭和53年の発売以来、静岡県民の放課後の味として愛され続けています。",
+      "badges": [
+        "local",
+        "editorial"
+      ]
+    },
+    {
+      "id": "p-046",
+      "name": "サラダパン",
+      "brand": "つるやパン",
+      "description": "滋賀県。コッペパンの中にマヨネーズで和えたたくあんが入った、驚きのロングセラー。",
+      "price": 150,
+      "prefecture": "滋賀県",
+      "region": "近畿",
+      "category": "惣菜",
+      "shelfLife": 2,
+      "isIndividualPackaged": true,
+      "servingSize": 1,
+      "guaranteeReason": [
+        "B級グルメの聖地",
+        "クセになる味"
+      ],
+      "makerStory": "キャベツの代わりにたくあんを入れてみたことから始まった、奇跡の組み合わせです。",
+      "badges": [
+        "local",
+        "editorial"
+      ]
+    },
+    {
+      "id": "p-047",
+      "name": "日光カステラ（金箔入）",
+      "brand": "日光カステラ本舗",
+      "description": "栃木県。日光東照宮をイメージした豪華な金箔入りカステラ。蜂蜜の優しい甘みが広がる。",
+      "price": 1500,
+      "prefecture": "栃木県",
+      "region": "関東",
+      "category": "スイーツ",
+      "shelfLife": 20,
+      "isIndividualPackaged": false,
+      "servingSize": 1,
+      "guaranteeReason": [
+        "豪華な見た目",
+        "日光観光の定番"
+      ],
+      "makerStory": "徳川幕府への献上品としての歴史を、現代の味に磨き上げました。",
+      "badges": [
+        "local",
+        "bestseller"
+      ]
+    },
+    {
+      "id": "p-048",
+      "name": "シウマイ 15個入",
+      "brand": "崎陽軒",
+      "description": "横浜名物。豚肉と帆立貝柱の豊かな旨味が詰まった、冷めても美味しい看板商品。",
+      "price": 660,
+      "prefecture": "神奈川県",
+      "region": "関東",
+      "category": "惣菜",
+      "shelfLife": 1,
+      "isIndividualPackaged": false,
+      "servingSize": 1,
+      "guaranteeReason": [
+        "横浜の顔",
+        "ご飯にもおつまみにも"
+      ],
+      "makerStory": "昭和3年に誕生。独自の製法で、豚肉の美味しさを最大限に引き出しています。",
+      "badges": [
+        "bestseller",
+        "local"
+      ]
+    },
+    {
+      "id": "p-049",
+      "name": "小豆島 オリーブオイル",
+      "brand": "かどや",
+      "description": "香川県。日本のオリーブ栽培発祥の地・小豆島産の果実を搾った、フルーティーな最高級オイル。",
+      "price": 2700,
+      "prefecture": "香川県",
+      "region": "四国",
+      "category": "調味料",
+      "shelfLife": 365,
+      "isIndividualPackaged": true,
+      "servingSize": 1,
+      "guaranteeReason": [
+        "国産の安心感",
+        "フレッシュな香り"
+      ],
+      "makerStory": "瀬戸内の温暖な気候が育んだ、太陽の恵みをそのまま瓶に詰めました。",
+      "badges": [
+        "premium",
+        "local"
+      ]
+    },
+    {
+      "id": "p-050",
+      "name": "ゆずすこ（YUZUSCO）",
+      "brand": "高橋商店",
+      "description": "福岡県。柚子胡椒、酢、唐辛子をブレンドした液体スパイス。和洋中あらゆる料理のアクセントに。",
+      "price": 540,
+      "prefecture": "福岡県",
+      "region": "九州",
+      "category": "調味料",
+      "shelfLife": 180,
+      "isIndividualPackaged": true,
+      "servingSize": 1,
+      "guaranteeReason": [
+        "万能スパイス",
+        "お洒落なボトル"
+      ],
+      "makerStory": "伝統の柚子胡椒を、もっと手軽に、もっと世界に広めるために考案しました。",
+      "badges": [
+        "local",
+        "editorial"
+      ]
+    },
+    {
+      "id": "p-051",
+      "name": "かんずり（大）",
+      "brand": "有限会社かんずり",
+      "description": "新潟県。唐辛子を雪の上にさらしてアクを抜き、3年熟成させた、マイルドで深い辛味のスパイス。",
+      "price": 864,
+      "prefecture": "新潟県",
+      "region": "中部",
+      "category": "調味料",
+      "shelfLife": 365,
+      "isIndividualPackaged": false,
+      "servingSize": 1,
+      "guaranteeReason": [
+        "雪国の知恵",
+        "発酵の旨味"
+      ],
+      "makerStory": "手間暇をかけ、じっくりと熟成させることでしか出せない「旨辛」の極致です。",
+      "badges": [
+        "local",
+        "editorial"
+      ]
+    },
+    {
+      "id": "p-052",
+      "name": "黄金だしパック",
+      "brand": "北野エース",
+      "description": "厳選された鰹節、昆布、椎茸を配合。煮出すだけでプロの味が再現できる魔法のだしパック。",
+      "price": 1200,
+      "prefecture": "東京都",
+      "region": "関東",
+      "category": "調味料",
+      "shelfLife": 365,
+      "isIndividualPackaged": true,
+      "servingSize": 20,
+      "guaranteeReason": [
+        "手軽に本格派",
+        "主婦層に絶大な人気"
+      ],
+      "makerStory": "日本の食卓の基本である「だし」を、より身近に、より美味しくしたいと考えました。",
+      "badges": [
+        "bestseller",
+        "editorial"
+      ]
+    }
+  ],
+  "sellers": []
+}

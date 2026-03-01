@@ -35,13 +35,15 @@
 - [x] Add toast notifications for success/error feedback
 - [x] Add form validation with better error messages
 - [x] Add auto-refresh functionality after mutations (invalidate on mutation success)
+- [x] Add JSON file upload functionality to AdminDataMigration
 
 ## Database & Backend
 - [x] Implement actual database INSERT/UPDATE/DELETE in tRPC procedures
 - [ ] Add transaction support for related data (product + sellers + giftMessages)
-- [x] Create data migration page (AdminDataMigration.tsx) for mockData.ts migration
+- [x] Create data migration page (AdminDataMigration.tsx) for mockData.ts and JSON import
 - [ ] Add database indexes for performance
 - [ ] Add audit logging for admin changes
+- [x] Support JSON file upload from Gemini-generated data
 
 ## Testing
 - [x] Write vitest tests for database query helpers (admin.test.ts)

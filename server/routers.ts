@@ -103,6 +103,69 @@ export const appRouter = router({
           await deleteProduct(input.id);
           return { success: true };
         }),
+      
+      bulkImport: protectedProcedure
+        .input(z.object({
+          products: z.array(z.object({
+            id: z.string().optional(),
+            name: z.string(),
+            brand: z.string(),
+            description: z.string(),
+            price: z.number(),
+            imageUrl: z.string().optional(),
+            prefecture: z.string(),
+            region: z.string(),
+            category: z.string(),
+            shelfLife: z.number(),
+            isIndividualPackaged: z.boolean(),
+            servingSize: z.number(),
+            guaranteeReason: z.array(z.string()).optional(),
+            makerStory: z.string().optional(),
+            badges: z.array(z.string()).optional(),
+          }))
+        }))
+        .mutation(async ({ ctx, input }) => {
+          if (ctx.user?.role !== "admin") {
+            throw new Error("Admin access required");
+          }
+          
+          let successCount = 0;
+          let errorCount = 0;
+          const errors: string[] = [];
+          
+          for (const product of input.products) {
+            try {
+              await createProduct({
+                name: product.name,
+                brand: product.brand,
+                description: product.description,
+                price: product.price,
+                imageUrl: product.imageUrl || '',
+                prefecture: product.prefecture,
+                region: product.region,
+                category: product.category,
+                shelfLife: product.shelfLife,
+                isIndividualPackaged: product.isIndividualPackaged,
+                servingSize: product.servingSize,
+                guaranteeReason: product.guaranteeReason || [],
+                makerStory: product.makerStory || '',
+                badges: product.badges || [],
+              });
+              successCount++;
+            } catch (error) {
+              errorCount++;
+              errors.push(`Product "${product.name}": ${error instanceof Error ? error.message : 'Unknown error'}`);
+            }
+          }
+          
+          return {
+            success: true,
+            successCount,
+            errorCount,
+            errors: errors.slice(0, 10), // Return first 10 errors
+            message: `Imported ${successCount} products${errorCount > 0 ? ` (${errorCount} errors)` : ''}`
+          };
+        }),
     }),
     
     facilities: router({

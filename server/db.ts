@@ -185,7 +185,7 @@ export async function getReservationById(id: string) {
  * Create a new product
  */
 export async function createProduct(data: {
-  id: string;
+  id?: string;
   name: string;
   brand: string;
   price: number;
@@ -197,20 +197,45 @@ export async function createProduct(data: {
   category?: string;
   isIndividualPackaged?: boolean;
   servingSize?: number;
-  guaranteeReason?: string;
+  guaranteeReason?: string | string[];
   makerStory?: string;
-  badges?: string;
+  badges?: string | string[];
   createdBy?: number;
 }) {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
   
+  // Generate ID if not provided
+  const id = data.id || `prod-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+  
+  // Convert arrays to JSON strings
+  const guaranteeReasonStr = typeof data.guaranteeReason === 'string' 
+    ? data.guaranteeReason 
+    : JSON.stringify(data.guaranteeReason || []);
+  const badgesStr = typeof data.badges === 'string' 
+    ? data.badges 
+    : JSON.stringify(data.badges || []);
+  
   await db.insert(products).values({
-    ...data,
+    id,
+    name: data.name,
+    brand: data.brand,
+    price: data.price,
+    prefecture: data.prefecture,
+    region: data.region,
+    description: data.description || null,
+    shelfLife: data.shelfLife || null,
+    imageUrl: data.imageUrl || null,
     category: data.category || "その他",
+    isIndividualPackaged: data.isIndividualPackaged || false,
+    servingSize: data.servingSize || null,
+    guaranteeReason: guaranteeReasonStr,
+    makerStory: data.makerStory || null,
+    badges: badgesStr,
+    createdBy: data.createdBy,
   });
   
-  return data.id;
+  return id;
 }
 
 /**

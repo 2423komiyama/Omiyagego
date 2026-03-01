@@ -1,4 +1,3 @@
-// ============================================================
 // Omiyage Go - Admin Data Migration Page
 // ============================================================
 import { useAuth } from "@/_core/hooks/useAuth";
@@ -6,7 +5,7 @@ import DashboardLayout from "@/components/DashboardLayout";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { ArrowLeft, Database, AlertCircle, CheckCircle2 } from "lucide-react";
+import { ArrowLeft, Database, AlertCircle, CheckCircle2, Upload } from "lucide-react";
 import { useLocation } from "wouter";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -45,6 +44,64 @@ export default function AdminDataMigration() {
 
   const addLog = (message: string) => {
     setMigrationLog((prev) => [...prev, `[${new Date().toLocaleTimeString()}] ${message}`]);
+  };
+
+  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    setIsMigrating(true);
+    setProgress(0);
+    setMigrationLog([]);
+
+    try {
+      const fileContent = await file.text();
+      const data = JSON.parse(fileContent);
+      
+      if (!data.products || !Array.isArray(data.products)) {
+        throw new Error('Invalid JSON format. Expected "products" array.');
+      }
+
+      addLog(`📦 Starting import of ${data.products.length} products from JSON...`);
+
+      let successCount = 0;
+      let errorCount = 0;
+
+      for (let i = 0; i < data.products.length; i++) {
+        const product = data.products[i];
+        try {
+          await createMutation.mutateAsync({
+            name: product.name,
+            brand: product.brand,
+            price: product.price,
+            prefecture: product.prefecture || "東京都",
+            region: product.region || "関東",
+            description: product.description,
+            shelfLife: product.shelfLife,
+            imageUrl: product.imageUrl,
+          });
+          successCount++;
+          addLog(`✅ Imported: ${product.name} (${i + 1}/${data.products.length})`);
+        } catch (err) {
+          errorCount++;
+          addLog(`❌ Error: ${product.name} - ${err instanceof Error ? err.message : "Unknown error"}`);
+        }
+        setProgress(((i + 1) / data.products.length) * 100);
+      }
+
+      addLog(`\n✨ Import completed!`);
+      addLog(`   ✅ Success: ${successCount}`);
+      addLog(`   ❌ Errors: ${errorCount}`);
+
+      toast.success(`${successCount}件の商品をインポートしました`);
+    } catch (error) {
+      console.error("Import error:", error);
+      addLog(`❌ Import error: ${error instanceof Error ? error.message : "Unknown error"}`);
+      toast.error("インポート中にエラーが発生しました");
+    } finally {
+      setIsMigrating(false);
+      event.target.value = '';
+    }
   };
 
   const handleMigrate = async () => {
@@ -116,10 +173,37 @@ export default function AdminDataMigration() {
           <div>
             <h1 className="text-3xl font-bold tracking-tight">データ移行</h1>
             <p className="text-muted-foreground mt-1">
-              mockData.tsから{ALL_PRODUCTS.length}件の商品データをデータベースに移行します
+              mockData.tsまたはGemini生成JSONからデータベースに移行します
             </p>
           </div>
         </div>
+
+        {/* JSONアップロード */}
+        <Card className="border-blue-200 bg-blue-50">
+          <CardHeader>
+            <div className="flex items-start gap-3">
+              <Upload className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
+              <div className="flex-1">
+                <CardTitle className="text-blue-900">JSONファイルからインポート</CardTitle>
+                <CardDescription className="text-blue-800 mt-2">
+                  Geminiから生成されたgemini_combined_data.jsonファイルをアップロードしてデータベースに登録します。
+                </CardDescription>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-center gap-4">
+              <input
+                type="file"
+                accept=".json"
+                onChange={handleFileUpload}
+                disabled={isMigrating}
+                className="flex-1 px-4 py-2 border border-blue-300 rounded-lg bg-white"
+              />
+              <p className="text-sm text-blue-700 whitespace-nowrap">gemini_combined_data.json</p>
+            </div>
+          </CardContent>
+        </Card>
 
         {/* 警告メッセージ */}
         <Card className="border-amber-200 bg-amber-50">
@@ -209,7 +293,7 @@ export default function AdminDataMigration() {
             className="gap-2"
           >
             <Database className="w-4 h-4" />
-            {isMigrating ? "移行中..." : "データ移行を開始"}
+            mockDataから移行
           </Button>
         </div>
       </div>
