@@ -20,6 +20,7 @@ import Favorites from "./pages/Favorites";
 import MyPage from "./pages/MyPage";
 import MapPage from "./pages/MapPage";
 import SearchPage from "./pages/SearchPage";
+import DBSearchPage from "./pages/DBSearchPage";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminProducts from "./pages/AdminProducts";
 import AdminProductForm from "./pages/AdminProductForm";
@@ -34,6 +35,7 @@ function Router() {
       <Route path="/conditions" component={Conditions} />
       <Route path="/results" component={Results} />
       <Route path="/search" component={SearchPage} />
+      <Route path="/db-search" component={DBSearchPage} />
       <Route path="/product/:id" component={ProductDetail} />
       <Route path="/seller/:id" component={SellerDetail} />
       <Route path="/favorites" component={Favorites} />

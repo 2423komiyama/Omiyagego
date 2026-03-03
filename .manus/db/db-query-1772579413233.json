@@ -1,0 +1,136 @@
+{
+  "query": "SELECT COUNT(*) as total FROM products; SELECT prefecture, COUNT(*) as cnt FROM products GROUP BY prefecture ORDER BY cnt DESC;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2xzt5HQKEQX5mEg.fe2b3777904e --database aXrCUMBv7Ngvrxv9W3BQsf --execute SELECT COUNT(*) as total FROM products; SELECT prefecture, COUNT(*) as cnt FROM products GROUP BY prefecture ORDER BY cnt DESC;",
+  "rows": [
+    {
+      "total": "1221"
+    },
+    {
+      "total": "prefecture\tcnt"
+    },
+    {
+      "total": "東京都\t225"
+    },
+    {
+      "total": "北海道\t50"
+    },
+    {
+      "total": "京都府\t50"
+    },
+    {
+      "total": "福岡県\t45"
+    },
+    {
+      "total": "石川県\t42"
+    },
+    {
+      "total": "大阪府\t42"
+    },
+    {
+      "total": "山梨県\t41"
+    },
+    {
+      "total": "静岡県\t38"
+    },
+    {
+      "total": "長崎県\t36"
+    },
+    {
+      "total": "鹿児島県\t36"
+    },
+    {
+      "total": "広島県\t36"
+    },
+    {
+      "total": "熊本県\t35"
+    },
+    {
+      "total": "奈良県\t35"
+    },
+    {
+      "total": "神奈川県\t34"
+    },
+    {
+      "total": "三重県\t31"
+    },
+    {
+      "total": "島根県\t31"
+    },
+    {
+      "total": "秋田県\t31"
+    },
+    {
+      "total": "青森県\t31"
+    },
+    {
+      "total": "滋賀県\t31"
+    },
+    {
+      "total": "愛媛県\t31"
+    },
+    {
+      "total": "千葉県\t30"
+    },
+    {
+      "total": "福井県\t30"
+    },
+    {
+      "total": "鳥取県\t30"
+    },
+    {
+      "total": "群馬県\t30"
+    },
+    {
+      "total": "岡山県\t30"
+    },
+    {
+      "total": "山形県\t30"
+    },
+    {
+      "total": "和歌山県\t30"
+    },
+    {
+      "total": "山口県\t30"
+    },
+    {
+      "total": "愛知県\t11"
+    },
+    {
+      "total": "沖縄県\t11"
+    },
+    {
+      "total": "宮城県\t10"
+    },
+    {
+      "total": "長野県\t6"
+    },
+    {
+      "total": "岩手県\t3"
+    },
+    {
+      "total": "香川県\t3"
+    },
+    {
+      "total": "栃木県\t1"
+    },
+    {
+      "total": "佐賀県\t1"
+    },
+    {
+      "total": "新潟県\t1"
+    },
+    {
+      "total": "埼玉県\t1"
+    },
+    {
+      "total": "福島県\t1"
+    },
+    {
+      "total": "兵庫県\t1"
+    }
+  ],
+  "messages": [],
+  "stdout": "total\n1221\nprefecture\tcnt\n東京都\t225\n北海道\t50\n京都府\t50\n福岡県\t45\n石川県\t42\n大阪府\t42\n山梨県\t41\n静岡県\t38\n長崎県\t36\n鹿児島県\t36\n広島県\t36\n熊本県\t35\n奈良県\t35\n神奈川県\t34\n三重県\t31\n島根県\t31\n秋田県\t31\n青森県\t31\n滋賀県\t31\n愛媛県\t31\n千葉県\t30\n福井県\t30\n鳥取県\t30\n群馬県\t30\n岡山県\t30\n山形県\t30\n和歌山県\t30\n山口県\t30\n愛知県\t11\n沖縄県\t11\n宮城県\t10\n長野県\t6\n岩手県\t3\n香川県\t3\n栃木県\t1\n佐賀県\t1\n新潟県\t1\n埼玉県\t1\n福島県\t1\n兵庫県\t1\n",
+  "stderr": "",
+  "execution_time_ms": 1880
+}

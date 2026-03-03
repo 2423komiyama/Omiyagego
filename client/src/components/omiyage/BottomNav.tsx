@@ -8,7 +8,7 @@ import { Home, Search, Map, Heart, User } from "lucide-react";
 
 const NAV_ITEMS = [
   { id: "home", label: "ホーム", icon: Home, path: "/" },
-  { id: "search", label: "探す", icon: Search, path: "/search" },
+  { id: "search", label: "探す", icon: Search, path: "/db-search" },
   { id: "map", label: "マップ", icon: Map, path: "/map" },
   { id: "favorites", label: "お気に入り", icon: Heart, path: "/favorites" },
   { id: "mypage", label: "マイページ", icon: User, path: "/mypage" },
@@ -23,6 +23,7 @@ export function BottomNav() {
 
   const isActive = (path: string) => {
     if (path === "/") return location === "/";
+    if (path === "/db-search") return location.startsWith("/db-search") || location.startsWith("/search");
     return location.startsWith(path);
   };
 

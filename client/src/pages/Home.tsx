@@ -69,7 +69,7 @@ export default function Home() {
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchText.trim()) {
-      navigate(`/search?q=${encodeURIComponent(searchText.trim())}`);
+      navigate(`/db-search?q=${encodeURIComponent(searchText.trim())}`);
     }
   };
 
