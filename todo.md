@@ -62,3 +62,10 @@
 - [ ] Verify all features work in production
 - [ ] Set up admin user account
 - [ ] Document admin panel usage
+
+## 大規模データ収集（47都道府県 × 30件 = 1,410件）
+- [ ] Gemini向け都道府県別プロンプト（最終版）を作成
+- [ ] データベーススキーマを拡張（prefecture, imageUrl, region フィールド追加）
+- [ ] 一括インポートAPIエンドポイントを整備（JSON形式対応）
+- [ ] フロントエンド検索機能をデータベースに接続
+- [ ] チェックポイント保存・デプロイ準備
