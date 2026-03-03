@@ -280,3 +280,119 @@ export async function deleteProduct(id: string) {
   // Delete the product
   await db.delete(products).where(eq(products.id, id));
 }
+
+// ============================================================
+// Product Search & Filter Operations
+// ============================================================
+
+import { like, and, or, gte, lte, inArray, sql } from "drizzle-orm";
+
+/**
+ * 商品を検索・フィルタリングして取得
+ */
+export async function searchProducts(params: {
+  query?: string;
+  prefecture?: string;
+  region?: string;
+  category?: string;
+  minPrice?: number;
+  maxPrice?: number;
+  badges?: string[];
+  limit?: number;
+  offset?: number;
+}) {
+  const db = await getDb();
+  if (!db) return { products: [], total: 0 };
+
+  const conditions = [];
+
+  if (params.query) {
+    conditions.push(
+      or(
+        like(products.name, `%${params.query}%`),
+        like(products.brand, `%${params.query}%`),
+        like(products.description, `%${params.query}%`),
+        like(products.prefecture, `%${params.query}%`),
+        like(products.category, `%${params.query}%`)
+      )
+    );
+  }
+
+  if (params.prefecture) {
+    conditions.push(eq(products.prefecture, params.prefecture));
+  }
+
+  if (params.region) {
+    conditions.push(eq(products.region, params.region));
+  }
+
+  if (params.category) {
+    conditions.push(eq(products.category, params.category));
+  }
+
+  if (params.minPrice !== undefined) {
+    conditions.push(gte(products.price, params.minPrice));
+  }
+
+  if (params.maxPrice !== undefined) {
+    conditions.push(lte(products.price, params.maxPrice));
+  }
+
+  const whereClause = conditions.length > 0 ? and(...conditions) : undefined;
+
+  const limit = params.limit || 20;
+  const offset = params.offset || 0;
+
+  const [rows, countRows] = await Promise.all([
+    whereClause
+      ? db.select().from(products).where(whereClause).limit(limit).offset(offset)
+      : db.select().from(products).limit(limit).offset(offset),
+    whereClause
+      ? db.select({ count: sql<number>`COUNT(*)` }).from(products).where(whereClause)
+      : db.select({ count: sql<number>`COUNT(*)` }).from(products),
+  ]);
+
+  return {
+    products: rows,
+    total: Number(countRows[0]?.count || 0),
+  };
+}
+
+/**
+ * 都道府県一覧を取得（商品が存在するもの）
+ */
+export async function getAvailablePrefectures() {
+  const db = await getDb();
+  if (!db) return [];
+  const rows = await db
+    .selectDistinct({ prefecture: products.prefecture })
+    .from(products)
+    .orderBy(products.prefecture);
+  return rows.map(r => r.prefecture);
+}
+
+/**
+ * カテゴリ一覧を取得（商品が存在するもの）
+ */
+export async function getAvailableCategories() {
+  const db = await getDb();
+  if (!db) return [];
+  const rows = await db
+    .selectDistinct({ category: products.category })
+    .from(products)
+    .orderBy(products.category);
+  return rows.map(r => r.category);
+}
+
+/**
+ * 地方一覧を取得（商品が存在するもの）
+ */
+export async function getAvailableRegions() {
+  const db = await getDb();
+  if (!db) return [];
+  const rows = await db
+    .selectDistinct({ region: products.region })
+    .from(products)
+    .orderBy(products.region);
+  return rows.map(r => r.region);
+}

@@ -4,7 +4,7 @@ import { systemRouter } from "./_core/systemRouter";
 import { publicProcedure, protectedProcedure, router } from "./_core/trpc";
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
-import { getAllProducts, getProductById, getAllFacilities, getAllReservations, createProduct, updateProduct, deleteProduct } from "./db";
+import { getAllProducts, getProductById, getAllFacilities, getAllReservations, createProduct, updateProduct, deleteProduct, searchProducts, getAvailablePrefectures, getAvailableCategories, getAvailableRegions } from "./db";
 
 export const appRouter = router({
     // if you need to use socket.io, read and register route in server/_core/index.ts, all api should start with '/api/' so that the gateway can route correctly
@@ -17,6 +17,45 @@ export const appRouter = router({
       return {
         success: true,
       } as const;
+    }),
+  }),
+
+  // ============================================================
+  // Omiyage Go - Public Product Search Router
+  // ============================================================
+  products: router({
+    search: publicProcedure
+      .input(z.object({
+        query: z.string().optional(),
+        prefecture: z.string().optional(),
+        region: z.string().optional(),
+        category: z.string().optional(),
+        minPrice: z.number().optional(),
+        maxPrice: z.number().optional(),
+        badges: z.array(z.string()).optional(),
+        limit: z.number().optional().default(20),
+        offset: z.number().optional().default(0),
+      }))
+      .query(async ({ input }) => {
+        return await searchProducts(input);
+      }),
+    
+    get: publicProcedure
+      .input(z.object({ id: z.string() }))
+      .query(async ({ input }) => {
+        return await getProductById(input.id);
+      }),
+    
+    prefectures: publicProcedure.query(async () => {
+      return await getAvailablePrefectures();
+    }),
+    
+    categories: publicProcedure.query(async () => {
+      return await getAvailableCategories();
+    }),
+    
+    regions: publicProcedure.query(async () => {
+      return await getAvailableRegions();
     }),
   }),
 
