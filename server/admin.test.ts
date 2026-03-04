@@ -237,3 +237,80 @@ describe("Admin - Batch Processing Logic", () => {
     expect(progress).toBe(75);
   });
 });
+
+// ── DB商品詳細ページのデータ処理ロジックのテスト ─────────────────
+describe("DBProductDetail - Data Parsing", () => {
+  function parseBadges(badgesStr: string | null): string[] {
+    try { return badgesStr ? JSON.parse(badgesStr) : []; }
+    catch { return []; }
+  }
+
+  function parseGuaranteeReasons(reasonStr: string | null): string[] {
+    try { return reasonStr ? JSON.parse(reasonStr) : []; }
+    catch { return []; }
+  }
+
+  function formatShelfLife(days: number | null): string {
+    if (!days) return "要確認";
+    if (days >= 9999) return "長期保存可";
+    return `${days}日`;
+  }
+
+  it("should parse badges JSON string", () => {
+    const badges = parseBadges('["popular","regional","niche"]');
+    expect(badges).toHaveLength(3);
+    expect(badges).toContain("popular");
+    expect(badges).toContain("niche");
+  });
+
+  it("should return empty array for null badges", () => {
+    const badges = parseBadges(null);
+    expect(badges).toEqual([]);
+  });
+
+  it("should return empty array for invalid badges JSON", () => {
+    const badges = parseBadges("invalid json");
+    expect(badges).toEqual([]);
+  });
+
+  it("should parse guarantee reasons JSON string", () => {
+    const reasons = parseGuaranteeReasons('["理由1","理由2"]');
+    expect(reasons).toHaveLength(2);
+    expect(reasons[0]).toBe("理由1");
+  });
+
+  it("should format shelf life correctly", () => {
+    expect(formatShelfLife(30)).toBe("30日");
+    expect(formatShelfLife(9999)).toBe("長期保存可");
+    expect(formatShelfLife(null)).toBe("要確認");
+    expect(formatShelfLife(7)).toBe("7日");
+  });
+
+  it("should handle product with all fields", () => {
+    const product = {
+      id: "prod-test-001",
+      name: "元祖紅いもタルト",
+      brand: "御菓子御殿",
+      price: 1200,
+      prefecture: "沖縄県",
+      region: "九州・沖縄",
+      category: "菓子",
+      description: "沖縄県産紅芋を100%使用したタルト",
+      imageUrl: null,
+      shelfLife: 30,
+      isIndividualPackaged: true,
+      badges: '["popular","regional"]',
+      guaranteeReason: '["沖縄県産紅芋100%使用","モンドセレクション受賞"]',
+      makerStory: null,
+    };
+
+    const badges = parseBadges(product.badges);
+    const reasons = parseGuaranteeReasons(product.guaranteeReason);
+    const shelfLabel = formatShelfLife(product.shelfLife);
+
+    expect(badges).toContain("popular");
+    expect(reasons).toHaveLength(2);
+    expect(shelfLabel).toBe("30日");
+    expect(product.isIndividualPackaged).toBe(true);
+  });
+});

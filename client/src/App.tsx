@@ -27,6 +27,7 @@ import AdminProductForm from "./pages/AdminProductForm";
 import AdminDataMigration from "./pages/AdminDataMigration";
 import AdminFacilities from "./pages/AdminFacilities";
 import AdminSellers from "./pages/AdminSellers";
+import DBProductDetail from "./pages/DBProductDetail";
 function Router() {
   // make sure to consider if you need authentication for certain routes
   return (
@@ -37,6 +38,7 @@ function Router() {
       <Route path="/search" component={SearchPage} />
       <Route path="/db-search" component={DBSearchPage} />
       <Route path="/product/:id" component={ProductDetail} />
+      <Route path="/db-product/:id" component={DBProductDetail} />
       <Route path="/seller/:id" component={SellerDetail} />
       <Route path="/favorites" component={Favorites} />
       <Route path="/mypage" component={MyPage} />
