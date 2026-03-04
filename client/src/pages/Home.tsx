@@ -3,20 +3,21 @@
 // デザイン哲学: 駅案内板スタイル - 最短で用途を選ばせる
 // 機能: 現在地近くのお土産表示・施設フィルタ・用途選択・検索履歴
 // ============================================================
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { useLocation } from "wouter";
 import {
   Search, MapPin, ChevronRight, WifiOff, Clock, RotateCcw, Eye, X,
-  Navigation, Loader2, AlertCircle, CheckCircle2, Sparkles
+  Navigation, Loader2, AlertCircle, CheckCircle2, Sparkles, Package
 } from "lucide-react";
 import { AppLayout } from "@/components/omiyage/AppLayout";
 import { ProductCard } from "@/components/omiyage/ProductCard";
 import { useSearch } from "@/contexts/SearchContext";
 import { useHistory } from "@/contexts/HistoryContext";
 import {
-  PURPOSE_LIST, ALL_PRODUCTS, FACILITIES, NATIONAL_PRODUCTS,
+  PURPOSE_LIST, ALL_PRODUCTS, FACILITIES,
   type FacilityId, type FacilityInfo
 } from "@/lib/mockData";
+import { trpc } from "@/lib/trpc";
 import { cn } from "@/lib/utils";
 
 const HERO_IMAGE =
@@ -144,8 +145,23 @@ export default function Home() {
     ).slice(0, 5);
   })();
 
-  // 特集商品（編集部推薦）
-  const featuredProducts = ALL_PRODUCTS.filter((p) => p.badges.includes("editorial")).slice(0, 3);
+  // DB: 全国ピックアップ（bestseller商品 上位4件）
+  const nationalPickupInput = useMemo(() => ({
+    badges: ["bestseller"],
+    limit: 4,
+    offset: 0,
+  }), []);
+  const { data: nationalPickupData, isLoading: isNationalLoading } = trpc.products.search.useQuery(nationalPickupInput);
+  const nationalPickupProducts = nationalPickupData?.products ?? [];
+
+  // DB: 編集部おすすめ（editorial商品 上位4件）
+  const editorialInput = useMemo(() => ({
+    badges: ["editorial"],
+    limit: 4,
+    offset: 0,
+  }), []);
+  const { data: editorialData, isLoading: isEditorialLoading } = trpc.products.search.useQuery(editorialInput);  
+  const editorialProducts = editorialData?.products ?? [];
 
   return (
     <AppLayout>
@@ -373,15 +389,15 @@ export default function Home() {
           </div>
         </button>
 
-        {/* ── 全国のお土産ピックアップ ── */}
+        {/* ── 全国のお土産ピックアップ（DB連携） ── */}
         <div>
           <div className="flex items-center justify-between mb-3">
             <div>
               <h2 className="text-base font-black text-stone-900">全国のお土産</h2>
-              <p className="text-xs text-stone-500 mt-0.5">北海道から沖縄まで厳選</p>
+              <p className="text-xs text-stone-500 mt-0.5">全国1,500件以上から厳選</p>
             </div>
             <button
-              onClick={() => navigate("/search")}
+              onClick={() => navigate("/db-search")}
               className="flex items-center gap-1 text-xs font-bold text-emerald-700"
             >
               すべて見る
@@ -391,32 +407,47 @@ export default function Home() {
           {/* 地方ショートカット */}
           <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide mb-3">
             {[
-              { label: "🐻 北海道", region: "北海道" },
-              { label: "⛩ 京都", region: "近畿" },
-              { label: "🦀 大阪", region: "近畿" },
-              { label: "🌺 沖縄", region: "九州・沖縄" },
-              { label: "🍜 福岡", region: "九州・沖縄" },
-              { label: "🍵 静岡", region: "中部" },
-              { label: "🦌 奈良", region: "近畿" },
-              { label: "🏯 広島", region: "中国" },
+              { label: "🐻 北海道", region: "北海道", pref: "北海道" },
+              { label: "⛩ 京都", region: "近畿", pref: "京都府" },
+              { label: "🦀 大阪", region: "近畿", pref: "大阪府" },
+              { label: "🌺 沖縄", region: "九州・沖縄", pref: "沖縄県" },
+              { label: "🍜 福岡", region: "九州・沖縄", pref: "福岡県" },
+              { label: "🍵 静岡", region: "中部", pref: "静岡県" },
+              { label: "🦌 奈良", region: "近畿", pref: "奈良県" },
+              { label: "🎯 広島", region: "中国", pref: "広島県" },
             ].map((item) => (
               <button
                 key={item.label}
-                onClick={() => navigate(`/search?region=${encodeURIComponent(item.region)}`)}
+                onClick={() => navigate(`/db-search?prefecture=${encodeURIComponent(item.pref)}`)}
                 className="flex-shrink-0 px-3 py-2 bg-white border border-stone-200 rounded-xl text-xs font-bold text-stone-700 hover:border-emerald-400 hover:text-emerald-700 hover:bg-emerald-50 transition-all whitespace-nowrap"
               >
                 {item.label}
               </button>
             ))}
           </div>
-          <div className="space-y-3">
-            {NATIONAL_PRODUCTS.slice(0, 3).map((product) => (
-              <ProductCard key={product.id} product={product} />
-            ))}
-          </div>
+          {/* DBから取得したピックアップ商品 */}
+          {isNationalLoading ? (
+            <div className="py-6 flex justify-center">
+              <Loader2 className="w-6 h-6 text-emerald-600 animate-spin" />
+            </div>
+          ) : nationalPickupProducts.length > 0 ? (
+            <div className="space-y-3">
+              {nationalPickupProducts.map((product) => (
+                <HomeDBProductCard key={product.id} product={product} />
+              ))}
+            </div>
+          ) : (
+            <button
+              onClick={() => navigate("/db-search")}
+              className="w-full py-8 flex flex-col items-center gap-2 bg-white border border-stone-200 rounded-xl hover:border-emerald-400 transition-colors"
+            >
+              <Package className="w-8 h-8 text-stone-300" />
+              <p className="text-sm text-stone-500">全国1,500件以上のお土産を探す</p>
+            </button>
+          )}
         </div>
 
-        {/* ── 編集部のおすすめ ── */}
+        {/* ── 編集部のおすすめ（DB連携） ── */}
         <div>
           <div className="flex items-center justify-between mb-3">
             <div>
@@ -426,18 +457,32 @@ export default function Home() {
               <p className="text-xs text-stone-500 mt-0.5">外しにくい定番品</p>
             </div>
             <button
-              onClick={() => navigate("/results")}
+              onClick={() => navigate("/db-search?badges=editorial")}
               className="flex items-center gap-1 text-xs font-bold text-emerald-700"
             >
               すべて見る
               <ChevronRight className="w-3.5 h-3.5" />
             </button>
           </div>
-          <div className="space-y-3">
-            {featuredProducts.map((product) => (
-              <ProductCard key={product.id} product={product} />
-            ))}
-          </div>
+          {isEditorialLoading ? (
+            <div className="py-6 flex justify-center">
+              <Loader2 className="w-6 h-6 text-emerald-600 animate-spin" />
+            </div>
+          ) : editorialProducts.length > 0 ? (
+            <div className="space-y-3">
+              {editorialProducts.map((product) => (
+                <HomeDBProductCard key={product.id} product={product} />
+              ))}
+            </div>
+          ) : (
+            <button
+              onClick={() => navigate("/db-search")}
+              className="w-full py-8 flex flex-col items-center gap-2 bg-white border border-stone-200 rounded-xl hover:border-emerald-400 transition-colors"
+            >
+              <Package className="w-8 h-8 text-stone-300" />
+              <p className="text-sm text-stone-500">おすすめ商品を探す</p>
+            </button>
+          )}
         </div>
 
         {/* ── 検索履歴 ── */}
@@ -528,5 +573,99 @@ export default function Home() {
         <div className="h-2" />
       </div>
     </AppLayout>
+  );
+}
+
+// ── ホーム用DBProductCardコンポーネント ──────────────────────────────
+interface HomeDBProduct {
+  id: string;
+  name: string;
+  brand: string | null;
+  price: number | null;
+  imageUrl: string | null;
+  prefecture: string | null;
+  category: string | null;
+  badges: string | null;
+  shelfLife: number | null;
+  isIndividualPackaged: boolean | null;
+}
+
+const CATEGORY_IMAGES: Record<string, string> = {
+  "和菓子": "https://images.unsplash.com/photo-1563245372-f21724e3856d?w=400&q=75",
+  "洋菓子": "https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=400&q=75",
+  "スイーツ": "https://images.unsplash.com/photo-1488477181946-6428a0291777?w=400&q=75",
+  "せんべい": "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&q=75",
+  "海産物": "https://images.unsplash.com/photo-1615141982883-c7ad0e69fd62?w=400&q=75",
+  "酒類": "https://images.unsplash.com/photo-1569529465841-dfecdab7503b?w=400&q=75",
+  "調味料": "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=400&q=75",
+  "漬物": "https://images.unsplash.com/photo-1590779033100-9f60a05a013d?w=400&q=75",
+  "乾物": "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=400&q=75",
+  "その他": "https://images.unsplash.com/photo-1513519245088-0e12902e35a6?w=400&q=75",
+};
+
+function getProductImage(product: HomeDBProduct): string {
+  if (product.imageUrl) return product.imageUrl;
+  const cat = product.category ?? "その他";
+  return CATEGORY_IMAGES[cat] ?? CATEGORY_IMAGES["その他"];
+}
+
+function parseBadgesHome(badgesStr: string | null): string[] {
+  try { return badgesStr ? JSON.parse(badgesStr) : []; }
+  catch { return []; }
+}
+
+const BADGE_LABELS: Record<string, { label: string; color: string }> = {
+  bestseller: { label: "定番", color: "bg-amber-100 text-amber-700" },
+  editorial: { label: "編集部推薦", color: "bg-emerald-100 text-emerald-700" },
+  popular: { label: "人気", color: "bg-blue-100 text-blue-700" },
+  niche: { label: "ニッチ", color: "bg-orange-100 text-orange-700" },
+  regional: { label: "地域限定", color: "bg-purple-100 text-purple-700" },
+};
+
+function HomeDBProductCard({ product }: { product: HomeDBProduct }) {
+  const [, navigate] = useLocation();
+  const badges = parseBadgesHome(product.badges).slice(0, 2);
+  const imgSrc = getProductImage(product);
+
+  return (
+    <button
+      onClick={() => navigate(`/db-product/${product.id}`)}
+      className="w-full flex items-center gap-3 bg-white border border-stone-200 rounded-xl p-3 hover:border-emerald-400 hover:shadow-sm active:scale-[0.98] transition-all text-left"
+    >
+      <div className="w-16 h-16 rounded-lg overflow-hidden flex-shrink-0 bg-stone-100">
+        <img
+          src={imgSrc}
+          alt={product.name}
+          className="w-full h-full object-cover"
+          onError={(e) => {
+            (e.target as HTMLImageElement).src = CATEGORY_IMAGES["その他"];
+          }}
+        />
+      </div>
+      <div className="flex-1 min-w-0">
+        <div className="flex items-center gap-1.5 mb-0.5 flex-wrap">
+          {badges.map((b) => {
+            const info = BADGE_LABELS[b];
+            if (!info) return null;
+            return (
+              <span key={b} className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full ${info.color}`}>
+                {info.label}
+              </span>
+            );
+          })}
+        </div>
+        <p className="text-sm font-bold text-stone-900 truncate">{product.name}</p>
+        <p className="text-xs text-stone-500 truncate">{product.brand ?? ""}</p>
+        <div className="flex items-center justify-between mt-1">
+          <span className="text-xs font-bold text-emerald-700">
+            {product.price ? `¥${product.price.toLocaleString()}` : "価格要確認"}
+          </span>
+          {product.prefecture && (
+            <span className="text-[10px] text-stone-400">{product.prefecture}</span>
+          )}
+        </div>
+      </div>
+      <ChevronRight className="w-4 h-4 text-stone-300 flex-shrink-0" />
+    </button>
   );
 }

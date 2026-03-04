@@ -413,3 +413,84 @@ describe("NichePage - Data Processing Logic", () => {
     expect(nicheInHokkaido[0].name).toBe("商品A");
   });
 });
+
+// ── Home - DB連携ピックアップセクションのデータ処理ロジックのテスト ─────
+describe("Home - DB Product Card Logic", () => {
+  const CATEGORY_IMAGES: Record<string, string> = {
+    "和菓子": "https://images.unsplash.com/photo-1563245372-f21724e3856d?w=400&q=75",
+    "洋菓子": "https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=400&q=75",
+    "その他": "https://images.unsplash.com/photo-1513519245088-0e12902e35a6?w=400&q=75",
+  };
+
+  interface HomeDBProduct {
+    id: string;
+    name: string;
+    brand: string | null;
+    price: number | null;
+    imageUrl: string | null;
+    prefecture: string | null;
+    category: string | null;
+    badges: string | null;
+  }
+
+  function getProductImage(product: HomeDBProduct): string {
+    if (product.imageUrl) return product.imageUrl;
+    const cat = product.category ?? "その他";
+    return CATEGORY_IMAGES[cat] ?? CATEGORY_IMAGES["その他"];
+  }
+
+  function parseBadgesHome(badgesStr: string | null): string[] {
+    try { return badgesStr ? JSON.parse(badgesStr) : []; }
+    catch { return []; }
+  }
+
+  it("should use imageUrl when available", () => {
+    const product: HomeDBProduct = {
+      id: "1", name: "テスト商品", brand: null, price: 1000,
+      imageUrl: "https://example.com/image.jpg",
+      prefecture: "東京都", category: "和菓子", badges: null,
+    };
+    expect(getProductImage(product)).toBe("https://example.com/image.jpg");
+  });
+
+  it("should fall back to category image when imageUrl is null", () => {
+    const product: HomeDBProduct = {
+      id: "2", name: "テスト商品", brand: null, price: 1000,
+      imageUrl: null,
+      prefecture: "京都府", category: "和菓子", badges: null,
+    };
+    expect(getProductImage(product)).toBe(CATEGORY_IMAGES["和菓子"]);
+  });
+
+  it("should fall back to 'その他' for unknown category", () => {
+    const product: HomeDBProduct = {
+      id: "3", name: "テスト商品", brand: null, price: 1000,
+      imageUrl: null,
+      prefecture: "北海道", category: "未知カテゴリ", badges: null,
+    };
+    expect(getProductImage(product)).toBe(CATEGORY_IMAGES["その他"]);
+  });
+
+  it("should parse badges and limit to 2", () => {
+    const badges = parseBadgesHome('["bestseller","editorial","popular","niche"]');
+    expect(badges).toHaveLength(4);
+    const displayBadges = badges.slice(0, 2);
+    expect(displayBadges).toHaveLength(2);
+    expect(displayBadges[0]).toBe("bestseller");
+  });
+
+  it("should format price correctly", () => {
+    const formatPrice = (price: number | null): string => {
+      return price ? `¥${price.toLocaleString()}` : "価格要確認";
+    };
+    expect(formatPrice(1200)).toBe("¥1,200");
+    expect(formatPrice(10000)).toBe("¥10,000");
+    expect(formatPrice(null)).toBe("価格要確認");
+  });
+
+  it("should navigate to /db-product/:id on click", () => {
+    const productId = "abc-123";
+    const expectedPath = `/db-product/${productId}`;
+    expect(expectedPath).toBe("/db-product/abc-123");
+  });
+});

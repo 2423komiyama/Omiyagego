@@ -80,3 +80,6 @@
 - [x] 商品画像：Unsplashカテゴリ別フォールバック画像をDBProductDetail・NichePageに設定
 - [x] 売り場データの充実（getSellersByProductIdをrouters.tsのproducts.getに結合、DBProductDetailに「今買える場所」セクション追加）
 - [x] ニッチ土産特集ページ（/niche）の新規作成（NichePage.tsx、ホームバナー、地方タブ、グリッド表示）
+
+## 追加作業（2026-03-04 #2）
+- [x] ホームの「全国のお土産」セクションをDB連携に置き換え（bestseller/editorial商品をtRPCで取得、地方ショートカットを/db-searchに変更、HomeDBProductCardコンポーネント新規作成）
