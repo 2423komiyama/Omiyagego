@@ -314,3 +314,102 @@ describe("DBProductDetail - Data Parsing", () => {
     expect(product.isIndividualPackaged).toBe(true);
   });
 });
+
+// ── NichePage - ニッチ土産特集ページのデータ処理ロジックのテスト ─────
+describe("NichePage - Data Processing Logic", () => {
+  // カテゴリ別画像マッピング
+  const CATEGORY_IMAGES: Record<string, string> = {
+    "和菓子": "https://images.unsplash.com/photo-1563245372-f21724e3856d?w=400&q=75",
+    "洋菓子": "https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=400&q=75",
+    "その他": "https://images.unsplash.com/photo-1513519245088-0e12902e35a6?w=400&q=75",
+  };
+
+  function getCategoryImage(category: string): string {
+    return CATEGORY_IMAGES[category] || CATEGORY_IMAGES["その他"];
+  }
+
+  function parseBadges(badgesStr: string | null): string[] {
+    try { return badgesStr ? JSON.parse(badgesStr) : []; }
+    catch { return []; }
+  }
+
+  function isNicheProduct(badges: string[]): boolean {
+    return badges.includes("niche");
+  }
+
+  function formatPrefectureShort(prefecture: string): string {
+    if (prefecture === "北海道") return "北海道";
+    return prefecture.replace("県", "").replace("府", "").replace("都", "");
+  }
+
+  it("should identify niche products correctly", () => {
+    const nicheProduct = { badges: '["niche","local"]' };
+    const normalProduct = { badges: '["bestseller","popular"]' };
+    const nullProduct = { badges: null };
+
+    expect(isNicheProduct(parseBadges(nicheProduct.badges))).toBe(true);
+    expect(isNicheProduct(parseBadges(normalProduct.badges))).toBe(false);
+    expect(isNicheProduct(parseBadges(nullProduct.badges))).toBe(false);
+  });
+
+  it("should get category image with fallback", () => {
+    const wagashiImg = getCategoryImage("和菓子");
+    const unknownImg = getCategoryImage("未知のカテゴリ");
+    const otherImg = getCategoryImage("その他");
+
+    expect(wagashiImg).toContain("unsplash.com");
+    expect(wagashiImg).not.toBe(otherImg); // 和菓子は専用画像
+    expect(unknownImg).toBe(otherImg); // 未知カテゴリはその他にフォールバック
+  });
+
+  it("should format prefecture name correctly", () => {
+    expect(formatPrefectureShort("東京都")).toBe("東京");
+    expect(formatPrefectureShort("大阪府")).toBe("大阪");
+    expect(formatPrefectureShort("北海道")).toBe("北海道");
+    expect(formatPrefectureShort("沖縄県")).toBe("沖縄");
+    expect(formatPrefectureShort("愛知県")).toBe("愛知");
+  });
+
+  it("should parse guarantee reasons for display", () => {
+    const product = {
+      guaranteeReason: '["地元農家直送の素材を使用","創業100年の老舗が手作り"]',
+    };
+
+    const reasons: string[] = (() => {
+      try { return product.guaranteeReason ? JSON.parse(product.guaranteeReason) : []; }
+      catch { return []; }
+    })();
+
+    expect(reasons).toHaveLength(2);
+    expect(reasons[0]).toBe("地元農家直送の素材を使用");
+  });
+
+  it("should handle shelf life display for niche products", () => {
+    function formatShelfLife(days: number | null): string {
+      if (!days) return "要確認";
+      if (days >= 9999) return "長期保存可";
+      return `${days}日`;
+    }
+
+    expect(formatShelfLife(14)).toBe("14日");
+    expect(formatShelfLife(9999)).toBe("長期保存可");
+    expect(formatShelfLife(null)).toBe("要確認");
+  });
+
+  it("should filter niche products by region", () => {
+    const products = [
+      { name: "商品A", region: "北海道", badges: '["niche"]' },
+      { name: "商品B", region: "東北", badges: '["niche"]' },
+      { name: "商品C", region: "北海道", badges: '["bestseller"]' },
+      { name: "商品D", region: "関東", badges: '["niche"]' },
+    ];
+
+    const nicheInHokkaido = products.filter(p => {
+      const badges = parseBadges(p.badges);
+      return isNicheProduct(badges) && p.region === "北海道";
+    });
+
+    expect(nicheInHokkaido).toHaveLength(1);
+    expect(nicheInHokkaido[0].name).toBe("商品A");
+  });
+});

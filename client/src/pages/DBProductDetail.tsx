@@ -9,7 +9,7 @@ import { trpc } from "@/lib/trpc";
 import {
   ArrowLeft, Package, MapPin, Clock, Tag, Star,
   ShoppingBag, Gift, ChevronRight, Loader2, AlertCircle,
-  CheckCircle2, Store
+  CheckCircle2, Store, Building2
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -24,6 +24,31 @@ const BADGE_CONFIG: Record<string, { label: string; className: string }> = {
   bestseller: { label: "ベストセラー", className: "bg-red-100 text-red-700" },
   local: { label: "地元産", className: "bg-green-100 text-green-700" },
 };
+
+// カテゴリ別フォールバック画像（Unsplash）
+const CATEGORY_IMAGES: Record<string, string> = {
+  "和菓子": "https://images.unsplash.com/photo-1563245372-f21724e3856d?w=600&q=80",
+  "洋菓子": "https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=600&q=80",
+  "焼き菓子": "https://images.unsplash.com/photo-1558961363-fa8fdf82db35?w=600&q=80",
+  "煎餅・おかき": "https://images.unsplash.com/photo-1547592180-85f173990554?w=600&q=80",
+  "スナック": "https://images.unsplash.com/photo-1566478989037-eec170784d0b?w=600&q=80",
+  "菓子": "https://images.unsplash.com/photo-1587132137056-bfbf0166836e?w=600&q=80",
+  "チョコレート": "https://images.unsplash.com/photo-1549007994-cb92caebd54b?w=600&q=80",
+  "飲料": "https://images.unsplash.com/photo-1544145945-f90425340c7e?w=600&q=80",
+  "お茶・飲料": "https://images.unsplash.com/photo-1556679343-c7306c1976bc?w=600&q=80",
+  "海産物": "https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?w=600&q=80",
+  "肉・加工品": "https://images.unsplash.com/photo-1529692236671-f1f6cf9683ba?w=600&q=80",
+  "調味料・ソース": "https://images.unsplash.com/photo-1472476443507-c7a5948772fc?w=600&q=80",
+  "麺類": "https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=600&q=80",
+  "弁当・惣菜": "https://images.unsplash.com/photo-1512058564366-18510be2db19?w=600&q=80",
+  "食品": "https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=600&q=80",
+  "工芸品": "https://images.unsplash.com/photo-1528360983277-13d401cdc186?w=600&q=80",
+  "その他": "https://images.unsplash.com/photo-1513519245088-0e12902e35a6?w=600&q=80",
+};
+
+function getCategoryImage(category: string): string {
+  return CATEGORY_IMAGES[category] || CATEGORY_IMAGES["その他"];
+}
 
 export default function DBProductDetail() {
   const params = useParams<{ id: string }>();
@@ -81,6 +106,12 @@ export default function DBProductDetail() {
     catch { return []; }
   })();
 
+  // 売り場情報
+  const sellers = product.sellers || [];
+
+  // 表示する画像URL（商品画像 → カテゴリ別フォールバック）
+  const displayImageUrl = product.imageUrl || getCategoryImage(product.category);
+
   return (
     <AppLayout>
       {/* ── ヘッダー ── */}
@@ -102,21 +133,14 @@ export default function DBProductDetail() {
       <div className="pb-24">
         {/* ── 商品画像 ── */}
         <div className="relative w-full h-56 bg-stone-100 overflow-hidden">
-          {product.imageUrl ? (
-            <img
-              src={product.imageUrl}
-              alt={product.name}
-              className="w-full h-full object-cover"
-              onError={(e) => {
-                (e.target as HTMLImageElement).parentElement!.classList.add("flex", "items-center", "justify-center");
-                (e.target as HTMLImageElement).style.display = "none";
-              }}
-            />
-          ) : (
-            <div className="w-full h-full flex items-center justify-center">
-              <Package className="w-16 h-16 text-stone-300" />
-            </div>
-          )}
+          <img
+            src={displayImageUrl}
+            alt={product.name}
+            className="w-full h-full object-cover"
+            onError={(e) => {
+              (e.target as HTMLImageElement).src = getCategoryImage("その他");
+            }}
+          />
           {/* グラデーションオーバーレイ */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
           {/* バッジ */}
@@ -134,6 +158,14 @@ export default function DBProductDetail() {
               );
             })}
           </div>
+          {/* カテゴリ画像使用の場合のラベル */}
+          {!product.imageUrl && (
+            <div className="absolute bottom-2 right-2">
+              <span className="px-1.5 py-0.5 bg-black/40 text-white text-[10px] rounded">
+                イメージ画像
+              </span>
+            </div>
+          )}
         </div>
 
         {/* ── 商品基本情報 ── */}
@@ -199,6 +231,58 @@ export default function DBProductDetail() {
                 <div key={i} className="flex items-start gap-2">
                   <CheckCircle2 className="w-4 h-4 text-emerald-600 flex-shrink-0 mt-0.5" />
                   <p className="text-sm text-stone-700">{reason}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* ── 今買える場所（売り場情報） ── */}
+        {sellers.length > 0 && (
+          <div className="px-4 py-4 border-b border-stone-100">
+            <h2 className="text-sm font-bold text-stone-700 mb-3 flex items-center gap-1.5">
+              <Building2 className="w-4 h-4 text-emerald-600" />
+              今買える場所
+            </h2>
+            <div className="space-y-2">
+              {sellers.map((seller) => (
+                <div key={seller.id} className="bg-stone-50 rounded-xl p-3">
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-bold text-stone-900">{seller.storeName}</p>
+                      {seller.floor && (
+                        <p className="text-xs text-stone-500 mt-0.5">{seller.floor}</p>
+                      )}
+                      {seller.businessHours && (
+                        <p className="text-xs text-stone-500 mt-0.5 flex items-center gap-1">
+                          <Clock className="w-3 h-3" />
+                          {seller.businessHours}
+                        </p>
+                      )}
+                    </div>
+                    <div className="flex-shrink-0 flex flex-col items-end gap-1">
+                      {seller.insideGate && (
+                        <span className="px-1.5 py-0.5 bg-emerald-100 text-emerald-700 text-[10px] font-bold rounded">
+                          改札内
+                        </span>
+                      )}
+                      {seller.stockStatus === "in_stock" && (
+                        <span className="px-1.5 py-0.5 bg-green-100 text-green-700 text-[10px] font-bold rounded">
+                          在庫あり
+                        </span>
+                      )}
+                      {seller.stockStatus === "low_stock" && (
+                        <span className="px-1.5 py-0.5 bg-amber-100 text-amber-700 text-[10px] font-bold rounded">
+                          残りわずか
+                        </span>
+                      )}
+                      {seller.stockStatus === "out_of_stock" && (
+                        <span className="px-1.5 py-0.5 bg-red-100 text-red-700 text-[10px] font-bold rounded">
+                          在庫なし
+                        </span>
+                      )}
+                    </div>
+                  </div>
                 </div>
               ))}
             </div>

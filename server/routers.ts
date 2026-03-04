@@ -4,7 +4,7 @@ import { systemRouter } from "./_core/systemRouter";
 import { publicProcedure, protectedProcedure, router } from "./_core/trpc";
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
-import { getAllProducts, getProductById, getAllFacilities, getAllReservations, createProduct, updateProduct, deleteProduct, searchProducts, getAvailablePrefectures, getAvailableCategories, getAvailableRegions } from "./db";
+import { getAllProducts, getProductById, getSellersByProductId, getAllFacilities, getAllReservations, createProduct, updateProduct, deleteProduct, searchProducts, getAvailablePrefectures, getAvailableCategories, getAvailableRegions } from "./db";
 
 export const appRouter = router({
     // if you need to use socket.io, read and register route in server/_core/index.ts, all api should start with '/api/' so that the gateway can route correctly
@@ -43,7 +43,11 @@ export const appRouter = router({
     get: publicProcedure
       .input(z.object({ id: z.string() }))
       .query(async ({ input }) => {
-        return await getProductById(input.id);
+        const product = await getProductById(input.id);
+        if (!product) return null;
+        // 売り場情報も一緒に取得
+        const productSellers = await getSellersByProductId(input.id);
+        return { ...product, sellers: productSellers };
       }),
     
     prefectures: publicProcedure.query(async () => {

@@ -28,6 +28,7 @@ import AdminDataMigration from "./pages/AdminDataMigration";
 import AdminFacilities from "./pages/AdminFacilities";
 import AdminSellers from "./pages/AdminSellers";
 import DBProductDetail from "./pages/DBProductDetail";
+import NichePage from "./pages/NichePage";
 function Router() {
   // make sure to consider if you need authentication for certain routes
   return (
@@ -50,6 +51,7 @@ function Router() {
       <Route path="/admin/migration" component={AdminDataMigration} />
       <Route path="/admin/facilities" component={AdminFacilities} />
       <Route path="/admin/sellers" component={AdminSellers} />
+      <Route path="/niche" component={NichePage} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>
