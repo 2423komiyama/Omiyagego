@@ -1,0 +1,19 @@
+{
+  "query": "SELECT COUNT(DISTINCT productId) as products_with_sellers FROM sellers; SELECT COUNT(*) as total_sellers FROM sellers;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2xzt5HQKEQX5mEg.fe2b3777904e --database aXrCUMBv7Ngvrxv9W3BQsf --execute SELECT COUNT(DISTINCT productId) as products_with_sellers FROM sellers; SELECT COUNT(*) as total_sellers FROM sellers;",
+  "rows": [
+    {
+      "products_with_sellers": "1370"
+    },
+    {
+      "products_with_sellers": "total_sellers"
+    },
+    {
+      "products_with_sellers": "2735"
+    }
+  ],
+  "messages": [],
+  "stdout": "products_with_sellers\n1370\ntotal_sellers\n2735\n",
+  "stderr": "",
+  "execution_time_ms": 1730
+}

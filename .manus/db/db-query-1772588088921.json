@@ -1,0 +1,61 @@
+{
+  "query": "SELECT COUNT(*) as total FROM sellers; SELECT facilityId, COUNT(*) as cnt FROM sellers GROUP BY facilityId ORDER BY cnt DESC LIMIT 15;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2xzt5HQKEQX5mEg.fe2b3777904e --database aXrCUMBv7Ngvrxv9W3BQsf --execute SELECT COUNT(*) as total FROM sellers; SELECT facilityId, COUNT(*) as cnt FROM sellers GROUP BY facilityId ORDER BY cnt DESC LIMIT 15;",
+  "rows": [
+    {
+      "total": "2735"
+    },
+    {
+      "total": "facilityId\tcnt"
+    },
+    {
+      "total": "local_station\t761"
+    },
+    {
+      "total": "online\t406"
+    },
+    {
+      "total": "tokyo_station\t269"
+    },
+    {
+      "total": "sendai_station\t252"
+    },
+    {
+      "total": "haneda_t1\t217"
+    },
+    {
+      "total": "local_airport\t148"
+    },
+    {
+      "total": "naha_airport\t142"
+    },
+    {
+      "total": "nagoya_station\t112"
+    },
+    {
+      "total": "shin_chitose_airport\t100"
+    },
+    {
+      "total": "kyoto_station\t100"
+    },
+    {
+      "total": "hakata_station\t43"
+    },
+    {
+      "total": "shin_osaka_station\t42"
+    },
+    {
+      "total": "kanazawa_station\t42"
+    },
+    {
+      "total": "hiroshima_station\t36"
+    },
+    {
+      "total": "okayama_station\t30"
+    }
+  ],
+  "messages": [],
+  "stdout": "total\n2735\nfacilityId\tcnt\nlocal_station\t761\nonline\t406\ntokyo_station\t269\nsendai_station\t252\nhaneda_t1\t217\nlocal_airport\t148\nnaha_airport\t142\nnagoya_station\t112\nshin_chitose_airport\t100\nkyoto_station\t100\nhakata_station\t43\nshin_osaka_station\t42\nkanazawa_station\t42\nhiroshima_station\t36\nokayama_station\t30\n",
+  "stderr": "",
+  "execution_time_ms": 1887
+}

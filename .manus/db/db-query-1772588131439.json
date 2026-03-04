@@ -1,0 +1,40 @@
+{
+  "query": "SELECT p.id, p.name, p.prefecture, COUNT(s.id) as seller_count FROM products p LEFT JOIN sellers s ON p.id = s.productId GROUP BY p.id, p.name, p.prefecture HAVING seller_count > 0 LIMIT 5;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2xzt5HQKEQX5mEg.fe2b3777904e --database aXrCUMBv7Ngvrxv9W3BQsf --execute SELECT p.id, p.name, p.prefecture, COUNT(s.id) as seller_count FROM products p LEFT JOIN sellers s ON p.id = s.productId GROUP BY p.id, p.name, p.prefecture HAVING seller_count > 0 LIMIT 5;",
+  "rows": [
+    {
+      "id": "p-akita-027",
+      "name": "角館武家屋敷まんじゅう",
+      "prefecture": "秋田県",
+      "seller_count": "2"
+    },
+    {
+      "id": "prod-1772582509074-bsd9e30x5",
+      "name": "秋田の郷土料理「だまこ餅」",
+      "prefecture": "秋田県",
+      "seller_count": "2"
+    },
+    {
+      "id": "p-okayama-018",
+      "name": "津山ホルモンうどん",
+      "prefecture": "岡山県",
+      "seller_count": "2"
+    },
+    {
+      "id": "product-1772343770284-x3v9ctufh",
+      "name": "N.Y.キャラメルサンド",
+      "prefecture": "東京都",
+      "seller_count": "1"
+    },
+    {
+      "id": "product-1771846609545-294a1x69j",
+      "name": "長崎カステラ（0番）",
+      "prefecture": "長崎県",
+      "seller_count": "2"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tname\tprefecture\tseller_count\np-akita-027\t角館武家屋敷まんじゅう\t秋田県\t2\nprod-1772582509074-bsd9e30x5\t秋田の郷土料理「だまこ餅」\t秋田県\t2\np-okayama-018\t津山ホルモンうどん\t岡山県\t2\nproduct-1772343770284-x3v9ctufh\tN.Y.キャラメルサンド\t東京都\t1\nproduct-1771846609545-294a1x69j\t長崎カステラ（0番）\t長崎県\t2\n",
+  "stderr": "",
+  "execution_time_ms": 1548
+}

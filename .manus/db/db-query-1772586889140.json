@@ -1,0 +1,360 @@
+{
+  "query": "SELECT id, name, brand, prefecture, category FROM products ORDER BY prefecture LIMIT 50;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2xzt5HQKEQX5mEg.fe2b3777904e --database aXrCUMBv7Ngvrxv9W3BQsf --execute SELECT id, name, brand, prefecture, category FROM products ORDER BY prefecture LIMIT 50;",
+  "rows": [
+    {
+      "id": "p-mie-010",
+      "name": "絲印煎餅",
+      "brand": "播田屋",
+      "prefecture": "三重県",
+      "category": "煎餅・おかき"
+    },
+    {
+      "id": "p-mie-007",
+      "name": "安永餅",
+      "brand": "永餅屋老舗",
+      "prefecture": "三重県",
+      "category": "和菓子"
+    },
+    {
+      "id": "p-mie-024",
+      "name": "かたやき",
+      "brand": "",
+      "prefecture": "三重県",
+      "category": "煎餅・おかき"
+    },
+    {
+      "id": "p-mie-025",
+      "name": "レモンケーキ",
+      "brand": "サンキューヤ",
+      "prefecture": "三重県",
+      "category": "洋菓子"
+    },
+    {
+      "id": "p-mie-027",
+      "name": "三重県限定 伊勢の大海老棒",
+      "brand": "",
+      "prefecture": "三重県",
+      "category": "海産物"
+    },
+    {
+      "id": "p-mie-030",
+      "name": "伊勢抹茶カステラ",
+      "brand": "",
+      "prefecture": "三重県",
+      "category": "洋菓子"
+    },
+    {
+      "id": "p-mie-013",
+      "name": "伊勢海老あられ",
+      "brand": "とだや",
+      "prefecture": "三重県",
+      "category": "煎餅・おかき"
+    },
+    {
+      "id": "p-mie-026",
+      "name": "三重限定 松阪牛ステーキ棒",
+      "brand": "",
+      "prefecture": "三重県",
+      "category": "肉製品"
+    },
+    {
+      "id": "p-mie-015",
+      "name": "お福餅",
+      "brand": "お福餅本家",
+      "prefecture": "三重県",
+      "category": "和菓子"
+    },
+    {
+      "id": "p-mie-016",
+      "name": "サメのたれ",
+      "brand": "魚春",
+      "prefecture": "三重県",
+      "category": "海産物"
+    },
+    {
+      "id": "p-mie-001",
+      "name": "赤福餅",
+      "brand": "赤福",
+      "prefecture": "三重県",
+      "category": "和菓子"
+    },
+    {
+      "id": "p-mie-009",
+      "name": "山村ぷりん",
+      "brand": "山村乳業",
+      "prefecture": "三重県",
+      "category": "洋菓子"
+    },
+    {
+      "id": "p-mie-022",
+      "name": "へこきまんじゅう",
+      "brand": "たまきや",
+      "prefecture": "三重県",
+      "category": "和菓子"
+    },
+    {
+      "id": "p-mie-019",
+      "name": "伊勢たま白粉",
+      "brand": "伊勢美人本舗",
+      "prefecture": "三重県",
+      "category": "工芸品・雑貨"
+    },
+    {
+      "id": "p-mie-003",
+      "name": "伊勢うどん",
+      "brand": "",
+      "prefecture": "三重県",
+      "category": "麺類"
+    },
+    {
+      "id": "p-mie-002",
+      "name": "松阪牛しぐれ煮",
+      "brand": "松阪まるよし",
+      "prefecture": "三重県",
+      "category": "肉製品"
+    },
+    {
+      "id": "p-003",
+      "name": "赤福餅",
+      "brand": "赤福",
+      "prefecture": "三重県",
+      "category": "和菓子"
+    },
+    {
+      "id": "p-mie-004",
+      "name": "シェル・レーヌ",
+      "brand": "ブランカ",
+      "prefecture": "三重県",
+      "category": "焼き菓子"
+    },
+    {
+      "id": "p-mie-008",
+      "name": "生ういろ",
+      "brand": "虎屋ういろ",
+      "prefecture": "三重県",
+      "category": "和菓子"
+    },
+    {
+      "id": "p-mie-028",
+      "name": "伊勢志摩限定 クレヨンしんちゃんせんべい イセエビ味",
+      "brand": "",
+      "prefecture": "三重県",
+      "category": "煎餅・おかき"
+    },
+    {
+      "id": "p-mie-014",
+      "name": "関の戸",
+      "brand": "深川屋",
+      "prefecture": "三重県",
+      "category": "和菓子"
+    },
+    {
+      "id": "p-mie-029",
+      "name": "三重県限定販売 伊勢のカリーなおかき",
+      "brand": "",
+      "prefecture": "三重県",
+      "category": "煎餅・おかき"
+    },
+    {
+      "id": "p-mie-005",
+      "name": "へんば餅",
+      "brand": "へんばや商店",
+      "prefecture": "三重県",
+      "category": "和菓子"
+    },
+    {
+      "id": "p-mie-023",
+      "name": "アイスまんじゅう",
+      "brand": "寿恵広",
+      "prefecture": "三重県",
+      "category": "その他"
+    },
+    {
+      "id": "p-mie-006",
+      "name": "なが餅",
+      "brand": "なが餅笹井屋",
+      "prefecture": "三重県",
+      "category": "和菓子"
+    },
+    {
+      "id": "p-mie-012",
+      "name": "ピケエイト",
+      "brand": "マスヤ",
+      "prefecture": "三重県",
+      "category": "煎餅・おかき"
+    },
+    {
+      "id": "p-mie-021",
+      "name": "松阪木綿ポーチ",
+      "brand": "もめん屋藍",
+      "prefecture": "三重県",
+      "category": "伝統工芸"
+    },
+    {
+      "id": "p-mie-020",
+      "name": "おかげ犬ぬいぐるみ",
+      "brand": "おかげ横丁土産物店",
+      "prefecture": "三重県",
+      "category": "工芸品・雑貨"
+    },
+    {
+      "id": "p-mie-018",
+      "name": "あおさのり",
+      "brand": "伊勢萬",
+      "prefecture": "三重県",
+      "category": "海産物"
+    },
+    {
+      "id": "p-mie-017",
+      "name": "牡蠣のオリーブオイル漬け燻製",
+      "brand": "海道工房 魚虎",
+      "prefecture": "三重県",
+      "category": "海産物"
+    },
+    {
+      "id": "p-mie-011",
+      "name": "伊勢おいないサンド",
+      "brand": "伊勢たからや",
+      "prefecture": "三重県",
+      "category": "焼き菓子"
+    },
+    {
+      "id": "p-kyoto-030",
+      "name": "宇治抹茶スイーツアソート",
+      "brand": "中村藤吉本店",
+      "prefecture": "京都府",
+      "category": "和菓子"
+    },
+    {
+      "id": "p-kyoto-010",
+      "name": "井筒八ッ橋",
+      "brand": "井筒八ッ橋本舗",
+      "prefecture": "京都府",
+      "category": "煎餅・おかき"
+    },
+    {
+      "id": "p-kyoto-027",
+      "name": "スティックショコラ",
+      "brand": "ベルアメール京都別邸",
+      "prefecture": "京都府",
+      "category": "洋菓子"
+    },
+    {
+      "id": "p-kyoto-029",
+      "name": "おたべ手作り体験キット",
+      "brand": "京都銘菓おたべ",
+      "prefecture": "京都府",
+      "category": "和菓子"
+    },
+    {
+      "id": "p-kyoto-028",
+      "name": "マルチ市松のがま口",
+      "brand": "カランコロン京都",
+      "prefecture": "京都府",
+      "category": "工芸品・雑貨"
+    },
+    {
+      "id": "p-kyoto-002",
+      "name": "阿闍梨餅",
+      "brand": "京菓子司満月",
+      "prefecture": "京都府",
+      "category": "和菓子"
+    },
+    {
+      "id": "p-kyoto-006",
+      "name": "京漬物",
+      "brand": "西利",
+      "prefecture": "京都府",
+      "category": "その他"
+    },
+    {
+      "id": "p-kyoto-001",
+      "name": "生八つ橋",
+      "brand": "京都銘菓おたべ",
+      "prefecture": "京都府",
+      "category": "和菓子"
+    },
+    {
+      "id": "p-kyoto-007",
+      "name": "生茶ゼリイ",
+      "brand": "中村藤吉本店",
+      "prefecture": "京都府",
+      "category": "和菓子"
+    },
+    {
+      "id": "p-kyoto-009",
+      "name": "つじりの里",
+      "brand": "祇園辻利",
+      "prefecture": "京都府",
+      "category": "焼き菓子"
+    },
+    {
+      "id": "p-017",
+      "name": "宇治抹茶スイーツ 詰合せ",
+      "brand": "祇園辻利",
+      "prefecture": "京都府",
+      "category": "スイーツ"
+    },
+    {
+      "id": "p-kyoto-020",
+      "name": "みたらし団子",
+      "brand": "み MITARASHI DANGO by kolme kyoto",
+      "prefecture": "京都府",
+      "category": "和菓子"
+    },
+    {
+      "id": "p-kyoto-008",
+      "name": "果朋だんご",
+      "brand": "果朋",
+      "prefecture": "京都府",
+      "category": "和菓子"
+    },
+    {
+      "id": "p-kyoto-005",
+      "name": "プレミアム千寿せんべい",
+      "brand": "鼓月",
+      "prefecture": "京都府",
+      "category": "煎餅・おかき"
+    },
+    {
+      "id": "p-kyoto-024",
+      "name": "あぶらとり紙",
+      "brand": "よーじや",
+      "prefecture": "京都府",
+      "category": "その他"
+    },
+    {
+      "id": "p-kyoto-023",
+      "name": "マスキングテープ",
+      "brand": "SOU・SOU",
+      "prefecture": "京都府",
+      "category": "工芸品・雑貨"
+    },
+    {
+      "id": "p-kyoto-003",
+      "name": "お濃茶ラングドシャ 茶の菓",
+      "brand": "京都北山マールブランシュ",
+      "prefecture": "京都府",
+      "category": "洋菓子"
+    },
+    {
+      "id": "p-kyoto-004",
+      "name": "京ばあむ",
+      "brand": "京ばあむ",
+      "prefecture": "京都府",
+      "category": "焼き菓子"
+    },
+    {
+      "id": "p-kyoto-022",
+      "name": "にほひ袋",
+      "brand": "石黒香舗",
+      "prefecture": "京都府",
+      "category": "工芸品・雑貨"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tname\tbrand\tprefecture\tcategory\np-mie-010\t絲印煎餅\t播田屋\t三重県\t煎餅・おかき\np-mie-007\t安永餅\t永餅屋老舗\t三重県\t和菓子\np-mie-024\tかたやき\t\t三重県\t煎餅・おかき\np-mie-025\tレモンケーキ\tサンキューヤ\t三重県\t洋菓子\np-mie-027\t三重県限定 伊勢の大海老棒\t\t三重県\t海産物\np-mie-030\t伊勢抹茶カステラ\t\t三重県\t洋菓子\np-mie-013\t伊勢海老あられ\tとだや\t三重県\t煎餅・おかき\np-mie-026\t三重限定 松阪牛ステーキ棒\t\t三重県\t肉製品\np-mie-015\tお福餅\tお福餅本家\t三重県\t和菓子\np-mie-016\tサメのたれ\t魚春\t三重県\t海産物\np-mie-001\t赤福餅\t赤福\t三重県\t和菓子\np-mie-009\t山村ぷりん\t山村乳業\t三重県\t洋菓子\np-mie-022\tへこきまんじゅう\tたまきや\t三重県\t和菓子\np-mie-019\t伊勢たま白粉\t伊勢美人本舗\t三重県\t工芸品・雑貨\np-mie-003\t伊勢うどん\t\t三重県\t麺類\np-mie-002\t松阪牛しぐれ煮\t松阪まるよし\t三重県\t肉製品\np-003\t赤福餅\t赤福\t三重県\t和菓子\np-mie-004\tシェル・レーヌ\tブランカ\t三重県\t焼き菓子\np-mie-008\t生ういろ\t虎屋ういろ\t三重県\t和菓子\np-mie-028\t伊勢志摩限定 クレヨンしんちゃんせんべい イセエビ味\t\t三重県\t煎餅・おかき\np-mie-014\t関の戸\t深川屋\t三重県\t和菓子\np-mie-029\t三重県限定販売 伊勢のカリーなおかき\t\t三重県\t煎餅・おかき\np-mie-005\tへんば餅\tへんばや商店\t三重県\t和菓子\np-mie-023\tアイスまんじゅう\t寿恵広\t三重県\tその他\np-mie-006\tなが餅\tなが餅笹井屋\t三重県\t和菓子\np-mie-012\tピケエイト\tマスヤ\t三重県\t煎餅・おかき\np-mie-021\t松阪木綿ポーチ\tもめん屋藍\t三重県\t伝統工芸\np-mie-020\tおかげ犬ぬいぐるみ\tおかげ横丁土産物店\t三重県\t工芸品・雑貨\np-mie-018\tあおさのり\t伊勢萬\t三重県\t海産物\np-mie-017\t牡蠣のオリーブオイル漬け燻製\t海道工房 魚虎\t三重県\t海産物\np-mie-011\t伊勢おいないサンド\t伊勢たからや\t三重県\t焼き菓子\np-kyoto-030\t宇治抹茶スイーツアソート\t中村藤吉本店\t京都府\t和菓子\np-kyoto-010\t井筒八ッ橋\t井筒八ッ橋本舗\t京都府\t煎餅・おかき\np-kyoto-027\tスティックショコラ\tベルアメール京都別邸\t京都府\t洋菓子\np-kyoto-029\tおたべ手作り体験キット\t京都銘菓おたべ\t京都府\t和菓子\np-kyoto-028\tマルチ市松のがま口\tカランコロン京都\t京都府\t工芸品・雑貨\np-kyoto-002\t阿闍梨餅\t京菓子司満月\t京都府\t和菓子\np-kyoto-006\t京漬物\t西利\t京都府\tその他\np-kyoto-001\t生八つ橋\t京都銘菓おたべ\t京都府\t和菓子\np-kyoto-007\t生茶ゼリイ\t中村藤吉本店\t京都府\t和菓子\np-kyoto-009\tつじりの里\t祇園辻利\t京都府\t焼き菓子\np-017\t宇治抹茶スイーツ 詰合せ\t祇園辻利\t京都府\tスイーツ\np-kyoto-020\tみたらし団子\tみ MITARASHI DANGO by kolme kyoto\t京都府\t和菓子\np-kyoto-008\t果朋だんご\t果朋\t京都府\t和菓子\np-kyoto-005\tプレミアム千寿せんべい\t鼓月\t京都府\t煎餅・おかき\np-kyoto-024\tあぶらとり紙\tよーじや\t京都府\tその他\np-kyoto-023\tマスキングテープ\tSOU・SOU\t京都府\t工芸品・雑貨\np-kyoto-003\tお濃茶ラングドシャ 茶の菓\t京都北山マールブランシュ\t京都府\t洋菓子\np-kyoto-004\t京ばあむ\t京ばあむ\t京都府\t焼き菓子\np-kyoto-022\tにほひ袋\t石黒香舗\t京都府\t工芸品・雑貨\n",
+  "stderr": "",
+  "execution_time_ms": 1519
+}

@@ -1,0 +1,37 @@
+{
+  "query": "SELECT COUNT(*) as total_sellers FROM sellers; SELECT COUNT(DISTINCT productId) as products_with_sellers FROM sellers; SELECT s.storeName, s.facilityId, s.floor, p.name as product_name, p.prefecture FROM sellers s JOIN products p ON s.productId = p.id LIMIT 5;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2xzt5HQKEQX5mEg.fe2b3777904e --database aXrCUMBv7Ngvrxv9W3BQsf --execute SELECT COUNT(*) as total_sellers FROM sellers; SELECT COUNT(DISTINCT productId) as products_with_sellers FROM sellers; SELECT s.storeName, s.facilityId, s.floor, p.name as product_name, p.prefecture FROM sellers s JOIN products p ON s.productId = p.id LIMIT 5;",
+  "rows": [
+    {
+      "total_sellers": "2735"
+    },
+    {
+      "total_sellers": "products_with_sellers"
+    },
+    {
+      "total_sellers": "1370"
+    },
+    {
+      "total_sellers": "storeName\tfacilityId\tfloor\tproduct_name\tprefecture"
+    },
+    {
+      "total_sellers": "グランスタ東京\ttokyo_station\t改札内\t萩の月\t宮城県"
+    },
+    {
+      "total_sellers": "仙台銘品館\tsendai_station\t改札内\t萩の月\t宮城県"
+    },
+    {
+      "total_sellers": "エスパル仙台\tsendai_station\tB1F\t萩の月\t宮城県"
+    },
+    {
+      "total_sellers": "仙台銘品館\tsendai_station\t改札内\tプレミアム牛たん 詰合せ\t宮城県"
+    },
+    {
+      "total_sellers": "エスパル仙台\tsendai_station\tB1F\tプレミアム牛たん 詰合せ\t宮城県"
+    }
+  ],
+  "messages": [],
+  "stdout": "total_sellers\n2735\nproducts_with_sellers\n1370\nstoreName\tfacilityId\tfloor\tproduct_name\tprefecture\nグランスタ東京\ttokyo_station\t改札内\t萩の月\t宮城県\n仙台銘品館\tsendai_station\t改札内\t萩の月\t宮城県\nエスパル仙台\tsendai_station\tB1F\t萩の月\t宮城県\n仙台銘品館\tsendai_station\t改札内\tプレミアム牛たん 詰合せ\t宮城県\nエスパル仙台\tsendai_station\tB1F\tプレミアム牛たん 詰合せ\t宮城県\n",
+  "stderr": "",
+  "execution_time_ms": 2129
+}
