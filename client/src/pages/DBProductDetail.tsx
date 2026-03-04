@@ -9,7 +9,7 @@ import { trpc } from "@/lib/trpc";
 import {
   ArrowLeft, Package, MapPin, Clock, Tag, Star,
   ShoppingBag, Gift, ChevronRight, Loader2, AlertCircle,
-  CheckCircle2, Store, Building2
+  CheckCircle2, Store, Building2, ExternalLink
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -246,7 +246,11 @@ export default function DBProductDetail() {
             </h2>
             <div className="space-y-2">
               {sellers.map((seller) => (
-                <div key={seller.id} className="bg-stone-50 rounded-xl p-3">
+                <button
+                  key={seller.id}
+                  onClick={() => navigate(`/seller/${seller.id}`)}
+                  className="w-full bg-stone-50 rounded-xl p-3 hover:bg-emerald-50 hover:border-emerald-200 border border-transparent transition-all text-left"
+                >
                   <div className="flex items-start justify-between gap-2">
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-bold text-stone-900">{seller.storeName}</p>
@@ -281,9 +285,10 @@ export default function DBProductDetail() {
                           在庫なし
                         </span>
                       )}
+                      <ChevronRight className="w-3.5 h-3.5 text-stone-400 mt-0.5" />
                     </div>
                   </div>
-                </div>
+                </button>
               ))}
             </div>
           </div>
@@ -297,6 +302,17 @@ export default function DBProductDetail() {
               メーカーについて
             </h2>
             <p className="text-sm text-stone-600 leading-relaxed">{product.makerStory}</p>
+            {product.brandUrl && (
+              <a
+                href={product.brandUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-3 flex items-center gap-2 w-full px-4 py-2.5 bg-emerald-700 text-white text-sm font-bold rounded-xl hover:bg-emerald-800 transition-colors justify-center"
+              >
+                <ExternalLink className="w-4 h-4" />
+                公式サイトを見る
+              </a>
+            )}
           </div>
         )}
 

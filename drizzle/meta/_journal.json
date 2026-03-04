@@ -15,6 +15,13 @@
       "when": 1771844886304,
       "tag": "0001_lame_stone_men",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1772592573857,
+      "tag": "0002_classy_taskmaster",
+      "breakpoints": true
     }
   ]
 }

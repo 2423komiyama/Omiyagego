@@ -66,6 +66,7 @@ export const products = mysqlTable("products", {
   servingSize: int("servingSize"), // 内容量（個数）
   guaranteeReason: text("guaranteeReason"), // 保証理由（JSON配列として保存）
   makerStory: text("makerStory"), // 作り手ストーリー
+  brandUrl: text("brandUrl"), // メーカー公式サイトURL
   badges: varchar("badges", { length: 256 }), // バッジ（JSON配列：editorial, bestseller等）
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),

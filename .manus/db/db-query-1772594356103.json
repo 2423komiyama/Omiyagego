@@ -1,0 +1,46 @@
+{
+  "query": "SELECT id, productId, facilityId, storeName, floor, location, insideGate, businessHours, congestionLevel, stockStatus FROM sellers LIMIT 3;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2xzt5HQKEQX5mEg.fe2b3777904e --database aXrCUMBv7Ngvrxv9W3BQsf --execute SELECT id, productId, facilityId, storeName, floor, location, insideGate, businessHours, congestionLevel, stockStatus FROM sellers LIMIT 3;",
+  "rows": [
+    {
+      "id": "smmbdb1gm0000j680ls",
+      "productId": "p-hokkaido-726",
+      "facilityId": "shin_chitose_airport",
+      "storeName": "スイーツ・アベニュー",
+      "floor": "2F",
+      "location": "新千歳空港",
+      "insideGate": "0",
+      "businessHours": "NULL",
+      "congestionLevel": "medium",
+      "stockStatus": "in_stock"
+    },
+    {
+      "id": "smmbdb1gm0001h1d4fw",
+      "productId": "p-hokkaido-726",
+      "facilityId": "shin_chitose_airport",
+      "storeName": "どさんこ産直市場",
+      "floor": "2F",
+      "location": "新千歳空港",
+      "insideGate": "0",
+      "businessHours": "NULL",
+      "congestionLevel": "medium",
+      "stockStatus": "in_stock"
+    },
+    {
+      "id": "smmbdb1gm0002qmm4hr",
+      "productId": "p-hokkaido-866",
+      "facilityId": "shin_chitose_airport",
+      "storeName": "スイーツ・アベニュー",
+      "floor": "2F",
+      "location": "新千歳空港",
+      "insideGate": "0",
+      "businessHours": "NULL",
+      "congestionLevel": "medium",
+      "stockStatus": "in_stock"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tproductId\tfacilityId\tstoreName\tfloor\tlocation\tinsideGate\tbusinessHours\tcongestionLevel\tstockStatus\nsmmbdb1gm0000j680ls\tp-hokkaido-726\tshin_chitose_airport\tスイーツ・アベニュー\t2F\t新千歳空港\t0\tNULL\tmedium\tin_stock\nsmmbdb1gm0001h1d4fw\tp-hokkaido-726\tshin_chitose_airport\tどさんこ産直市場\t2F\t新千歳空港\t0\tNULL\tmedium\tin_stock\nsmmbdb1gm0002qmm4hr\tp-hokkaido-866\tshin_chitose_airport\tスイーツ・アベニュー\t2F\t新千歳空港\t0\tNULL\tmedium\tin_stock\n",
+  "stderr": "",
+  "execution_time_ms": 1604
+}

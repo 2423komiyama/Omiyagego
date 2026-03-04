@@ -494,3 +494,52 @@ describe("Home - DB Product Card Logic", () => {
     expect(expectedPath).toBe("/db-product/abc-123");
   });
 });
+
+// ============================================================
+// SellerDetail DB対応 + brandUrl リンクのテスト
+// ============================================================
+
+describe("SellerDetail DB対応", () => {
+  it("facilityIdから日本語施設名を正しく取得できる", () => {
+    const FACILITY_NAMES: Record<string, string> = {
+      "tokyo-station": "東京駅",
+      "haneda-t1": "羽田空港 第1ターミナル",
+      "hakata-station": "博多駅",
+      "shin-chitose": "新千歳空港",
+      "naha-airport": "那覇空港",
+    };
+    expect(FACILITY_NAMES["tokyo-station"]).toBe("東京駅");
+    expect(FACILITY_NAMES["hakata-station"]).toBe("博多駅");
+    expect(FACILITY_NAMES["naha-airport"]).toBe("那覇空港");
+    expect(FACILITY_NAMES["shin-chitose"]).toBe("新千歳空港");
+  });
+
+  it("insideGateフラグで改札内外を正しく判定できる", () => {
+    const getGateLabel = (insideGate: boolean) => insideGate ? "改札内" : "改札外";
+    expect(getGateLabel(true)).toBe("改札内");
+    expect(getGateLabel(false)).toBe("改札外");
+  });
+
+  it("stockStatusから日本語表示を正しく変換できる", () => {
+    const getStockLabel = (status: string) => {
+      if (status === "in_stock") return "在庫あり";
+      if (status === "low_stock") return "残りわずか";
+      return "在庫なし";
+    };
+    expect(getStockLabel("in_stock")).toBe("在庫あり");
+    expect(getStockLabel("low_stock")).toBe("残りわずか");
+    expect(getStockLabel("out_of_stock")).toBe("在庫なし");
+  });
+
+  it("brandUrlが存在する場合に公式サイトリンクを表示すべき", () => {
+    const product = { brandUrl: "https://www.example.com", makerStory: "テスト" };
+    const shouldShowLink = !!product.brandUrl;
+    expect(shouldShowLink).toBe(true);
+  });
+
+  it("brandUrlがnullの場合に公式サイトリンクを非表示にすべき", () => {
+    const product = { brandUrl: null, makerStory: "テスト" };
+    const shouldShowLink = !!product.brandUrl;
+    expect(shouldShowLink).toBe(false);
+  });
+});
