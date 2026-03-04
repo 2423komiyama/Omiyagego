@@ -1,0 +1,34 @@
+{
+  "query": "SELECT COUNT(*) as niche_count FROM products WHERE badges LIKE '%niche%'; SELECT prefecture, COUNT(*) as cnt FROM products WHERE badges LIKE '%niche%' GROUP BY prefecture ORDER BY cnt DESC LIMIT 15;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2xzt5HQKEQX5mEg.fe2b3777904e --database aXrCUMBv7Ngvrxv9W3BQsf --execute SELECT COUNT(*) as niche_count FROM products WHERE badges LIKE '%niche%'; SELECT prefecture, COUNT(*) as cnt FROM products WHERE badges LIKE '%niche%' GROUP BY prefecture ORDER BY cnt DESC LIMIT 15;",
+  "rows": [
+    {
+      "niche_count": "66"
+    },
+    {
+      "niche_count": "prefecture\tcnt"
+    },
+    {
+      "niche_count": "宮崎県\t13"
+    },
+    {
+      "niche_count": "山形県\t12"
+    },
+    {
+      "niche_count": "愛知県\t11"
+    },
+    {
+      "niche_count": "秋田県\t11"
+    },
+    {
+      "niche_count": "沖縄県\t10"
+    },
+    {
+      "niche_count": "佐賀県\t9"
+    }
+  ],
+  "messages": [],
+  "stdout": "niche_count\n66\nprefecture\tcnt\n宮崎県\t13\n山形県\t12\n愛知県\t11\n秋田県\t11\n沖縄県\t10\n佐賀県\t9\n",
+  "stderr": "",
+  "execution_time_ms": 1815
+}

@@ -74,3 +74,9 @@
 - [x] 残り7県（沖縄・愛知・秋田・山形・岩手・宮崎・佐賀）のデータをLLMで生成しDBに登録（328件追加、合計1,549件）
 - [x] 商品詳細ページをDBデータに対応（DBProductDetail.tsx新規作成、/db-product/:idルート追加）
 - [x] チェックポイント保存・公開準備
+
+## 追加作業（2026-03-04）
+- [x] DB検索で新規登録商品が表示されないバグを修正（公開サイトで正常表示されていたことを確認）
+- [x] 商品画像：Unsplashカテゴリ別フォールバック画像をDBProductDetail・NichePageに設定
+- [x] 売り場データの充実（getSellersByProductIdをrouters.tsのproducts.getに結合、DBProductDetailに「今買える場所」セクション追加）
+- [x] ニッチ土産特集ページ（/niche）の新規作成（NichePage.tsx、ホームバナー、地方タブ、グリッド表示）

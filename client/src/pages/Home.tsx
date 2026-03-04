@@ -7,7 +7,7 @@ import { useState, useEffect, useCallback } from "react";
 import { useLocation } from "wouter";
 import {
   Search, MapPin, ChevronRight, WifiOff, Clock, RotateCcw, Eye, X,
-  Navigation, Loader2, AlertCircle, CheckCircle2
+  Navigation, Loader2, AlertCircle, CheckCircle2, Sparkles
 } from "lucide-react";
 import { AppLayout } from "@/components/omiyage/AppLayout";
 import { ProductCard } from "@/components/omiyage/ProductCard";
@@ -348,6 +348,30 @@ export default function Home() {
             ))}
           </div>
         </div>
+
+        {/* ── ニッチ土産特集バナー ── */}
+        <button
+          onClick={() => navigate("/niche")}
+          className="w-full relative overflow-hidden rounded-2xl bg-gradient-to-r from-orange-500 to-amber-400 p-4 text-left hover:opacity-95 active:scale-[0.98] transition-all"
+        >
+          <div className="absolute top-0 right-0 w-24 h-24 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2" />
+          <div className="relative z-10">
+            <div className="flex items-center gap-2 mb-1">
+              <div className="w-6 h-6 bg-white/20 rounded-lg flex items-center justify-center">
+                <Sparkles className="w-3.5 h-3.5 text-white" />
+              </div>
+              <span className="text-white/80 text-[10px] font-bold uppercase tracking-widest">Niche Picks</span>
+            </div>
+            <p className="text-white font-black text-base leading-tight mb-0.5">
+              知る人ぞ知る<br />ニッチなお土産
+            </p>
+            <p className="text-white/75 text-xs">地元で愛される隠れた逸品を特集</p>
+          </div>
+          <div className="absolute right-4 bottom-4 flex items-center gap-1 text-white/80">
+            <span className="text-xs font-bold">特集を見る</span>
+            <ChevronRight className="w-3.5 h-3.5" />
+          </div>
+        </button>
 
         {/* ── 全国のお土産ピックアップ ── */}
         <div>

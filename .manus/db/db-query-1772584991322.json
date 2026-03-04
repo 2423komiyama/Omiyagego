@@ -1,0 +1,13 @@
+{
+  "query": "SELECT COUNT(*) as niche_count FROM products WHERE badges LIKE '%niche%'",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2xzt5HQKEQX5mEg.fe2b3777904e --database aXrCUMBv7Ngvrxv9W3BQsf --execute SELECT COUNT(*) as niche_count FROM products WHERE badges LIKE '%niche%'",
+  "rows": [
+    {
+      "niche_count": "66"
+    }
+  ],
+  "messages": [],
+  "stdout": "niche_count\n66\n",
+  "stderr": "",
+  "execution_time_ms": 1588
+}

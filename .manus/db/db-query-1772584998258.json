@@ -1,0 +1,70 @@
+{
+  "query": "SELECT id, name, prefecture, badges FROM products WHERE badges LIKE '%niche%' LIMIT 10",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2xzt5HQKEQX5mEg.fe2b3777904e --database aXrCUMBv7Ngvrxv9W3BQsf --execute SELECT id, name, prefecture, badges FROM products WHERE badges LIKE '%niche%' LIMIT 10",
+  "rows": [
+    {
+      "id": "prod-1772582479274-jkqn71c02",
+      "name": "琉球ガラス グラス",
+      "prefecture": "沖縄県",
+      "badges": "[\"regional\",\"niche\"]"
+    },
+    {
+      "id": "prod-1772582479507-oonsr1swq",
+      "name": "島とうがらし",
+      "prefecture": "沖縄県",
+      "badges": "[\"regional\",\"niche\"]"
+    },
+    {
+      "id": "prod-1772582479737-imbwytvn8",
+      "name": "ジーマーミ豆腐",
+      "prefecture": "沖縄県",
+      "badges": "[\"regional\",\"niche\"]"
+    },
+    {
+      "id": "prod-1772582479965-sixhgvpft",
+      "name": "ミミガーチップス",
+      "prefecture": "沖縄県",
+      "badges": "[\"regional\",\"niche\"]"
+    },
+    {
+      "id": "prod-1772582481333-izkzb8x45",
+      "name": "沖縄限定 ポテトチップス タコライス味",
+      "prefecture": "沖縄県",
+      "badges": "[\"limited\",\"niche\"]"
+    },
+    {
+      "id": "prod-1772582481560-kyqj9h9yf",
+      "name": "泡盛コーヒー",
+      "prefecture": "沖縄県",
+      "badges": "[\"niche\",\"new\"]"
+    },
+    {
+      "id": "prod-1772582481788-bfsdz4d1y",
+      "name": "やちむん マグカップ",
+      "prefecture": "沖縄県",
+      "badges": "[\"regional\",\"niche\"]"
+    },
+    {
+      "id": "prod-1772582482015-p275gmo8z",
+      "name": "月桃茶",
+      "prefecture": "沖縄県",
+      "badges": "[\"regional\",\"niche\"]"
+    },
+    {
+      "id": "prod-1772582482248-0y3c7p8w3",
+      "name": "ハブ酒",
+      "prefecture": "沖縄県",
+      "badges": "[\"regional\",\"niche\"]"
+    },
+    {
+      "id": "prod-1772582491171-kk1f2onlw",
+      "name": "沖縄限定 タコライス缶詰",
+      "prefecture": "沖縄県",
+      "badges": "[\"regional\",\"niche\"]"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tname\tprefecture\tbadges\nprod-1772582479274-jkqn71c02\t琉球ガラス グラス\t沖縄県\t[\"regional\",\"niche\"]\nprod-1772582479507-oonsr1swq\t島とうがらし\t沖縄県\t[\"regional\",\"niche\"]\nprod-1772582479737-imbwytvn8\tジーマーミ豆腐\t沖縄県\t[\"regional\",\"niche\"]\nprod-1772582479965-sixhgvpft\tミミガーチップス\t沖縄県\t[\"regional\",\"niche\"]\nprod-1772582481333-izkzb8x45\t沖縄限定 ポテトチップス タコライス味\t沖縄県\t[\"limited\",\"niche\"]\nprod-1772582481560-kyqj9h9yf\t泡盛コーヒー\t沖縄県\t[\"niche\",\"new\"]\nprod-1772582481788-bfsdz4d1y\tやちむん マグカップ\t沖縄県\t[\"regional\",\"niche\"]\nprod-1772582482015-p275gmo8z\t月桃茶\t沖縄県\t[\"regional\",\"niche\"]\nprod-1772582482248-0y3c7p8w3\tハブ酒\t沖縄県\t[\"regional\",\"niche\"]\nprod-1772582491171-kk1f2onlw\t沖縄限定 タコライス缶詰\t沖縄県\t[\"regional\",\"niche\"]\n",
+  "stderr": "",
+  "execution_time_ms": 1513
+}

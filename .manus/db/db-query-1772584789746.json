@@ -1,0 +1,145 @@
+{
+  "query": "SELECT COUNT(*) as total FROM products; SELECT COUNT(*) as no_image FROM products WHERE imageUrl IS NULL OR imageUrl = ''; SELECT prefecture, COUNT(*) as total, SUM(CASE WHEN imageUrl IS NULL OR imageUrl = '' THEN 1 ELSE 0 END) as no_image FROM products GROUP BY prefecture ORDER BY prefecture;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2xzt5HQKEQX5mEg.fe2b3777904e --database aXrCUMBv7Ngvrxv9W3BQsf --execute SELECT COUNT(*) as total FROM products; SELECT COUNT(*) as no_image FROM products WHERE imageUrl IS NULL OR imageUrl = ''; SELECT prefecture, COUNT(*) as total, SUM(CASE WHEN imageUrl IS NULL OR imageUrl = '' THEN 1 ELSE 0 END) as no_image FROM products GROUP BY prefecture ORDER BY prefecture;",
+  "rows": [
+    {
+      "total": "1549"
+    },
+    {
+      "total": "no_image"
+    },
+    {
+      "total": "1229"
+    },
+    {
+      "total": "prefecture\ttotal\tno_image"
+    },
+    {
+      "total": "三重県\t31\t31"
+    },
+    {
+      "total": "京都府\t50\t31"
+    },
+    {
+      "total": "佐賀県\t58\t58"
+    },
+    {
+      "total": "兵庫県\t1\t1"
+    },
+    {
+      "total": "北海道\t50\t35"
+    },
+    {
+      "total": "千葉県\t30\t30"
+    },
+    {
+      "total": "和歌山県\t30\t30"
+    },
+    {
+      "total": "埼玉県\t1\t1"
+    },
+    {
+      "total": "大阪府\t42\t30"
+    },
+    {
+      "total": "奈良県\t35\t30"
+    },
+    {
+      "total": "宮城県\t10\t3"
+    },
+    {
+      "total": "宮崎県\t30\t30"
+    },
+    {
+      "total": "山口県\t30\t30"
+    },
+    {
+      "total": "山形県\t74\t74"
+    },
+    {
+      "total": "山梨県\t41\t41"
+    },
+    {
+      "total": "岡山県\t30\t30"
+    },
+    {
+      "total": "岩手県\t52\t50"
+    },
+    {
+      "total": "島根県\t31\t31"
+    },
+    {
+      "total": "広島県\t36\t31"
+    },
+    {
+      "total": "愛媛県\t31\t31"
+    },
+    {
+      "total": "愛知県\t56\t46"
+    },
+    {
+      "total": "新潟県\t1\t1"
+    },
+    {
+      "total": "東京都\t225\t35"
+    },
+    {
+      "total": "栃木県\t1\t1"
+    },
+    {
+      "total": "沖縄県\t71\t61"
+    },
+    {
+      "total": "滋賀県\t31\t31"
+    },
+    {
+      "total": "熊本県\t35\t30"
+    },
+    {
+      "total": "石川県\t42\t32"
+    },
+    {
+      "total": "神奈川県\t34\t34"
+    },
+    {
+      "total": "福井県\t30\t30"
+    },
+    {
+      "total": "福岡県\t45\t35"
+    },
+    {
+      "total": "福島県\t1\t1"
+    },
+    {
+      "total": "秋田県\t74\t74"
+    },
+    {
+      "total": "群馬県\t30\t30"
+    },
+    {
+      "total": "長崎県\t36\t31"
+    },
+    {
+      "total": "長野県\t6\t1"
+    },
+    {
+      "total": "青森県\t31\t31"
+    },
+    {
+      "total": "静岡県\t38\t33"
+    },
+    {
+      "total": "香川県\t3\t3"
+    },
+    {
+      "total": "鳥取県\t30\t30"
+    },
+    {
+      "total": "鹿児島県\t36\t31"
+    }
+  ],
+  "messages": [],
+  "stdout": "total\n1549\nno_image\n1229\nprefecture\ttotal\tno_image\n三重県\t31\t31\n京都府\t50\t31\n佐賀県\t58\t58\n兵庫県\t1\t1\n北海道\t50\t35\n千葉県\t30\t30\n和歌山県\t30\t30\n埼玉県\t1\t1\n大阪府\t42\t30\n奈良県\t35\t30\n宮城県\t10\t3\n宮崎県\t30\t30\n山口県\t30\t30\n山形県\t74\t74\n山梨県\t41\t41\n岡山県\t30\t30\n岩手県\t52\t50\n島根県\t31\t31\n広島県\t36\t31\n愛媛県\t31\t31\n愛知県\t56\t46\n新潟県\t1\t1\n東京都\t225\t35\n栃木県\t1\t1\n沖縄県\t71\t61\n滋賀県\t31\t31\n熊本県\t35\t30\n石川県\t42\t32\n神奈川県\t34\t34\n福井県\t30\t30\n福岡県\t45\t35\n福島県\t1\t1\n秋田県\t74\t74\n群馬県\t30\t30\n長崎県\t36\t31\n長野県\t6\t1\n青森県\t31\t31\n静岡県\t38\t33\n香川県\t3\t3\n鳥取県\t30\t30\n鹿児島県\t36\t31\n",
+  "stderr": "",
+  "execution_time_ms": 1999
+}

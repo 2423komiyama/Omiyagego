@@ -1,0 +1,31 @@
+{
+  "query": "SELECT COUNT(*) as has_image FROM products WHERE imageUrl IS NOT NULL AND imageUrl != ''; SELECT id, name, imageUrl FROM products WHERE imageUrl IS NOT NULL AND imageUrl != '' LIMIT 5;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2xzt5HQKEQX5mEg.fe2b3777904e --database aXrCUMBv7Ngvrxv9W3BQsf --execute SELECT COUNT(*) as has_image FROM products WHERE imageUrl IS NOT NULL AND imageUrl != ''; SELECT id, name, imageUrl FROM products WHERE imageUrl IS NOT NULL AND imageUrl != '' LIMIT 5;",
+  "rows": [
+    {
+      "has_image": "320"
+    },
+    {
+      "has_image": "id\tname\timageUrl"
+    },
+    {
+      "has_image": "product-1771846371448-fbul2s91m\tクレームブリュレタルト\thttps://images.unsplash.com/photo-1464305795204-6f5bbfc7fb81?w=600&q=80"
+    },
+    {
+      "has_image": "product-1771846372266-ys2972i4s\tサンドクッキー ヘーゼルナッツと木苺\thttps://images.unsplash.com/photo-1499636136210-6f4ee915583e?w=600&q=80"
+    },
+    {
+      "has_image": "product-1771846373086-8cuhvs2er\tメープルクッキー詰合せ缶\thttps://images.unsplash.com/photo-1499636136210-6f4ee915583e?w=600&q=80"
+    },
+    {
+      "has_image": "product-1771846374048-5mtc1dvt6\t東京鈴もなか\thttps://images.unsplash.com/photo-1607301405390-d831c242f59b?w=600&q=80"
+    },
+    {
+      "has_image": "product-1771846374879-dw39a9q42\tガレット ショコラ エピス\thttps://images.unsplash.com/photo-1549007994-cb92caebd54b?w=600&q=80"
+    }
+  ],
+  "messages": [],
+  "stdout": "has_image\n320\nid\tname\timageUrl\nproduct-1771846371448-fbul2s91m\tクレームブリュレタルト\thttps://images.unsplash.com/photo-1464305795204-6f5bbfc7fb81?w=600&q=80\nproduct-1771846372266-ys2972i4s\tサンドクッキー ヘーゼルナッツと木苺\thttps://images.unsplash.com/photo-1499636136210-6f4ee915583e?w=600&q=80\nproduct-1771846373086-8cuhvs2er\tメープルクッキー詰合せ缶\thttps://images.unsplash.com/photo-1499636136210-6f4ee915583e?w=600&q=80\nproduct-1771846374048-5mtc1dvt6\t東京鈴もなか\thttps://images.unsplash.com/photo-1607301405390-d831c242f59b?w=600&q=80\nproduct-1771846374879-dw39a9q42\tガレット ショコラ エピス\thttps://images.unsplash.com/photo-1549007994-cb92caebd54b?w=600&q=80\n",
+  "stderr": "",
+  "execution_time_ms": 1813
+}

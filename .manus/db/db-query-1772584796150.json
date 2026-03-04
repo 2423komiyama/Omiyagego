@@ -1,0 +1,13 @@
+{
+  "query": "SELECT COUNT(*) as no_image FROM products WHERE imageUrl IS NULL OR imageUrl = ''",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2xzt5HQKEQX5mEg.fe2b3777904e --database aXrCUMBv7Ngvrxv9W3BQsf --execute SELECT COUNT(*) as no_image FROM products WHERE imageUrl IS NULL OR imageUrl = ''",
+  "rows": [
+    {
+      "no_image": "1229"
+    }
+  ],
+  "messages": [],
+  "stdout": "no_image\n1229\n",
+  "stderr": "",
+  "execution_time_ms": 1569
+}
