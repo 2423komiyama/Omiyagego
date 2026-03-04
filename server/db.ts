@@ -122,6 +122,16 @@ export async function getSellersByFacilityId(facilityId: string) {
 }
 
 /**
+ * 売り場IDで売り場情報を取得
+ */
+export async function getSellerById(id: string) {
+  const db = await getDb();
+  if (!db) return undefined;
+  const result = await db.select().from(sellers).where(eq(sellers.id, id)).limit(1);
+  return result.length > 0 ? result[0] : undefined;
+}
+
+/**
  * 商品IDで売り場情報を取得
  */
 export async function getSellersByProductId(productId: string) {

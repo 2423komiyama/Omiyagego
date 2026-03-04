@@ -1,6 +1,5 @@
 // ============================================================
-// Omiyage Go - 売り場詳細画面（Google Maps連携）
-// デザイン哲学: 改札内外を最大強調、迷わずたどり着ける
+// Omiyage Go - 売り場詳細画面（DB対応版 + Google Maps連携）
 // ============================================================
 import { useRef, useState, useCallback } from "react";
 import { useLocation, useParams } from "wouter";
@@ -8,40 +7,68 @@ import {
   ChevronLeft,
   MapPin,
   Clock,
-  Users,
   Navigation,
   Train,
-  Layers,
   Route,
+  Loader2,
+  AlertCircle,
+  Store,
+  Package,
 } from "lucide-react";
 import { AppLayout } from "@/components/omiyage/AppLayout";
 import { MapView } from "@/components/Map";
-import { PRODUCTS } from "@/lib/mockData";
+import { trpc } from "@/lib/trpc";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 
-// 施設ごとの座標データ
+// facilityIdから座標を取得するマッピング
 const FACILITY_COORDS: Record<string, google.maps.LatLngLiteral> = {
-  "東京駅 八重洲地下街": { lat: 35.6812, lng: 139.7671 },
-  "羽田空港 第1ターミナル": { lat: 35.5494, lng: 139.7798 },
-  "東京駅 グランスタ": { lat: 35.6812, lng: 139.7671 },
-  "東京駅 エキュート東京": { lat: 35.6812, lng: 139.7671 },
-  "東京駅 グランスタ東京": { lat: 35.6812, lng: 139.7671 },
-  "銀座本店": { lat: 35.6717, lng: 139.7650 },
-  "品川駅 エキュート品川": { lat: 35.6284, lng: 139.7387 },
-  "新宿駅 NEWoMan": { lat: 35.6896, lng: 139.7006 },
-  "渋谷駅 渋谷ヒカリエ": { lat: 35.6591, lng: 139.7030 },
+  "tokyo-station": { lat: 35.6812, lng: 139.7671 },
+  "haneda-t1": { lat: 35.5494, lng: 139.7798 },
+  "haneda-t2": { lat: 35.5494, lng: 139.7798 },
+  "haneda-t3": { lat: 35.5494, lng: 139.7798 },
+  "narita-t1": { lat: 35.7647, lng: 140.3864 },
+  "narita-t2": { lat: 35.7647, lng: 140.3864 },
+  "shin-osaka": { lat: 34.7335, lng: 135.5001 },
+  "osaka-station": { lat: 34.7024, lng: 135.4959 },
+  "kyoto-station": { lat: 34.9857, lng: 135.7588 },
+  "hakata-station": { lat: 33.5902, lng: 130.4208 },
+  "shin-chitose": { lat: 42.7752, lng: 141.6922 },
+  "sapporo-station": { lat: 43.0686, lng: 141.3507 },
+  "nagoya-station": { lat: 35.1706, lng: 136.8816 },
+  "sendai-station": { lat: 38.2604, lng: 140.8824 },
+  "hiroshima-station": { lat: 34.3966, lng: 132.4759 },
+  "naha-airport": { lat: 26.1958, lng: 127.6464 },
+  "naha-station": { lat: 26.2124, lng: 127.6792 },
 };
 
-// 施設名から座標を取得（部分一致）
-function getCoords(facilityName: string): google.maps.LatLngLiteral {
-  for (const [key, coords] of Object.entries(FACILITY_COORDS)) {
-    if (facilityName.includes(key) || key.includes(facilityName)) {
-      return coords;
-    }
-  }
-  // デフォルト: 東京駅
-  return { lat: 35.6812, lng: 139.7671 };
+// facilityIdから日本語名を取得
+const FACILITY_NAMES: Record<string, string> = {
+  "tokyo-station": "東京駅",
+  "haneda-t1": "羽田空港 第1ターミナル",
+  "haneda-t2": "羽田空港 第2ターミナル",
+  "haneda-t3": "羽田空港 第3ターミナル（国際線）",
+  "narita-t1": "成田空港 第1ターミナル",
+  "narita-t2": "成田空港 第2ターミナル",
+  "shin-osaka": "新大阪駅",
+  "osaka-station": "大阪駅",
+  "kyoto-station": "京都駅",
+  "hakata-station": "博多駅",
+  "shin-chitose": "新千歳空港",
+  "sapporo-station": "札幌駅",
+  "nagoya-station": "名古屋駅",
+  "sendai-station": "仙台駅",
+  "hiroshima-station": "広島駅",
+  "naha-airport": "那覇空港",
+  "naha-station": "那覇駅",
+};
+
+function getFacilityCoords(facilityId: string): google.maps.LatLngLiteral {
+  return FACILITY_COORDS[facilityId] ?? { lat: 35.6812, lng: 139.7671 };
+}
+
+function getFacilityName(facilityId: string): string {
+  return FACILITY_NAMES[facilityId] ?? facilityId;
 }
 
 type MapMode = "location" | "route" | "transit";
@@ -57,24 +84,24 @@ export default function SellerDetail() {
   const [routeInfo, setRouteInfo] = useState<string | null>(null);
   const [isLoadingRoute, setIsLoadingRoute] = useState(false);
 
-  // 売り場IDから商品と売り場を検索
-  const found = PRODUCTS.flatMap((p) =>
-    p.sellers.map((s) => ({ product: p, seller: s }))
-  ).find(({ seller }) => seller.id === id);
+  // DBから売り場情報を取得
+  const { data: sellerData, isLoading, error } = trpc.sellers.getById.useQuery(
+    { id: id ?? "" },
+    { enabled: !!id }
+  );
 
-  const seller = found?.seller;
-  const product = found?.product;
-
-  const sellerCoords = seller ? getCoords(seller.facilityName) : { lat: 35.6812, lng: 139.7671 };
+  const seller = sellerData;
+  const product = sellerData?.product;
+  const facilityCoords = seller ? getFacilityCoords(seller.facilityId) : { lat: 35.6812, lng: 139.7671 };
+  const facilityName = seller ? getFacilityName(seller.facilityId) : "";
 
   // 地図初期化
   const handleMapReady = useCallback(
     (map: google.maps.Map) => {
       mapRef.current = map;
-      map.setCenter(sellerCoords);
+      map.setCenter(facilityCoords);
       map.setZoom(17);
 
-      // 売り場マーカー（カスタムDOM）
       const markerEl = document.createElement("div");
       markerEl.innerHTML = `
         <div style="
@@ -88,31 +115,28 @@ export default function SellerDetail() {
           box-shadow: 0 2px 8px rgba(0,0,0,0.3);
           border: 2px solid white;
         ">
-          📍 ${seller?.facilityName ?? "売り場"}
+          📍 ${seller?.storeName ?? "売り場"}
         </div>
       `;
 
       markerRef.current = new google.maps.marker.AdvancedMarkerElement({
         map,
-        position: sellerCoords,
+        position: facilityCoords,
         content: markerEl,
-        title: seller?.facilityName,
+        title: seller?.storeName,
       });
 
-      // 交通機関レイヤー
       transitLayerRef.current = new google.maps.TransitLayer();
     },
-    [sellerCoords, seller]
+    [facilityCoords, seller]
   );
 
-  // ルート案内（現在地 → 売り場）
+  // ルート案内
   const handleShowRoute = useCallback(() => {
     if (!mapRef.current) return;
-
     setIsLoadingRoute(true);
     setMapMode("route");
 
-    // 既存のDirectionsRendererをクリア
     if (directionsRendererRef.current) {
       directionsRendererRef.current.setMap(null);
     }
@@ -129,30 +153,18 @@ export default function SellerDetail() {
     });
     directionsRendererRef.current = directionsRenderer;
 
-    // 現在地を取得してルート計算
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (pos) => {
-          const origin = {
-            lat: pos.coords.latitude,
-            lng: pos.coords.longitude,
-          };
+          const origin = { lat: pos.coords.latitude, lng: pos.coords.longitude };
           directionsService.route(
-            {
-              origin,
-              destination: sellerCoords,
-              travelMode: google.maps.TravelMode.WALKING,
-            },
+            { origin, destination: facilityCoords, travelMode: google.maps.TravelMode.WALKING },
             (result, status) => {
               setIsLoadingRoute(false);
               if (status === "OK" && result) {
                 directionsRenderer.setDirections(result);
                 const leg = result.routes[0]?.legs[0];
-                if (leg) {
-                  setRouteInfo(
-                    `徒歩 ${leg.duration?.text} (${leg.distance?.text})`
-                  );
-                }
+                if (leg) setRouteInfo(`徒歩 ${leg.duration?.text} (${leg.distance?.text})`);
                 mapRef.current?.setZoom(15);
               } else {
                 toast.error("ルート取得に失敗しました");
@@ -162,23 +174,14 @@ export default function SellerDetail() {
           );
         },
         () => {
-          // 位置情報が取得できない場合は東京駅からのルートを表示
           setIsLoadingRoute(false);
           directionsService.route(
-            {
-              origin: { lat: 35.6812, lng: 139.7671 },
-              destination: sellerCoords,
-              travelMode: google.maps.TravelMode.WALKING,
-            },
+            { origin: { lat: 35.6812, lng: 139.7671 }, destination: facilityCoords, travelMode: google.maps.TravelMode.WALKING },
             (result, status) => {
               if (status === "OK" && result) {
                 directionsRenderer.setDirections(result);
                 const leg = result.routes[0]?.legs[0];
-                if (leg) {
-                  setRouteInfo(
-                    `東京駅から徒歩 ${leg.duration?.text} (${leg.distance?.text})`
-                  );
-                }
+                if (leg) setRouteInfo(`東京駅から徒歩 ${leg.duration?.text} (${leg.distance?.text})`);
                 mapRef.current?.setZoom(15);
               }
             }
@@ -190,7 +193,7 @@ export default function SellerDetail() {
       setIsLoadingRoute(false);
       toast.error("このブラウザは位置情報に対応していません");
     }
-  }, [sellerCoords]);
+  }, [facilityCoords]);
 
   // 交通情報レイヤー切り替え
   const handleToggleTransit = useCallback(() => {
@@ -201,10 +204,7 @@ export default function SellerDetail() {
     } else {
       transitLayerRef.current.setMap(mapRef.current);
       setMapMode("transit");
-      // ルートをクリア
-      if (directionsRendererRef.current) {
-        directionsRendererRef.current.setMap(null);
-      }
+      if (directionsRendererRef.current) directionsRendererRef.current.setMap(null);
       setRouteInfo(null);
     }
   }, [mapMode]);
@@ -212,35 +212,45 @@ export default function SellerDetail() {
   // 売り場に戻る
   const handleResetMap = useCallback(() => {
     if (!mapRef.current) return;
-    mapRef.current.setCenter(sellerCoords);
+    mapRef.current.setCenter(facilityCoords);
     mapRef.current.setZoom(17);
-    if (directionsRendererRef.current) {
-      directionsRendererRef.current.setMap(null);
-    }
-    if (transitLayerRef.current) {
-      transitLayerRef.current.setMap(null);
-    }
+    if (directionsRendererRef.current) directionsRendererRef.current.setMap(null);
+    if (transitLayerRef.current) transitLayerRef.current.setMap(null);
     setMapMode("location");
     setRouteInfo(null);
-  }, [sellerCoords]);
+  }, [facilityCoords]);
 
-  if (!found) {
+  // ローディング状態
+  if (isLoading) {
     return (
       <AppLayout>
-        <div className="flex flex-col items-center justify-center min-h-screen px-4">
-          <p className="text-stone-500 mb-4">売り場情報が見つかりませんでした</p>
+        <div className="flex flex-col items-center justify-center min-h-screen px-4 gap-3">
+          <Loader2 className="w-8 h-8 text-emerald-600 animate-spin" />
+          <p className="text-stone-500 text-sm">売り場情報を読み込み中...</p>
+        </div>
+      </AppLayout>
+    );
+  }
+
+  // エラー・データなし
+  if (error || !seller) {
+    return (
+      <AppLayout>
+        <div className="flex flex-col items-center justify-center min-h-screen px-4 gap-3">
+          <AlertCircle className="w-8 h-8 text-red-400" />
+          <p className="text-stone-500 text-sm">売り場情報が見つかりませんでした</p>
           <button
-            onClick={() => navigate("/")}
+            onClick={() => navigate(-1 as any)}
             className="px-6 py-3 bg-emerald-700 text-white rounded-xl text-sm font-bold"
           >
-            ホームに戻る
+            戻る
           </button>
         </div>
       </AppLayout>
     );
   }
 
-  const isInside = seller!.gateStatus === "改札内";
+  const isInside = seller.insideGate;
 
   return (
     <AppLayout className="pb-0">
@@ -254,11 +264,11 @@ export default function SellerDetail() {
         </button>
         <div>
           <h1 className="text-base font-black text-stone-900">売り場情報</h1>
-          <p className="text-xs text-stone-500">{product!.name}</p>
+          {product && <p className="text-xs text-stone-500">{product.name}</p>}
         </div>
       </div>
 
-      <div className="px-4 pt-5 space-y-4">
+      <div className="px-4 pt-5 space-y-4 pb-8">
         {/* 改札内外 - 最大強調 */}
         <div
           className={cn(
@@ -266,11 +276,9 @@ export default function SellerDetail() {
             isInside ? "bg-emerald-700" : "bg-orange-500"
           )}
         >
-          <p className="text-white/80 text-sm font-medium mb-1">
-            {seller!.facilityName}
-          </p>
+          <p className="text-white/80 text-sm font-medium mb-1">{facilityName}</p>
           <p className="text-white font-black text-4xl tracking-tight mb-1">
-            {seller!.gateStatus}
+            {isInside ? "改札内" : "改札外"}
           </p>
           <p className="text-white/90 text-sm">
             {isInside
@@ -281,142 +289,128 @@ export default function SellerDetail() {
 
         {/* 売り場詳細情報 */}
         <div className="bg-white border border-stone-200 rounded-xl overflow-hidden">
-          {[
-            {
-              icon: MapPin,
-              label: "フロア・目印",
-              value: `${seller!.floor} · ${seller!.landmark}`,
-            },
-            { icon: Clock, label: "営業時間", value: seller!.openHours },
-            {
-              icon: Navigation,
-              label: "所要時間",
-              value: `徒歩${seller!.walkingMinutes}分`,
-            },
-            {
-              icon: Users,
-              label: "混雑目安",
-              value: `${seller!.crowdLevel}（目安）`,
-              valueClass:
-                seller!.crowdLevel === "少"
-                  ? "text-emerald-700 font-bold"
-                  : seller!.crowdLevel === "中"
-                  ? "text-amber-600 font-bold"
-                  : "text-red-500 font-bold",
-            },
-          ].map((item, i) => {
-            const Icon = item.icon;
-            return (
-              <div
-                key={i}
-                className="flex items-start gap-3 px-4 py-3 border-b border-stone-100 last:border-0"
-              >
-                <Icon className="w-4 h-4 text-stone-400 mt-0.5 flex-shrink-0" />
-                <div className="flex-1">
-                  <p className="text-xs text-stone-400">{item.label}</p>
-                  <p className={cn("text-sm text-stone-800 mt-0.5", item.valueClass)}>
-                    {item.value}
-                  </p>
-                </div>
+          <div className="flex items-start gap-3 px-4 py-3 border-b border-stone-100">
+            <Store className="w-4 h-4 text-stone-400 mt-0.5 flex-shrink-0" />
+            <div className="flex-1">
+              <p className="text-xs text-stone-400">店舗名</p>
+              <p className="text-sm text-stone-800 mt-0.5 font-bold">{seller.storeName}</p>
+            </div>
+          </div>
+          {seller.floor && (
+            <div className="flex items-start gap-3 px-4 py-3 border-b border-stone-100">
+              <MapPin className="w-4 h-4 text-stone-400 mt-0.5 flex-shrink-0" />
+              <div className="flex-1">
+                <p className="text-xs text-stone-400">フロア</p>
+                <p className="text-sm text-stone-800 mt-0.5">{seller.floor}</p>
               </div>
-            );
-          })}
+            </div>
+          )}
+          {seller.location && (
+            <div className="flex items-start gap-3 px-4 py-3 border-b border-stone-100">
+              <Navigation className="w-4 h-4 text-stone-400 mt-0.5 flex-shrink-0" />
+              <div className="flex-1">
+                <p className="text-xs text-stone-400">場所の詳細</p>
+                <p className="text-sm text-stone-800 mt-0.5">{seller.location}</p>
+              </div>
+            </div>
+          )}
+          {seller.businessHours && (
+            <div className="flex items-start gap-3 px-4 py-3 border-b border-stone-100">
+              <Clock className="w-4 h-4 text-stone-400 mt-0.5 flex-shrink-0" />
+              <div className="flex-1">
+                <p className="text-xs text-stone-400">営業時間</p>
+                <p className="text-sm text-stone-800 mt-0.5">{seller.businessHours}</p>
+              </div>
+            </div>
+          )}
+          <div className="flex items-start gap-3 px-4 py-3">
+            <Package className="w-4 h-4 text-stone-400 mt-0.5 flex-shrink-0" />
+            <div className="flex-1">
+              <p className="text-xs text-stone-400">在庫状況</p>
+              <p className={cn("text-sm mt-0.5 font-bold",
+                seller.stockStatus === "in_stock" ? "text-green-700" :
+                seller.stockStatus === "low_stock" ? "text-amber-600" : "text-red-500"
+              )}>
+                {seller.stockStatus === "in_stock" ? "在庫あり" :
+                 seller.stockStatus === "low_stock" ? "残りわずか" : "在庫なし"}
+              </p>
+            </div>
+          </div>
         </div>
 
-        {/* ── Google Maps インタラクティブ地図 ── */}
+        {/* Google Maps タブ */}
         <div className="bg-white border border-stone-200 rounded-xl overflow-hidden">
           <div className="px-4 py-3 border-b border-stone-100 flex items-center justify-between">
-            <h2 className="text-sm font-black text-stone-900 flex items-center gap-2">
-              <MapPin className="w-4 h-4 text-emerald-700" />
-              地図
-            </h2>
-            {/* 地図モード切り替えボタン */}
+            <h2 className="text-sm font-bold text-stone-800">地図</h2>
             <div className="flex gap-1.5">
-              <button
-                onClick={handleResetMap}
-                className={cn(
-                  "flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-bold border transition-all",
-                  mapMode === "location"
-                    ? "bg-emerald-700 text-white border-emerald-700"
-                    : "bg-white text-stone-500 border-stone-200 hover:border-stone-400"
-                )}
-              >
-                <MapPin className="w-3 h-3" />
-                売り場
-              </button>
-              <button
-                onClick={handleShowRoute}
-                disabled={isLoadingRoute}
-                className={cn(
-                  "flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-bold border transition-all",
-                  mapMode === "route"
-                    ? "bg-emerald-700 text-white border-emerald-700"
-                    : "bg-white text-stone-500 border-stone-200 hover:border-stone-400",
-                  isLoadingRoute && "opacity-60 cursor-not-allowed"
-                )}
-              >
-                <Route className="w-3 h-3" />
-                {isLoadingRoute ? "取得中..." : "ルート"}
-              </button>
-              <button
-                onClick={handleToggleTransit}
-                className={cn(
-                  "flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-bold border transition-all",
-                  mapMode === "transit"
-                    ? "bg-blue-600 text-white border-blue-600"
-                    : "bg-white text-stone-500 border-stone-200 hover:border-stone-400"
-                )}
-              >
-                <Train className="w-3 h-3" />
-                交通
-              </button>
+              {[
+                { mode: "location" as MapMode, icon: MapPin, label: "地図" },
+                { mode: "route" as MapMode, icon: Route, label: "ルート" },
+                { mode: "transit" as MapMode, icon: Train, label: "交通" },
+              ].map(({ mode, icon: Icon, label }) => (
+                <button
+                  key={mode}
+                  onClick={() => {
+                    if (mode === "route") handleShowRoute();
+                    else if (mode === "transit") handleToggleTransit();
+                    else handleResetMap();
+                  }}
+                  className={cn(
+                    "flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-bold transition-colors",
+                    mapMode === mode
+                      ? "bg-emerald-700 text-white"
+                      : "bg-stone-100 text-stone-600 hover:bg-stone-200"
+                  )}
+                >
+                  {isLoadingRoute && mode === "route" ? (
+                    <Loader2 className="w-3 h-3 animate-spin" />
+                  ) : (
+                    <Icon className="w-3 h-3" />
+                  )}
+                  {label}
+                </button>
+              ))}
             </div>
           </div>
 
-          {/* ルート情報バナー */}
           {routeInfo && (
-            <div className="px-4 py-2.5 bg-emerald-50 border-b border-emerald-100 flex items-center gap-2">
-              <Route className="w-4 h-4 text-emerald-700 flex-shrink-0" />
-              <p className="text-sm font-bold text-emerald-800">{routeInfo}</p>
+            <div className="px-4 py-2 bg-emerald-50 border-b border-emerald-100">
+              <p className="text-xs text-emerald-700 font-bold flex items-center gap-1">
+                <Navigation className="w-3 h-3" />
+                {routeInfo}
+              </p>
             </div>
           )}
 
-          {/* 地図本体 */}
-          <MapView
-            initialCenter={sellerCoords}
-            initialZoom={17}
-            onMapReady={handleMapReady}
-            className="h-64 w-full"
-          />
+          <div className="h-64">
+            <MapView
+              onMapReady={handleMapReady}
+              className="w-full h-full"
+            />
+          </div>
+
+          <div className="px-4 py-3">
+            <a
+              href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(seller.storeName + " " + facilityName)}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center justify-center gap-2 w-full py-3 bg-emerald-700 text-white text-sm font-bold rounded-xl hover:bg-emerald-800 transition-colors"
+            >
+              <MapPin className="w-4 h-4" />
+              Google Mapsで開く
+            </a>
+          </div>
         </div>
 
-        {/* 外部マップリンク */}
-        <div className="space-y-2.5">
+        {/* 商品に戻るボタン */}
+        {product && (
           <button
-            onClick={() =>
-              window.open(
-                `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
-                  seller!.facilityName + " " + seller!.floor
-                )}`,
-                "_blank"
-              )
-            }
-            className="w-full py-3.5 bg-emerald-700 text-white rounded-xl text-sm font-black hover:bg-emerald-800 active:scale-[0.98] transition-all flex items-center justify-center gap-2"
+            onClick={() => navigate(`/db-product/${product.id}`)}
+            className="w-full py-3 border border-stone-200 text-stone-700 text-sm font-bold rounded-xl hover:bg-stone-50 transition-colors"
           >
-            <MapPin className="w-4 h-4" />
-            Google Mapsで開く
+            商品詳細に戻る
           </button>
-        </div>
-
-        {/* 商品に戻る */}
-        <button
-          onClick={() => navigate(`/product/${product!.id}`)}
-          className="w-full py-3.5 bg-white border border-stone-200 text-stone-600 rounded-xl text-sm font-bold hover:bg-stone-50 transition-colors"
-        >
-          商品詳細に戻る
-        </button>
-
-        <div className="h-4" />
+        )}
       </div>
     </AppLayout>
   );
