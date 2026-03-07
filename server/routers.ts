@@ -1,13 +1,18 @@
-import { COOKIE_NAME } from "@shared/const";
+import { COOKIE_NAME } from "../shared/const";
 import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
 import { publicProcedure, protectedProcedure, router } from "./_core/trpc";
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
-import { getAllProducts, getProductById, getSellersByProductId, getAllFacilities, getAllReservations, createProduct, updateProduct, deleteProduct, searchProducts, getAvailablePrefectures, getAvailableCategories, getAvailableRegions, getSellerById } from "./db";
+import {
+  getAllProducts, getProductById, getSellersByProductId, getAllFacilities,
+  getAllReservations, createProduct, updateProduct, deleteProduct, searchProducts,
+  getAvailablePrefectures, getAvailableCategories, getAvailableRegions, getSellerById,
+  addLike, removeLike, getLikedProductIds, getActiveFeatures, getProductsByFacilityId,
+  getFacilityById, getSellersByFacilityId
+} from "./db";
 
 export const appRouter = router({
-    // if you need to use socket.io, read and register route in server/_core/index.ts, all api should start with '/api/' so that the gateway can route correctly
   system: systemRouter,
   auth: router({
     me: publicProcedure.query(opts => opts.ctx.user),
@@ -33,6 +38,12 @@ export const appRouter = router({
         minPrice: z.number().optional(),
         maxPrice: z.number().optional(),
         badges: z.array(z.string()).optional(),
+        // 新規フィルター
+        purposeTag: z.string().optional(),
+        minShelfLife: z.number().optional(),
+        isIndividualPackaged: z.boolean().optional(),
+        facilityId: z.string().optional(),
+        sortBy: z.enum(['popular', 'editorial', 'shelf_life_desc', 'price_asc', 'newest']).optional(),
         limit: z.number().optional().default(20),
         offset: z.number().optional().default(0),
       }))
@@ -45,7 +56,6 @@ export const appRouter = router({
       .query(async ({ input }) => {
         const product = await getProductById(input.id);
         if (!product) return null;
-        // 売り場情報も一緒に取得
         const productSellers = await getSellersByProductId(input.id);
         return { ...product, sellers: productSellers };
       }),
@@ -64,6 +74,80 @@ export const appRouter = router({
   }),
 
   // ============================================================
+  // Omiyage Go - Likes Router
+  // ============================================================
+  likes: router({
+    toggle: publicProcedure
+      .input(z.object({
+        productId: z.string(),
+        sessionId: z.string().optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        const userId = ctx.user?.id;
+        const sessionId = input.sessionId;
+
+        // 既にいいね済みか確認
+        const likedIds = await getLikedProductIds(sessionId, userId);
+        const isLiked = likedIds.includes(input.productId);
+
+        if (isLiked) {
+          await removeLike(input.productId, sessionId, userId);
+          return { liked: false };
+        } else {
+          await addLike(input.productId, sessionId, userId);
+          return { liked: true };
+        }
+      }),
+
+    getLikedIds: publicProcedure
+      .input(z.object({ sessionId: z.string().optional() }))
+      .query(async ({ ctx, input }) => {
+        const userId = ctx.user?.id;
+        return await getLikedProductIds(input.sessionId, userId);
+      }),
+  }),
+
+  // ============================================================
+  // Omiyage Go - Features (特集カード) Router
+  // ============================================================
+  features: router({
+    getActive: publicProcedure.query(async () => {
+      return await getActiveFeatures();
+    }),
+  }),
+
+  // ============================================================
+  // Omiyage Go - Facilities Router (Public)
+  // ============================================================
+  facilities: router({
+    list: publicProcedure.query(async () => {
+      return await getAllFacilities();
+    }),
+
+    get: publicProcedure
+      .input(z.object({ id: z.string() }))
+      .query(async ({ input }) => {
+        return await getFacilityById(input.id);
+      }),
+
+    getProducts: publicProcedure
+      .input(z.object({
+        facilityId: z.string(),
+        limit: z.number().optional().default(20),
+        offset: z.number().optional().default(0),
+      }))
+      .query(async ({ input }) => {
+        return await getProductsByFacilityId(input.facilityId, input.limit, input.offset);
+      }),
+
+    getSellers: publicProcedure
+      .input(z.object({ facilityId: z.string() }))
+      .query(async ({ input }) => {
+        return await getSellersByFacilityId(input.facilityId);
+      }),
+  }),
+
+  // ============================================================
   // Omiyage Go - Sellers Router
   // ============================================================
   sellers: router({
@@ -72,7 +156,6 @@ export const appRouter = router({
       .query(async ({ input }) => {
         const seller = await getSellerById(input.id);
         if (!seller) return null;
-        // 関連商品も取得
         const product = await getProductById(seller.productId);
         return { ...seller, product: product || null };
       }),
@@ -84,7 +167,6 @@ export const appRouter = router({
   admin: router({
     products: router({
       list: protectedProcedure.query(async ({ ctx }) => {
-        // Admin check
         if (ctx.user?.role !== "admin") {
           throw new Error("Admin access required");
         }
@@ -220,7 +302,7 @@ export const appRouter = router({
             success: true,
             successCount,
             errorCount,
-            errors: errors.slice(0, 10), // Return first 10 errors
+            errors: errors.slice(0, 10),
             message: `Imported ${successCount} products${errorCount > 0 ? ` (${errorCount} errors)` : ''}`
           };
         }),

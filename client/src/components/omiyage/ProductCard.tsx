@@ -28,7 +28,7 @@ export function ProductCard({ product, className }: ProductCardProps) {
     return chips.slice(0, 3);
   };
 
-  const primarySeller = product.sellers[0];
+  const primarySeller = product.sellers?.[0];
 
   return (
     <div

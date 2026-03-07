@@ -1,4 +1,4 @@
-import { int, mysqlEnum, mysqlTable, text, timestamp, varchar, decimal, boolean } from "drizzle-orm/mysql-core";
+import { int, mysqlEnum, mysqlTable, text, timestamp, varchar, decimal, boolean, tinyint } from "drizzle-orm/mysql-core";
 
 /**
  * Core user table backing auth flow.
@@ -68,6 +68,14 @@ export const products = mysqlTable("products", {
   makerStory: text("makerStory"), // 作り手ストーリー
   brandUrl: text("brandUrl"), // メーカー公式サイトURL
   badges: varchar("badges", { length: 256 }), // バッジ（JSON配列：editorial, bestseller等）
+  // ── 新規追加フィールド ──
+  purposeTags: text("purposeTags"), // 用途タグ（JSON配列: ["greeting","thanks","apology","family","lover","friend","self","kids","souvenir"]）
+  minPeople: int("minPeople"), // 人数目安（最小）
+  maxPeople: int("maxPeople"), // 人数目安（最大）
+  editorialPick: boolean("editorialPick").default(false).notNull(), // 編集部推薦フラグ
+  editorialNote: text("editorialNote"), // 編集部推薦理由（短文）
+  externalLinks: text("externalLinks"), // 外部リンク（JSON配列: [{url, type, title, priority}]）
+  likeCount: int("likeCount").default(0).notNull(), // いいね数（非正規化カウンタ）
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
   createdBy: int("createdBy"), // 作成者ID
@@ -90,6 +98,10 @@ export const sellers = mysqlTable("sellers", {
   businessHours: varchar("businessHours", { length: 256 }), // 営業時間
   congestionLevel: mysqlEnum("congestionLevel", ["low", "medium", "high"]).default("medium"), // 混雑度
   stockStatus: mysqlEnum("stockStatus", ["in_stock", "low_stock", "out_of_stock"]).default("in_stock"), // 在庫状況
+  // ── 新規追加フィールド ──
+  mapUrl: text("mapUrl"), // Google Maps URL等
+  walkMinutes: int("walkMinutes"), // 改札/出口からの徒歩分数
+  topProductIds: text("topProductIds"), // 人気商品TOP3（JSON配列: ["id1","id2","id3"]）
   lastUpdated: timestamp("lastUpdated").defaultNow().onUpdateNow().notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
@@ -133,3 +145,66 @@ export const reservations = mysqlTable("reservations", {
 
 export type Reservation = typeof reservations.$inferSelect;
 export type InsertReservation = typeof reservations.$inferInsert;
+
+// ============================================================
+// 新規テーブル（SEO流入最大化・UGC対応）
+// ============================================================
+
+/**
+ * いいねテーブル（Step1 UGC）
+ * 匿名ユーザーはsessionIdで識別、ログイン済みはuserIdで管理
+ */
+export const likes = mysqlTable("likes", {
+  id: int("id").autoincrement().primaryKey(),
+  productId: varchar("productId", { length: 32 }).notNull(),
+  userId: int("userId"), // ログイン済みユーザーのID（nullable）
+  sessionId: varchar("sessionId", { length: 128 }), // 匿名ユーザーのセッションID
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type Like = typeof likes.$inferSelect;
+export type InsertLike = typeof likes.$inferInsert;
+
+/**
+ * 口コミテーブル（Step2 UGC、今回はテーブルのみ作成）
+ */
+export const reviews = mysqlTable("reviews", {
+  id: int("id").autoincrement().primaryKey(),
+  productId: varchar("productId", { length: 32 }).notNull(),
+  userId: int("userId"), // 投稿者ID（nullable: 匿名可）
+  authorName: varchar("authorName", { length: 64 }), // 表示名（匿名の場合は"匿名ユーザー"等）
+  rating: tinyint("rating").notNull(), // 評価 1-5
+  purposeTag: varchar("purposeTag", { length: 64 }), // 用途タグ（どんな場面で使ったか）
+  body: text("body").notNull(), // 口コミ本文
+  isAnonymous: boolean("isAnonymous").default(false).notNull(), // 匿名フラグ
+  isVisible: boolean("isVisible").default(true).notNull(), // 表示フラグ（通報で非表示化）
+  reportCount: int("reportCount").default(0).notNull(), // 通報数
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type Review = typeof reviews.$inferSelect;
+export type InsertReview = typeof reviews.$inferInsert;
+
+/**
+ * 特集カードテーブル（トップページカルーセル用）
+ * 運用で差し替え可能
+ */
+export const features = mysqlTable("features", {
+  id: int("id").autoincrement().primaryKey(),
+  title: varchar("title", { length: 128 }).notNull(), // 特集タイトル
+  subtitle: varchar("subtitle", { length: 256 }), // サブタイトル
+  imageUrl: text("imageUrl"), // バナー画像URL
+  linkUrl: varchar("linkUrl", { length: 512 }).notNull(), // 遷移先URL（内部/外部）
+  linkType: mysqlEnum("linkType", ["station", "purpose", "region", "article", "external"]).default("article"), // リンク種別
+  badgeText: varchar("badgeText", { length: 32 }), // バッジテキスト（例：「季節限定」「編集部推薦」）
+  sortOrder: int("sortOrder").default(0).notNull(), // 表示順（小さいほど先頭）
+  isActive: boolean("isActive").default(true).notNull(), // 表示フラグ
+  startsAt: timestamp("startsAt"), // 表示開始日時（null=即時）
+  endsAt: timestamp("endsAt"), // 表示終了日時（null=無期限）
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type Feature = typeof features.$inferSelect;
+export type InsertFeature = typeof features.$inferInsert;
