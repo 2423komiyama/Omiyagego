@@ -1,0 +1,82 @@
+{
+  "query": "\nSELECT \n  region,\n  COUNT(*) as total,\n  SUM(CASE WHEN brandUrl IS NOT NULL AND brandUrl != '' THEN 1 ELSE 0 END) as with_url,\n  ROUND(SUM(CASE WHEN brandUrl IS NOT NULL AND brandUrl != '' THEN 1 ELSE 0 END) / COUNT(*) * 100, 0) as pct\nFROM products\nGROUP BY region\nORDER BY region;\n",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2xzt5HQKEQX5mEg.fe2b3777904e --database aXrCUMBv7Ngvrxv9W3BQsf --execute \nSELECT \n  region,\n  COUNT(*) as total,\n  SUM(CASE WHEN brandUrl IS NOT NULL AND brandUrl != '' THEN 1 ELSE 0 END) as with_url,\n  ROUND(SUM(CASE WHEN brandUrl IS NOT NULL AND brandUrl != '' THEN 1 ELSE 0 END) / COUNT(*) * 100, 0) as pct\nFROM products\nGROUP BY region\nORDER BY region;\n",
+  "rows": [
+    {
+      "region": "中国",
+      "total": "157",
+      "with_url": "136",
+      "pct": "87"
+    },
+    {
+      "region": "中部",
+      "total": "212",
+      "with_url": "179",
+      "pct": "84"
+    },
+    {
+      "region": "九州",
+      "total": "8",
+      "with_url": "8",
+      "pct": "100"
+    },
+    {
+      "region": "九州・沖縄",
+      "total": "302",
+      "with_url": "181",
+      "pct": "60"
+    },
+    {
+      "region": "京都市内・嵐山・伏見・宇治・天橋立",
+      "total": "30",
+      "with_url": "30",
+      "pct": "100"
+    },
+    {
+      "region": "北海道",
+      "total": "50",
+      "with_url": "50",
+      "pct": "100"
+    },
+    {
+      "region": "北陸",
+      "total": "2",
+      "with_url": "2",
+      "pct": "100"
+    },
+    {
+      "region": "四国",
+      "total": "34",
+      "with_url": "34",
+      "pct": "100"
+    },
+    {
+      "region": "東北",
+      "total": "242",
+      "with_url": "127",
+      "pct": "52"
+    },
+    {
+      "region": "沖縄",
+      "total": "1",
+      "with_url": "1",
+      "pct": "100"
+    },
+    {
+      "region": "近畿",
+      "total": "190",
+      "with_url": "167",
+      "pct": "88"
+    },
+    {
+      "region": "関東",
+      "total": "321",
+      "with_url": "306",
+      "pct": "95"
+    }
+  ],
+  "messages": [],
+  "stdout": "region\ttotal\twith_url\tpct\n中国\t157\t136\t87\n中部\t212\t179\t84\n九州\t8\t8\t100\n九州・沖縄\t302\t181\t60\n京都市内・嵐山・伏見・宇治・天橋立\t30\t30\t100\n北海道\t50\t50\t100\n北陸\t2\t2\t100\n四国\t34\t34\t100\n東北\t242\t127\t52\n沖縄\t1\t1\t100\n近畿\t190\t167\t88\n関東\t321\t306\t95\n",
+  "stderr": "",
+  "execution_time_ms": 1669
+}

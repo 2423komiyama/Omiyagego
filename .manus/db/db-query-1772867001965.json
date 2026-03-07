@@ -1,0 +1,67 @@
+{
+  "query": "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'products' ORDER BY ORDINAL_POSITION;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2xzt5HQKEQX5mEg.fe2b3777904e --database aXrCUMBv7Ngvrxv9W3BQsf --execute SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'products' ORDER BY ORDINAL_POSITION;",
+  "rows": [
+    {
+      "COLUMN_NAME": "id"
+    },
+    {
+      "COLUMN_NAME": "name"
+    },
+    {
+      "COLUMN_NAME": "brand"
+    },
+    {
+      "COLUMN_NAME": "description"
+    },
+    {
+      "COLUMN_NAME": "price"
+    },
+    {
+      "COLUMN_NAME": "imageUrl"
+    },
+    {
+      "COLUMN_NAME": "prefecture"
+    },
+    {
+      "COLUMN_NAME": "region"
+    },
+    {
+      "COLUMN_NAME": "category"
+    },
+    {
+      "COLUMN_NAME": "shelfLife"
+    },
+    {
+      "COLUMN_NAME": "isIndividualPackaged"
+    },
+    {
+      "COLUMN_NAME": "servingSize"
+    },
+    {
+      "COLUMN_NAME": "guaranteeReason"
+    },
+    {
+      "COLUMN_NAME": "makerStory"
+    },
+    {
+      "COLUMN_NAME": "badges"
+    },
+    {
+      "COLUMN_NAME": "createdAt"
+    },
+    {
+      "COLUMN_NAME": "updatedAt"
+    },
+    {
+      "COLUMN_NAME": "createdBy"
+    },
+    {
+      "COLUMN_NAME": "brandUrl"
+    }
+  ],
+  "messages": [],
+  "stdout": "COLUMN_NAME\nid\nname\nbrand\ndescription\nprice\nimageUrl\nprefecture\nregion\ncategory\nshelfLife\nisIndividualPackaged\nservingSize\nguaranteeReason\nmakerStory\nbadges\ncreatedAt\nupdatedAt\ncreatedBy\nbrandUrl\n",
+  "stderr": "",
+  "execution_time_ms": 1666
+}

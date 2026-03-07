@@ -1,0 +1,215 @@
+{
+  "query": "\nSELECT \n  region, prefecture, COUNT(*) as count\nFROM products\nWHERE brandUrl IS NULL OR brandUrl = ''\nGROUP BY region, prefecture\nORDER BY region, prefecture;\n",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2xzt5HQKEQX5mEg.fe2b3777904e --database aXrCUMBv7Ngvrxv9W3BQsf --execute \nSELECT \n  region, prefecture, COUNT(*) as count\nFROM products\nWHERE brandUrl IS NULL OR brandUrl = ''\nGROUP BY region, prefecture\nORDER BY region, prefecture;\n",
+  "rows": [
+    {
+      "region": "中国",
+      "prefecture": "山口県",
+      "count": "30"
+    },
+    {
+      "region": "中国",
+      "prefecture": "岡山県",
+      "count": "30"
+    },
+    {
+      "region": "中国",
+      "prefecture": "島根県",
+      "count": "31"
+    },
+    {
+      "region": "中国",
+      "prefecture": "広島県",
+      "count": "36"
+    },
+    {
+      "region": "中国",
+      "prefecture": "鳥取県",
+      "count": "30"
+    },
+    {
+      "region": "中部",
+      "prefecture": "山梨県",
+      "count": "7"
+    },
+    {
+      "region": "中部",
+      "prefecture": "愛知県",
+      "count": "25"
+    },
+    {
+      "region": "中部",
+      "prefecture": "石川県",
+      "count": "4"
+    },
+    {
+      "region": "中部",
+      "prefecture": "福井県",
+      "count": "3"
+    },
+    {
+      "region": "中部",
+      "prefecture": "静岡県",
+      "count": "5"
+    },
+    {
+      "region": "九州",
+      "prefecture": "佐賀県",
+      "count": "1"
+    },
+    {
+      "region": "九州",
+      "prefecture": "福岡県",
+      "count": "5"
+    },
+    {
+      "region": "九州",
+      "prefecture": "長崎県",
+      "count": "1"
+    },
+    {
+      "region": "九州",
+      "prefecture": "鹿児島県",
+      "count": "1"
+    },
+    {
+      "region": "九州・沖縄",
+      "prefecture": "佐賀県",
+      "count": "57"
+    },
+    {
+      "region": "九州・沖縄",
+      "prefecture": "宮崎県",
+      "count": "30"
+    },
+    {
+      "region": "九州・沖縄",
+      "prefecture": "沖縄県",
+      "count": "70"
+    },
+    {
+      "region": "九州・沖縄",
+      "prefecture": "熊本県",
+      "count": "35"
+    },
+    {
+      "region": "九州・沖縄",
+      "prefecture": "福岡県",
+      "count": "40"
+    },
+    {
+      "region": "九州・沖縄",
+      "prefecture": "長崎県",
+      "count": "35"
+    },
+    {
+      "region": "九州・沖縄",
+      "prefecture": "鹿児島県",
+      "count": "35"
+    },
+    {
+      "region": "京都市内・嵐山・伏見・宇治・天橋立",
+      "prefecture": "京都府",
+      "count": "30"
+    },
+    {
+      "region": "四国",
+      "prefecture": "愛媛県",
+      "count": "31"
+    },
+    {
+      "region": "四国",
+      "prefecture": "香川県",
+      "count": "3"
+    },
+    {
+      "region": "東北",
+      "prefecture": "宮城県",
+      "count": "2"
+    },
+    {
+      "region": "東北",
+      "prefecture": "山形県",
+      "count": "74"
+    },
+    {
+      "region": "東北",
+      "prefecture": "岩手県",
+      "count": "51"
+    },
+    {
+      "region": "東北",
+      "prefecture": "秋田県",
+      "count": "73"
+    },
+    {
+      "region": "東北",
+      "prefecture": "青森県",
+      "count": "27"
+    },
+    {
+      "region": "沖縄",
+      "prefecture": "沖縄県",
+      "count": "1"
+    },
+    {
+      "region": "近畿",
+      "prefecture": "三重県",
+      "count": "31"
+    },
+    {
+      "region": "近畿",
+      "prefecture": "京都府",
+      "count": "20"
+    },
+    {
+      "region": "近畿",
+      "prefecture": "兵庫県",
+      "count": "1"
+    },
+    {
+      "region": "近畿",
+      "prefecture": "和歌山県",
+      "count": "30"
+    },
+    {
+      "region": "近畿",
+      "prefecture": "大阪府",
+      "count": "42"
+    },
+    {
+      "region": "近畿",
+      "prefecture": "奈良県",
+      "count": "35"
+    },
+    {
+      "region": "近畿",
+      "prefecture": "滋賀県",
+      "count": "31"
+    },
+    {
+      "region": "関東",
+      "prefecture": "千葉県",
+      "count": "11"
+    },
+    {
+      "region": "関東",
+      "prefecture": "東京都",
+      "count": "80"
+    },
+    {
+      "region": "関東",
+      "prefecture": "神奈川県",
+      "count": "3"
+    },
+    {
+      "region": "関東",
+      "prefecture": "群馬県",
+      "count": "2"
+    }
+  ],
+  "messages": [],
+  "stdout": "region\tprefecture\tcount\n中国\t山口県\t30\n中国\t岡山県\t30\n中国\t島根県\t31\n中国\t広島県\t36\n中国\t鳥取県\t30\n中部\t山梨県\t7\n中部\t愛知県\t25\n中部\t石川県\t4\n中部\t福井県\t3\n中部\t静岡県\t5\n九州\t佐賀県\t1\n九州\t福岡県\t5\n九州\t長崎県\t1\n九州\t鹿児島県\t1\n九州・沖縄\t佐賀県\t57\n九州・沖縄\t宮崎県\t30\n九州・沖縄\t沖縄県\t70\n九州・沖縄\t熊本県\t35\n九州・沖縄\t福岡県\t40\n九州・沖縄\t長崎県\t35\n九州・沖縄\t鹿児島県\t35\n京都市内・嵐山・伏見・宇治・天橋立\t京都府\t30\n四国\t愛媛県\t31\n四国\t香川県\t3\n東北\t宮城県\t2\n東北\t山形県\t74\n東北\t岩手県\t51\n東北\t秋田県\t73\n東北\t青森県\t27\n沖縄\t沖縄県\t1\n近畿\t三重県\t31\n近畿\t京都府\t20\n近畿\t兵庫県\t1\n近畿\t和歌山県\t30\n近畿\t大阪府\t42\n近畿\t奈良県\t35\n近畿\t滋賀県\t31\n関東\t千葉県\t11\n関東\t東京都\t80\n関東\t神奈川県\t3\n関東\t群馬県\t2\n",
+  "stderr": "",
+  "execution_time_ms": 1586
+}

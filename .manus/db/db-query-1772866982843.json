@@ -1,0 +1,150 @@
+{
+  "query": "\nSELECT \n  prefecture,\n  COUNT(*) as count\nFROM products\nWHERE brandUrl IS NULL OR brandUrl = ''\nGROUP BY prefecture\nORDER BY prefecture;\n",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2xzt5HQKEQX5mEg.fe2b3777904e --database aXrCUMBv7Ngvrxv9W3BQsf --execute \nSELECT \n  prefecture,\n  COUNT(*) as count\nFROM products\nWHERE brandUrl IS NULL OR brandUrl = ''\nGROUP BY prefecture\nORDER BY prefecture;\n",
+  "rows": [
+    {
+      "prefecture": "三重県",
+      "count": "31"
+    },
+    {
+      "prefecture": "京都府",
+      "count": "50"
+    },
+    {
+      "prefecture": "佐賀県",
+      "count": "58"
+    },
+    {
+      "prefecture": "兵庫県",
+      "count": "1"
+    },
+    {
+      "prefecture": "千葉県",
+      "count": "11"
+    },
+    {
+      "prefecture": "和歌山県",
+      "count": "30"
+    },
+    {
+      "prefecture": "大阪府",
+      "count": "42"
+    },
+    {
+      "prefecture": "奈良県",
+      "count": "35"
+    },
+    {
+      "prefecture": "宮城県",
+      "count": "2"
+    },
+    {
+      "prefecture": "宮崎県",
+      "count": "30"
+    },
+    {
+      "prefecture": "山口県",
+      "count": "30"
+    },
+    {
+      "prefecture": "山形県",
+      "count": "74"
+    },
+    {
+      "prefecture": "山梨県",
+      "count": "7"
+    },
+    {
+      "prefecture": "岡山県",
+      "count": "30"
+    },
+    {
+      "prefecture": "岩手県",
+      "count": "51"
+    },
+    {
+      "prefecture": "島根県",
+      "count": "31"
+    },
+    {
+      "prefecture": "広島県",
+      "count": "36"
+    },
+    {
+      "prefecture": "愛媛県",
+      "count": "31"
+    },
+    {
+      "prefecture": "愛知県",
+      "count": "25"
+    },
+    {
+      "prefecture": "東京都",
+      "count": "80"
+    },
+    {
+      "prefecture": "沖縄県",
+      "count": "71"
+    },
+    {
+      "prefecture": "滋賀県",
+      "count": "31"
+    },
+    {
+      "prefecture": "熊本県",
+      "count": "35"
+    },
+    {
+      "prefecture": "石川県",
+      "count": "4"
+    },
+    {
+      "prefecture": "神奈川県",
+      "count": "3"
+    },
+    {
+      "prefecture": "福井県",
+      "count": "3"
+    },
+    {
+      "prefecture": "福岡県",
+      "count": "45"
+    },
+    {
+      "prefecture": "秋田県",
+      "count": "73"
+    },
+    {
+      "prefecture": "群馬県",
+      "count": "2"
+    },
+    {
+      "prefecture": "長崎県",
+      "count": "36"
+    },
+    {
+      "prefecture": "青森県",
+      "count": "27"
+    },
+    {
+      "prefecture": "静岡県",
+      "count": "5"
+    },
+    {
+      "prefecture": "香川県",
+      "count": "3"
+    },
+    {
+      "prefecture": "鳥取県",
+      "count": "30"
+    },
+    {
+      "prefecture": "鹿児島県",
+      "count": "36"
+    }
+  ],
+  "messages": [],
+  "stdout": "prefecture\tcount\n三重県\t31\n京都府\t50\n佐賀県\t58\n兵庫県\t1\n千葉県\t11\n和歌山県\t30\n大阪府\t42\n奈良県\t35\n宮城県\t2\n宮崎県\t30\n山口県\t30\n山形県\t74\n山梨県\t7\n岡山県\t30\n岩手県\t51\n島根県\t31\n広島県\t36\n愛媛県\t31\n愛知県\t25\n東京都\t80\n沖縄県\t71\n滋賀県\t31\n熊本県\t35\n石川県\t4\n神奈川県\t3\n福井県\t3\n福岡県\t45\n秋田県\t73\n群馬県\t2\n長崎県\t36\n青森県\t27\n静岡県\t5\n香川県\t3\n鳥取県\t30\n鹿児島県\t36\n",
+  "stderr": "",
+  "execution_time_ms": 1507
+}
