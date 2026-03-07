@@ -68,11 +68,11 @@ export function ProductCard({ product, className }: ProductCardProps) {
             {/* お気に入りボタン */}
             <div className="flex items-start justify-between mb-1.5">
               <div className="flex flex-wrap gap-1">
-                {product.badges.map((badge, i) => (
+                {(product.badges ?? []).map((badge, i) => (
                   <RecommendBadge
                     key={badge}
                     type={badge}
-                    label={product.badgeLabels[i]}
+                    label={product.badgeLabels?.[i] ?? badge}
                   />
                 ))}
               </div>

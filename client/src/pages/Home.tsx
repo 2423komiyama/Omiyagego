@@ -12,7 +12,6 @@ import {
   Clock, Package, Heart, ChevronLeft, Sparkles, Users
 } from "lucide-react";
 import { AppLayout } from "@/components/omiyage/AppLayout";
-import { ProductCard } from "@/components/omiyage/ProductCard";
 import { useSearch } from "@/contexts/SearchContext";
 import { useHistory } from "@/contexts/HistoryContext";
 import {
@@ -426,7 +425,7 @@ export default function Home() {
           ) : popularProducts.length > 0 ? (
             <div className="space-y-3">
               {popularProducts.slice(0, 4).map((product) => (
-                <ProductCard key={product.id} product={product as any} />
+                <DBHomeCard key={product.id} product={product} />
               ))}
             </div>
           ) : (
@@ -451,7 +450,7 @@ export default function Home() {
             </div>
             <div className="space-y-3">
               {editorialProducts.slice(0, 3).map((product) => (
-                <ProductCard key={product.id} product={product as any} />
+                <DBHomeCard key={product.id} product={product} />
               ))}
             </div>
           </section>
@@ -482,5 +481,46 @@ export default function Home() {
         </section>
       </div>
     </AppLayout>
+  );
+}
+
+// ── DBHomeCard: DBデータ対応の商品カード ──────────────────────
+function DBHomeCard({ product }: { product: any }) {
+  const [, navigate] = useLocation();
+  return (
+    <div
+      className="relative bg-white rounded-xl border border-stone-200 overflow-hidden cursor-pointer hover:shadow-md transition-all"
+      onClick={() => navigate(`/db-product/${product.id}`)}
+    >
+      <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-emerald-700" />
+      <div className="pl-4 pr-4 pt-3 pb-3">
+        <div className="flex gap-3">
+          <div className="w-16 h-16 rounded-lg overflow-hidden bg-stone-100 flex-shrink-0">
+            {product.imageUrl ? (
+              <img src={product.imageUrl} alt={product.name} className="w-full h-full object-cover" />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center">
+                <Package className="w-6 h-6 text-stone-300" />
+              </div>
+            )}
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-black text-stone-900 line-clamp-2 leading-tight">{product.name}</p>
+            <p className="text-xs text-stone-500 mt-0.5">{product.brand}</p>
+            <div className="flex gap-1.5 mt-1.5 flex-wrap">
+              <span className="px-2 py-0.5 bg-emerald-50 text-emerald-700 text-[10px] font-medium rounded-full">
+                {product.prefecture}
+              </span>
+              {product.shelfLife && (
+                <span className="px-2 py-0.5 bg-stone-100 text-stone-600 text-[10px] font-medium rounded-full">
+                  {product.shelfLife}日
+                </span>
+              )}
+            </div>
+          </div>
+          <p className="text-sm font-black text-stone-900 flex-shrink-0">¥{product.price?.toLocaleString()}</p>
+        </div>
+      </div>
+    </div>
   );
 }
