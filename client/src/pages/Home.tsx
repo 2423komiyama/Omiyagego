@@ -249,15 +249,25 @@ export default function Home() {
     }
   }, [requestLocation]);
 
+  // DB: 最寄り施設の商品（位置情報取得後）
+  const nearbyFacilityId = locationState.status === "granted" ? locationState.nearestFacility.id : undefined;
+  const nearbyInput = useMemo(
+    () => nearbyFacilityId ? { facilityId: nearbyFacilityId, limit: 5, offset: 0 } : null,
+    [nearbyFacilityId]
+  );
+  const { data: nearbyData, isLoading: isNearbyLoading } = trpc.products.search.useQuery(
+    nearbyInput ?? { facilityId: "__none__", limit: 0, offset: 0 },
+    { enabled: !!nearbyFacilityId }
+  );
+  const nearbyProducts = nearbyData?.products ?? [];
   // DB: 人気商品（いいね数順）
   const popularInput = useMemo(() => ({ sortBy: "popular" as const, limit: 6, offset: 0 }), []);
   const { data: popularData, isLoading: isPopularLoading } = trpc.products.search.useQuery(popularInput);
   const popularProducts = popularData?.products ?? [];
-
   // DB: 編集部おすすめ
   const editorialInput = useMemo(() => ({ badges: ["editorial"], limit: 4, offset: 0 }), []);
   const { data: editorialData } = trpc.products.search.useQuery(editorialInput);
-  const editorialProducts = editorialData?.products ?? [];
+  const editorialProducts = editorialData?.products ?? [];;
 
   return (
     <AppLayout>
@@ -336,6 +346,45 @@ export default function Home() {
           </div>
         )}
 
+        {/* ── 現在地近くのお土産（位置情報取得済み時） ── */}
+        {locationState.status === "granted" && (
+          <section>
+            <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center gap-2">
+                <MapPin className="w-4 h-4 text-emerald-600" />
+                <div>
+                  <h2 className="text-base font-black text-stone-900">
+                    {locationState.nearestFacility.shortLabel}のお土産
+                  </h2>
+                  <p className="text-xs text-stone-500">
+                    現在地から{locationState.distanceKm < 1
+                      ? `${Math.round(locationState.distanceKm * 1000)}m`
+                      : `${locationState.distanceKm.toFixed(1)}km`}
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={() => navigate(`/station/${locationState.nearestFacility.id}`)}
+                className="flex items-center gap-1 text-xs font-bold text-emerald-700"
+              >
+                すべて見る <ChevronRight className="w-3.5 h-3.5" />
+              </button>
+            </div>
+            {isNearbyLoading ? (
+              <div className="flex justify-center py-6">
+                <Loader2 className="w-5 h-5 text-emerald-600 animate-spin" />
+              </div>
+            ) : nearbyProducts.length > 0 ? (
+              <div className="space-y-3">
+                {nearbyProducts.map((product) => (
+                  <DBHomeCard key={product.id} product={product} />
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-6 text-stone-400 text-sm">この施設の商品情報を読み込み中...</div>
+            )}
+          </section>
+        )}
         {locationState.status === "denied" && (
           <div className="flex items-center gap-2 bg-amber-50 border border-amber-200 rounded-xl px-4 py-3">
             <WifiOff className="w-4 h-4 text-amber-500" />
