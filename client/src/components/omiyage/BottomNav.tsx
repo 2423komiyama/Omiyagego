@@ -4,12 +4,12 @@
 // ============================================================
 import { cn } from "@/lib/utils";
 import { useLocation } from "wouter";
-import { Home, Search, Map, Heart, User } from "lucide-react";
+import { Home, Search, Trophy, Heart, User } from "lucide-react";
 
 const NAV_ITEMS = [
   { id: "home", label: "ホーム", icon: Home, path: "/" },
   { id: "search", label: "探す", icon: Search, path: "/db-search" },
-  { id: "map", label: "マップ", icon: Map, path: "/map" },
+  { id: "collector", label: "コレクター", icon: Trophy, path: "/collector" },
   { id: "favorites", label: "お気に入り", icon: Heart, path: "/favorites" },
   { id: "mypage", label: "マイページ", icon: User, path: "/mypage" },
 ];

@@ -295,3 +295,59 @@ export const features = mysqlTable("features", {
 
 export type Feature = typeof features.$inferSelect;
 export type InsertFeature = typeof features.$inferInsert;
+
+// ============================================================
+// お土産コレクター機能（桃鉄風スタンプラリー）
+// ============================================================
+
+/**
+ * お土産コレクションテーブル
+ * ユーザーが買ったお土産を写真から登録する
+ */
+export const collections = mysqlTable("collections", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  productId: varchar("productId", { length: 32 }).notNull(),
+  photoUrl: text("photoUrl"),           // S3に保存した写真 URL
+  ocrText: text("ocrText"),             // OCRで抽出したテキスト
+  matchScore: decimal("matchScore", { precision: 5, scale: 2 }), // マッチングスコア(0-100)
+  prefecture: varchar("prefecture", { length: 16 }).notNull(), // 最得都道府縣（スタンプ用）
+  region: varchar("region", { length: 32 }).notNull(),         // 最得エリア（ボーナス用）
+  pointsEarned: int("pointsEarned").default(0).notNull(),      // この登録で獲得したポイント
+  status: mysqlEnum("status", [
+    "pending",    // OCR処理中
+    "matched",    // 商品特定成功
+    "unmatched",  // 商品特定失敗
+    "manual",     // 手動登録
+  ]).default("pending").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type Collection = typeof collections.$inferSelect;
+export type InsertCollection = typeof collections.$inferInsert;
+
+/**
+ * コレクターランクテーブル
+ * ユーザーのスタンプラリー達成状況を管理
+ */
+export const collectorStats = mysqlTable("collectorStats", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull().unique(),
+  totalCollected: int("totalCollected").default(0).notNull(),     // 登録商品数
+  prefecturesCount: int("prefecturesCount").default(0).notNull(), // 制霸都道府縣数
+  regionsCount: int("regionsCount").default(0).notNull(),         // 制霸エリア数
+  collectorRank: mysqlEnum("collectorRank", [
+    "traveler",       // 旅人: 1-9都道府縣
+    "seasoned",       // 旅慣れ: 10-19都道府縣
+    "master",         // 旅人達人: 20-34都道府縣
+    "legend",         // 全国制霸: 35+都道府縣
+  ]).default("traveler").notNull(),
+  stampedPrefectures: text("stampedPrefectures"),  // JSON配列: ["東京都", "北海道", ...]
+  stampedRegions: text("stampedRegions"),          // JSON配列: ["関東", "北海道", ...]
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type CollectorStats = typeof collectorStats.$inferSelect;
+export type InsertCollectorStats = typeof collectorStats.$inferInsert;

@@ -1,6 +1,6 @@
 import { eq } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
-import { InsertUser, users, products, sellers, facilities, giftMessages, reservations, likes, reviews, features, curatedLinks, userPoints, userBadges, pointTransactions } from "../drizzle/schema";
+import { InsertUser, users, products, sellers, facilities, giftMessages, reservations, likes, reviews, features, curatedLinks, userPoints, userBadges, pointTransactions, collections, collectorStats } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
 let _db: ReturnType<typeof drizzle> | null = null;
@@ -1026,4 +1026,178 @@ export async function processLoginBonus(userId: number) {
     });
     await awardBadge(userId, "first_login");
   }
+}
+
+// ============================================================
+// お土産コレクター機能 - DB ヘルパー
+// ============================================================
+
+/**
+ * ユーザーのコレクション一覧を取得
+ */
+export async function getCollectionsByUserId(userId: number, limit = 20, offset = 0) {
+  const db = await getDb();
+  if (!db) return { items: [], total: 0 };
+  const [rows, countRows] = await Promise.all([
+    db.select().from(collections)
+      .where(eq(collections.userId, userId))
+      .orderBy(desc(collections.createdAt))
+      .limit(limit)
+      .offset(offset),
+    db.select({ count: sql<number>`COUNT(*)` }).from(collections)
+      .where(eq(collections.userId, userId)),
+  ]);
+  return { items: rows, total: Number(countRows[0]?.count || 0) };
+}
+
+/**
+ * コレクションに商品を追加
+ */
+export async function addToCollection(data: {
+  userId: number;
+  productId: string;
+  photoUrl?: string;
+  ocrText?: string;
+  matchScore?: number;
+  prefecture: string;
+  region: string;
+  pointsEarned?: number;
+  status?: "pending" | "matched" | "unmatched" | "manual";
+}) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const [result] = await db.insert(collections).values({
+    userId: data.userId,
+    productId: data.productId,
+    photoUrl: data.photoUrl ?? null,
+    ocrText: data.ocrText ?? null,
+    matchScore: data.matchScore?.toString() ?? null,
+    prefecture: data.prefecture,
+    region: data.region,
+    pointsEarned: data.pointsEarned ?? 0,
+    status: data.status ?? "matched",
+  });
+  return { id: (result as any).insertId as number };
+}
+
+/**
+ * ユーザーが既にその商品をコレクション済みか確認
+ */
+export async function isProductCollected(userId: number, productId: string) {
+  const db = await getDb();
+  if (!db) return false;
+  const rows = await db.select({ id: collections.id })
+    .from(collections)
+    .where(and(eq(collections.userId, userId), eq(collections.productId, productId)))
+    .limit(1);
+  return rows.length > 0;
+}
+
+/**
+ * コレクターステータスを取得（なければ初期化して返す）
+ */
+export async function getOrCreateCollectorStats(userId: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const existing = await db.select().from(collectorStats)
+    .where(eq(collectorStats.userId, userId))
+    .limit(1);
+  if (existing.length > 0) return existing[0];
+  await db.insert(collectorStats).values({
+    userId,
+    totalCollected: 0,
+    prefecturesCount: 0,
+    regionsCount: 0,
+    collectorRank: "traveler",
+    stampedPrefectures: "[]",
+    stampedRegions: "[]",
+  });
+  const created = await db.select().from(collectorStats)
+    .where(eq(collectorStats.userId, userId))
+    .limit(1);
+  return created[0];
+}
+
+/**
+ * コレクターステータスを更新（新しいスタンプを追加）
+ */
+export async function updateCollectorStats(userId: number, newPrefecture: string, newRegion: string) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  const stats = await getOrCreateCollectorStats(userId);
+  const stampedPrefs: string[] = JSON.parse(stats.stampedPrefectures || "[]");
+  const stampedRegs: string[] = JSON.parse(stats.stampedRegions || "[]");
+
+  const prefAdded = !stampedPrefs.includes(newPrefecture);
+  const regAdded = !stampedRegs.includes(newRegion);
+
+  if (prefAdded) stampedPrefs.push(newPrefecture);
+  if (regAdded) stampedRegs.push(newRegion);
+
+  const newPrefCount = stampedPrefs.length;
+  const newRegCount = stampedRegs.length;
+
+  // ランク計算
+  let newRank: "traveler" | "seasoned" | "master" | "legend" = "traveler";
+  if (newPrefCount >= 35) newRank = "legend";
+  else if (newPrefCount >= 20) newRank = "master";
+  else if (newPrefCount >= 10) newRank = "seasoned";
+
+  const rankChanged = newRank !== stats.collectorRank;
+
+  await db.update(collectorStats).set({
+    totalCollected: stats.totalCollected + 1,
+    prefecturesCount: newPrefCount,
+    regionsCount: newRegCount,
+    collectorRank: newRank,
+    stampedPrefectures: JSON.stringify(stampedPrefs),
+    stampedRegions: JSON.stringify(stampedRegs),
+  }).where(eq(collectorStats.userId, userId));
+
+  return { prefAdded, regAdded, rankChanged, newRank, prefecturesCount: newPrefCount };
+}
+
+/**
+ * OCR結果テキストからDBの商品を検索してマッチング
+ */
+export async function matchProductByOcrText(ocrText: string): Promise<{ product: any; score: number } | null> {
+  const db = await getDb();
+  if (!db) return null;
+
+  // テキストを単語に分割してOR検索
+  const words = ocrText.split(/[\s\n、。・]+/).filter(w => w.length >= 2).slice(0, 10);
+  if (words.length === 0) return null;
+
+  const conditions = words.map(w =>
+    or(
+      like(products.name, `%${w}%`),
+      like(products.brand, `%${w}%`),
+    )
+  );
+
+  const candidates = await db.select().from(products)
+    .where(or(...conditions))
+    .orderBy(desc(products.likeCount))
+    .limit(10);
+
+  if (candidates.length === 0) return null;
+
+  // スコアリング: 何単語マッチしたか
+  let bestProduct = candidates[0];
+  let bestScore = 0;
+  for (const candidate of candidates) {
+    let score = 0;
+    for (const word of words) {
+      if (candidate.name.includes(word)) score += 3;
+      if (candidate.brand?.includes(word)) score += 2;
+    }
+    if (score > bestScore) {
+      bestScore = score;
+      bestProduct = candidate;
+    }
+  }
+
+  const normalizedScore = Math.min(100, (bestScore / (words.length * 3)) * 100);
+  return { product: bestProduct, score: normalizedScore };
 }
