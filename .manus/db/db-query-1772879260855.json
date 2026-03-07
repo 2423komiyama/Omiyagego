@@ -1,0 +1,130 @@
+{
+  "query": "SELECT id, name, brand, prefecture FROM products WHERE editorialPick = 1 LIMIT 20; SELECT id, name, brand, prefecture FROM products WHERE badges LIKE '%bestseller%' LIMIT 20;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2xzt5HQKEQX5mEg.fe2b3777904e --database aXrCUMBv7Ngvrxv9W3BQsf --execute SELECT id, name, brand, prefecture FROM products WHERE editorialPick = 1 LIMIT 20; SELECT id, name, brand, prefecture FROM products WHERE badges LIKE '%bestseller%' LIMIT 20;",
+  "rows": [
+    {
+      "id": "fukui-001",
+      "name": "羽二重くるみ",
+      "brand": "はや川金花堂",
+      "prefecture": "福井県"
+    },
+    {
+      "id": "fukui-003",
+      "name": "谷口屋の、おあげ",
+      "brand": "谷口屋",
+      "prefecture": "福井県"
+    },
+    {
+      "id": "fukui-008",
+      "name": "越前そば「旨味」",
+      "brand": "越前そばの里",
+      "prefecture": "福井県"
+    },
+    {
+      "id": "fukui-009",
+      "name": "五月ヶ瀬",
+      "brand": "五月ヶ瀬",
+      "prefecture": "福井県"
+    },
+    {
+      "id": "fukui-010",
+      "name": "元祖焼き鯖寿司",
+      "brand": "越前三國湊屋",
+      "prefecture": "福井県"
+    },
+    {
+      "id": "fukui-014",
+      "name": "汐うに",
+      "brand": "天たつ",
+      "prefecture": "福井県"
+    },
+    {
+      "id": "p-001",
+      "name": "白い恋人",
+      "brand": "石屋製菓",
+      "prefecture": "北海道"
+    },
+    {
+      "id": "p-002",
+      "name": "萩の月",
+      "brand": "菓匠三全",
+      "prefecture": "宮城県"
+    },
+    {
+      "id": "p-003",
+      "name": "赤福餅",
+      "brand": "赤福",
+      "prefecture": "三重県"
+    },
+    {
+      "id": "p-004",
+      "name": "博多通りもん",
+      "brand": "明月堂",
+      "prefecture": "福岡県"
+    },
+    {
+      "id": "p-005",
+      "name": "鳩サブレー",
+      "brand": "豊島屋",
+      "prefecture": "神奈川県"
+    },
+    {
+      "id": "p-006",
+      "name": "信玄餅",
+      "brand": "桔梗屋",
+      "prefecture": "山梨県"
+    },
+    {
+      "id": "p-007",
+      "name": "うなぎパイ",
+      "brand": "春華堂",
+      "prefecture": "静岡県"
+    },
+    {
+      "id": "p-008",
+      "name": "マルセイバターサンド",
+      "brand": "六花亭",
+      "prefecture": "北海道"
+    },
+    {
+      "id": "p-009",
+      "name": "かもめの玉子",
+      "brand": "さいとう製菓",
+      "prefecture": "岩手県"
+    },
+    {
+      "id": "p-010",
+      "name": "東京ばな奈",
+      "brand": "グレープストーン",
+      "prefecture": "東京都"
+    },
+    {
+      "id": "p-011",
+      "name": "白い恋人 36枚入（缶入）",
+      "brand": "石屋製菓",
+      "prefecture": "北海道"
+    },
+    {
+      "id": "p-016",
+      "name": "フルーツポンチ 3瓶セット",
+      "brand": "千疋屋総本店",
+      "prefecture": "東京都"
+    },
+    {
+      "id": "p-020",
+      "name": "長崎カステラ 桐箱入",
+      "brand": "文明堂総本店",
+      "prefecture": "長崎県"
+    },
+    {
+      "id": "p-021",
+      "name": "札幌おかき Oh! 焼とうきび",
+      "brand": "YOSHIMI",
+      "prefecture": "北海道"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tname\tbrand\tprefecture\nfukui-001\t羽二重くるみ\tはや川金花堂\t福井県\nfukui-003\t谷口屋の、おあげ\t谷口屋\t福井県\nfukui-008\t越前そば「旨味」\t越前そばの里\t福井県\nfukui-009\t五月ヶ瀬\t五月ヶ瀬\t福井県\nfukui-010\t元祖焼き鯖寿司\t越前三國湊屋\t福井県\nfukui-014\t汐うに\t天たつ\t福井県\np-001\t白い恋人\t石屋製菓\t北海道\np-002\t萩の月\t菓匠三全\t宮城県\np-003\t赤福餅\t赤福\t三重県\np-004\t博多通りもん\t明月堂\t福岡県\np-005\t鳩サブレー\t豊島屋\t神奈川県\np-006\t信玄餅\t桔梗屋\t山梨県\np-007\tうなぎパイ\t春華堂\t静岡県\np-008\tマルセイバターサンド\t六花亭\t北海道\np-009\tかもめの玉子\tさいとう製菓\t岩手県\np-010\t東京ばな奈\tグレープストーン\t東京都\np-011\t白い恋人 36枚入（缶入）\t石屋製菓\t北海道\np-016\tフルーツポンチ 3瓶セット\t千疋屋総本店\t東京都\np-020\t長崎カステラ 桐箱入\t文明堂総本店\t長崎県\np-021\t札幌おかき Oh! 焼とうきび\tYOSHIMI\t北海道\n",
+  "stderr": "",
+  "execution_time_ms": 1812
+}

@@ -445,6 +445,32 @@ export default function PurposePage() {
           </button>
         </div>
 
+        {/* ── 施設別リンク（複合SEOページへ） ── */}
+        <div className="px-4 py-4 border-t border-stone-100">
+          <h2 className="text-sm font-bold text-stone-700 mb-3">駅・空港から探す</h2>
+          <div className="grid grid-cols-2 gap-2">
+            {[
+              { id: "tokyo", label: "東京駅", icon: "🚄" },
+              { id: "haneda_t1", label: "羽田空港T1", icon: "✈️" },
+              { id: "haneda_t2", label: "羽田空港T2", icon: "✈️" },
+              { id: "chitose", label: "新千歳空港", icon: "✈️" },
+              { id: "kyoto", label: "京都駅", icon: "🚄" },
+              { id: "osaka", label: "大阪駅", icon: "🚄" },
+              { id: "fukuoka", label: "博多駅", icon: "🚄" },
+              { id: "naha", label: "那覇空港", icon: "✈️" },
+            ].map((facility) => (
+              <button
+                key={facility.id}
+                onClick={() => navigate(`/station/${facility.id}/purpose/${purposeId}`)}
+                className="flex items-center gap-2 bg-white border border-stone-200 rounded-xl px-3 py-2.5 hover:border-emerald-300 hover:bg-emerald-50 transition-all text-left"
+              >
+                <span className="text-base">{facility.icon}</span>
+                <span className="text-xs font-bold text-stone-700 leading-tight">{facility.label}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+
         {/* ── 関連用途リンク ── */}
         <div className="px-4 py-4 border-t border-stone-100">
           <h2 className="text-sm font-bold text-stone-700 mb-3">関連する用途</h2>

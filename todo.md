@@ -137,7 +137,7 @@
 
 ### Phase 6: SEO入口ページ群
 - [x] 駅/空港ページ（/station/:facilityId）作成（14施設対応）
-- [ ] 駅/空港xd7用途ページ（/station/:facilityId/purpose/:purposeId）作成
+- [x] 駅/空港×8用途ページ（/station/:facilityId/purpose/:purposeId）作成（StationPurposePage.tsx）
 - [ ] 店舗ページ（/store/:sellerId）作成
 - [x] 用途ページ（/purpose/:purposeId）作成（8用途対応）
 - [x] 各ページにOGP・構造化データ・FAQ・選び方ガイド設置
@@ -159,4 +159,13 @@
 - [x] マイページ実装（ポイント残高・バッジ・活動履歴）
 - [x] AdminCuratedLinksページ作成（YouTube/SNS/記事リンク登録・削除）
 - [x] AdminDashboardにキュレーションリンク管理へのナビゲーション追加
+- [x] テスト38件全パス・チェックポイント保存
+
+## 追加作業（2026-03-07 #3）
+- [x] 人気商品のYouTube/SNS/記事キュレーションリンクをLLMで生成しDBに登録（56件）
+- [x] 口コミ投稿・ポイント付与フローをテストし不具合を修正
+- [x] /station/:facilityId/purpose/:purposeId 複合SEOページを作成（StationPurposePage.tsx）
+- [x] StationPageの用途クイックリンクを複合SEOページへ変更
+- [x] PurposePageに「駅・空港から探す」セクション追加（複合SEOページへのリンク）
+- [x] purposeTagsをLLMで一括付与（1,548件/1,549件 = 99.9%カバレッジ）
 - [x] テスト38件全パス・チェックポイント保存

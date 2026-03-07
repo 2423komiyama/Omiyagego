@@ -32,6 +32,7 @@ import DBProductDetail from "./pages/DBProductDetail";
 import NichePage from "./pages/NichePage";
 import StationPage from "./pages/StationPage";
 import PurposePage from "./pages/PurposePage";
+import StationPurposePage from "./pages/StationPurposePage";
 function Router() {
   // make sure to consider if you need authentication for certain routes
   return (
@@ -56,6 +57,7 @@ function Router() {
       <Route path="/admin/sellers" component={AdminSellers} />
       <Route path="/admin/curated-links" component={AdminCuratedLinks} />
       <Route path="/niche" component={NichePage} />
+      <Route path="/station/:facilityId/purpose/:purposeId" component={StationPurposePage} />
       <Route path="/station/:facilityId" component={StationPage} />
       <Route path="/purpose/:purposeId" component={PurposePage} />
       <Route path="/404" component={NotFound} />

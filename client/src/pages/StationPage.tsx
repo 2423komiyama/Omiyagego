@@ -261,7 +261,7 @@ export default function StationPage() {
             ].map((purpose) => (
               <button
                 key={purpose.id}
-                onClick={() => navigate(`/db-search?facilityId=${facilityId}&purposeTag=${purpose.id}`)}
+                onClick={() => navigate(`/station/${facilityId}/purpose/${purpose.id}`)}
                 className="flex flex-col items-center gap-1 py-3 bg-stone-50 rounded-xl border border-stone-200 hover:border-emerald-300 hover:bg-emerald-50 transition-colors"
               >
                 <span className="text-xl">{purpose.icon}</span>

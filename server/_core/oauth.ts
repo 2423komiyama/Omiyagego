@@ -36,6 +36,16 @@ export function registerOAuthRoutes(app: Express) {
         lastSignedIn: new Date(),
       });
 
+      // 初回ログインボーナス付与（1回のみ）
+      try {
+        const dbUser = await db.getUserByOpenId(userInfo.openId);
+        if (dbUser) {
+          await db.processLoginBonus(dbUser.id);
+        }
+      } catch (bonusErr) {
+        console.warn("[OAuth] Login bonus failed (non-critical):", bonusErr);
+      }
+
       const sessionToken = await sdk.createSessionToken(userInfo.openId, {
         name: userInfo.name || "",
         expiresInMs: ONE_YEAR_MS,

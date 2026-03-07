@@ -1,0 +1,8 @@
+{
+  "query": "SELECT id, name, brand, prefecture FROM products WHERE is_bestseller = 1 OR is_editorial = 1 ORDER BY like_count DESC LIMIT 30;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2xzt5HQKEQX5mEg.fe2b3777904e --database aXrCUMBv7Ngvrxv9W3BQsf --execute SELECT id, name, brand, prefecture FROM products WHERE is_bestseller = 1 OR is_editorial = 1 ORDER BY like_count DESC LIMIT 30;",
+  "returncode": 1,
+  "logs": [
+    "ERROR 1054 (42S22) at line 1: Unknown column 'like_count' in 'order clause'"
+  ]
+}
