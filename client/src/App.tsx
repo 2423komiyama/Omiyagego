@@ -34,6 +34,7 @@ import StationPage from "./pages/StationPage";
 import PurposePage from "./pages/PurposePage";
 import StationPurposePage from "./pages/StationPurposePage";
 import CollectorPage from "./pages/CollectorPage";
+import RegisterPage from "./pages/RegisterPage";
 function Router() {
   // make sure to consider if you need authentication for certain routes
   return (
@@ -62,6 +63,7 @@ function Router() {
       <Route path="/station/:facilityId" component={StationPage} />
       <Route path="/purpose/:purposeId" component={PurposePage} />
       <Route path="/collector" component={CollectorPage} />
+      <Route path="/register" component={RegisterPage} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>

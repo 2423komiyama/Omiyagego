@@ -188,3 +188,12 @@
 - [x] スタンプラリーSNSシェア機能（Canvas APIで動的シェア画像生成、X/LINE/URLコピー/画像保存）
 - [x] エリア制覇バッジのビジュアル強化（エモジ・鍵アイコン・進捗バー・スターバッジ付きカード型バッジ）
 - [x] テスト38/38パス・チェックポイント保存
+
+## 会員登録フォーム・ページ（2026-03-07 #6）
+- [x] DBスキーマ拡張（nickname/bio/avatarUrl/homePrefecture/isProfileComplete）とマイグレーション
+- [x] tRPC user.updateProfile/user.getProfileエンドポイント実装
+- [x] RegisterPage.tsx（3ステップオンボーディング）作成
+- [x] App.tsxに/registerルートを追加
+- [x] MyPageのプロフィールヘッダーに「編集」ボタンを追加
+- [x] Home.tsxに初回ログイン後の未登録ユーザーを/registerへ誘導するフローを実装
+- [x] テスト38/38パス・チェックポイント保存
