@@ -1,17 +1,20 @@
 // ============================================================
-// Omiyage Go - DB商品詳細ページ（強化版）
-// 機能: いいね・共有・キュレーション枠・OGP・公式サイトリンク
+// Omiyage Go - DB商品詳細ページ（強化版 v2）
+// 機能: いいね・共有・キュレーション枠・OGP・公式サイトリンク・口コミ・ポイント
 // ============================================================
 import { useState, useEffect, useMemo } from "react";
 import { useParams, useLocation } from "wouter";
 import { AppLayout } from "@/components/omiyage/AppLayout";
 import { trpc } from "@/lib/trpc";
+import { useAuth } from "@/_core/hooks/useAuth";
+import { getLoginUrl } from "@/const";
 import { Helmet } from "react-helmet-async";
 import {
   ArrowLeft, Package, MapPin, Clock, Tag, Star,
   ShoppingBag, Gift, ChevronRight, Loader2, AlertCircle,
   CheckCircle2, Store, Building2, ExternalLink, Heart, Share2,
-  Sparkles
+  Sparkles, Youtube, Instagram, Twitter, FileText, MessageSquare,
+  Send, X, ThumbsUp, Award
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -27,7 +30,7 @@ const BADGE_CONFIG: Record<string, { label: string; className: string }> = {
   local: { label: "地元産", className: "bg-green-100 text-green-700" },
 };
 
-// カテゴリ別フォールバック画像（Unsplash）
+// カテゴリ別フォールバック画像
 const CATEGORY_IMAGES: Record<string, string> = {
   "和菓子": "https://images.unsplash.com/photo-1563245372-f21724e3856d?w=600&q=80",
   "洋菓子": "https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=600&q=80",
@@ -62,10 +65,84 @@ function getSessionId(): string {
   return sid;
 }
 
+// キュレーションリンクのアイコン
+function CuratedLinkIcon({ type }: { type: string }) {
+  switch (type) {
+    case "youtube": return <Youtube className="w-4 h-4 text-red-500" />;
+    case "instagram": return <Instagram className="w-4 h-4 text-pink-500" />;
+    case "twitter": return <Twitter className="w-4 h-4 text-sky-500" />;
+    case "tiktok": return <span className="text-xs font-black text-stone-800">TT</span>;
+    case "article": return <FileText className="w-4 h-4 text-blue-500" />;
+    case "news": return <FileText className="w-4 h-4 text-stone-500" />;
+    default: return <ExternalLink className="w-4 h-4 text-stone-500" />;
+  }
+}
+
+// キュレーションリンクのラベル
+const LINK_TYPE_LABELS: Record<string, string> = {
+  youtube: "YouTube",
+  instagram: "Instagram",
+  twitter: "X (Twitter)",
+  tiktok: "TikTok",
+  article: "記事",
+  news: "ニュース",
+  other: "外部リンク",
+};
+
+// 星評価コンポーネント
+function StarRating({ value, onChange, readonly = false }: {
+  value: number;
+  onChange?: (v: number) => void;
+  readonly?: boolean;
+}) {
+  const [hover, setHover] = useState(0);
+  return (
+    <div className="flex gap-0.5">
+      {[1, 2, 3, 4, 5].map((star) => (
+        <button
+          key={star}
+          type="button"
+          disabled={readonly}
+          onClick={() => onChange?.(star)}
+          onMouseEnter={() => !readonly && setHover(star)}
+          onMouseLeave={() => !readonly && setHover(0)}
+          className={cn("transition-colors", readonly ? "cursor-default" : "cursor-pointer")}
+        >
+          <Star
+            className={cn(
+              "w-5 h-5",
+              (hover || value) >= star ? "text-amber-400 fill-amber-400" : "text-stone-300"
+            )}
+          />
+        </button>
+      ))}
+    </div>
+  );
+}
+
+// ポイント獲得通知
+function PointToast({ points, message, onClose }: { points: number; message: string; onClose: () => void }) {
+  useEffect(() => {
+    const t = setTimeout(onClose, 4000);
+    return () => clearTimeout(t);
+  }, [onClose]);
+
+  return (
+    <div className="fixed bottom-24 left-1/2 -translate-x-1/2 z-50 flex items-center gap-2 bg-emerald-700 text-white px-4 py-2.5 rounded-full shadow-lg animate-bounce-in">
+      <Award className="w-4 h-4 text-amber-300" />
+      <span className="text-sm font-bold">+{points}pt {message}</span>
+      <button onClick={onClose} className="ml-1 opacity-70 hover:opacity-100">
+        <X className="w-3.5 h-3.5" />
+      </button>
+    </div>
+  );
+}
+
 export default function DBProductDetail() {
   const params = useParams<{ id: string }>();
   const [, navigate] = useLocation();
   const productId = params.id;
+  const { user, isAuthenticated } = useAuth();
 
   const { data: product, isLoading, error } = trpc.products.get.useQuery(
     { id: productId },
@@ -80,7 +157,46 @@ export default function DBProductDetail() {
   const [localLiked, setLocalLiked] = useState(false);
   useEffect(() => { setLocalLiked(isLiked); }, [isLiked]);
 
-  // 関連商品（同じ都道府県・カテゴリ）
+  // キュレーションリンク
+  const { data: curatedLinks = [] } = trpc.curatedLinks.list.useQuery(
+    { productId },
+    { enabled: !!productId }
+  );
+
+  // 口コミ
+  const { data: reviewData, refetch: refetchReviews } = trpc.reviews.list.useQuery(
+    { productId, limit: 10 },
+    { enabled: !!productId }
+  );
+  const reviews = reviewData?.reviews ?? [];
+  const reviewTotal = reviewData?.total ?? 0;
+
+  // 口コミ投稿フォーム
+  const [showReviewForm, setShowReviewForm] = useState(false);
+  const [reviewRating, setReviewRating] = useState(5);
+  const [reviewBody, setReviewBody] = useState("");
+  const [reviewIsAnonymous, setReviewIsAnonymous] = useState(false);
+  const [reviewError, setReviewError] = useState("");
+
+  // ポイント通知
+  const [pointToast, setPointToast] = useState<{ points: number; message: string } | null>(null);
+
+  const createReview = trpc.reviews.create.useMutation({
+    onSuccess: (data) => {
+      setShowReviewForm(false);
+      setReviewBody("");
+      setReviewRating(5);
+      setReviewError("");
+      refetchReviews();
+      // ポイント通知
+      setPointToast({ points: 50, message: "口コミ投稿ありがとうございます！" });
+    },
+    onError: (err) => {
+      setReviewError(err.message);
+    },
+  });
+
+  // 関連商品
   const relatedInput = useMemo(() => ({
     prefecture: product?.prefecture,
     category: product?.category,
@@ -138,10 +254,7 @@ export default function DBProductDetail() {
     catch { return []; }
   })();
 
-  // 売り場情報
   const sellers = product.sellers || [];
-
-  // 表示する画像URL
   const displayImageUrl = product.imageUrl || getCategoryImage(product.category);
 
   // 共有
@@ -159,6 +272,23 @@ export default function DBProductDetail() {
   const handleLike = () => {
     setLocalLiked(!localLiked);
     toggleLike.mutate({ productId, sessionId });
+    if (!localLiked && isAuthenticated) {
+      setPointToast({ points: 5, message: "いいね！" });
+    }
+  };
+
+  // 口コミ投稿
+  const handleSubmitReview = () => {
+    if (reviewBody.trim().length < 10) {
+      setReviewError("口コミは10文字以上で入力してください");
+      return;
+    }
+    createReview.mutate({
+      productId,
+      rating: reviewRating,
+      body: reviewBody.trim(),
+      isAnonymous: reviewIsAnonymous,
+    });
   };
 
   // SEOメタ
@@ -166,6 +296,9 @@ export default function DBProductDetail() {
   const pageDescription = product.description
     ? `${product.description.slice(0, 100)}...`
     : `${product.prefecture}のお土産「${product.name}」。${product.brand}。価格¥${product.price.toLocaleString()}。日持ち${product.shelfLife}日。`;
+
+  // 平均評価
+  const avgRating = product.avgRating ? Number(product.avgRating) : 0;
 
   return (
     <AppLayout>
@@ -176,7 +309,7 @@ export default function DBProductDetail() {
         <meta property="og:description" content={pageDescription} />
         <meta property="og:type" content="product" />
         {displayImageUrl && <meta property="og:image" content={displayImageUrl} />}
-        <link rel="canonical" href={`https://omiyagego-axrcumbv.manus.space/db-product/${productId}`} />
+        <link rel="canonical" href={`${window.location.origin}/db-product/${productId}`} />
         <script type="application/ld+json">{JSON.stringify({
           "@context": "https://schema.org",
           "@type": "Product",
@@ -190,8 +323,24 @@ export default function DBProductDetail() {
             "priceCurrency": "JPY",
             "availability": "https://schema.org/InStock",
           },
+          ...(avgRating > 0 && reviewTotal > 0 ? {
+            "aggregateRating": {
+              "@type": "AggregateRating",
+              "ratingValue": avgRating.toFixed(1),
+              "reviewCount": reviewTotal,
+            }
+          } : {}),
         })}</script>
       </Helmet>
+
+      {/* ポイント獲得通知 */}
+      {pointToast && (
+        <PointToast
+          points={pointToast.points}
+          message={pointToast.message}
+          onClose={() => setPointToast(null)}
+        />
+      )}
 
       {/* ── ヘッダー ── */}
       <div className="sticky top-0 z-20 bg-white/95 backdrop-blur-sm border-b border-stone-100">
@@ -206,7 +355,6 @@ export default function DBProductDetail() {
             <p className="text-sm font-bold text-stone-900 truncate">{product.name}</p>
             <p className="text-xs text-stone-500">{product.prefecture}</p>
           </div>
-          {/* いいね・共有ボタン（ヘッダー右） */}
           <div className="flex items-center gap-2">
             <button
               onClick={handleLike}
@@ -263,6 +411,14 @@ export default function DBProductDetail() {
             <div className="flex-1 min-w-0">
               <p className="text-xl font-black text-stone-900 leading-tight">{product.name}</p>
               <p className="text-sm text-stone-500 mt-0.5">{product.brand}</p>
+              {/* 評価サマリー */}
+              {avgRating > 0 && reviewTotal > 0 && (
+                <div className="flex items-center gap-1.5 mt-1.5">
+                  <StarRating value={Math.round(avgRating)} readonly />
+                  <span className="text-sm font-bold text-amber-600">{avgRating.toFixed(1)}</span>
+                  <span className="text-xs text-stone-400">({reviewTotal}件)</span>
+                </div>
+              )}
             </div>
             <div className="flex-shrink-0 text-right">
               <p className="text-2xl font-black text-emerald-700">¥{product.price.toLocaleString()}</p>
@@ -294,7 +450,7 @@ export default function DBProductDetail() {
             )}
           </div>
 
-          {/* いいね・共有ボタン（メイン） */}
+          {/* いいね・共有ボタン */}
           <div className="flex gap-3 mt-4">
             <button
               onClick={handleLike}
@@ -307,6 +463,9 @@ export default function DBProductDetail() {
             >
               <Heart className={cn("w-4 h-4", localLiked && "fill-rose-500")} />
               {localLiked ? "お気に入り済み" : "お気に入りに追加"}
+              {isAuthenticated && !localLiked && (
+                <span className="text-[10px] text-emerald-600 font-bold bg-emerald-50 px-1.5 py-0.5 rounded-full">+5pt</span>
+              )}
             </button>
             <button
               onClick={handleShare}
@@ -376,24 +535,16 @@ export default function DBProductDetail() {
                     </div>
                     <div className="flex-shrink-0 flex flex-col items-end gap-1">
                       {seller.insideGate && (
-                        <span className="px-1.5 py-0.5 bg-emerald-100 text-emerald-700 text-[10px] font-bold rounded">
-                          改札内
-                        </span>
+                        <span className="px-1.5 py-0.5 bg-emerald-100 text-emerald-700 text-[10px] font-bold rounded">改札内</span>
                       )}
                       {seller.stockStatus === "in_stock" && (
-                        <span className="px-1.5 py-0.5 bg-green-100 text-green-700 text-[10px] font-bold rounded">
-                          在庫あり
-                        </span>
+                        <span className="px-1.5 py-0.5 bg-green-100 text-green-700 text-[10px] font-bold rounded">在庫あり</span>
                       )}
                       {seller.stockStatus === "low_stock" && (
-                        <span className="px-1.5 py-0.5 bg-amber-100 text-amber-700 text-[10px] font-bold rounded">
-                          残りわずか
-                        </span>
+                        <span className="px-1.5 py-0.5 bg-amber-100 text-amber-700 text-[10px] font-bold rounded">残りわずか</span>
                       )}
                       {seller.stockStatus === "out_of_stock" && (
-                        <span className="px-1.5 py-0.5 bg-red-100 text-red-700 text-[10px] font-bold rounded">
-                          在庫なし
-                        </span>
+                        <span className="px-1.5 py-0.5 bg-red-100 text-red-700 text-[10px] font-bold rounded">在庫なし</span>
                       )}
                       <ChevronRight className="w-3.5 h-3.5 text-stone-400 mt-0.5" />
                     </div>
@@ -403,6 +554,187 @@ export default function DBProductDetail() {
             </div>
           </div>
         )}
+
+        {/* ── キュレーションリンク（SNS/YouTube/記事） ── */}
+        {curatedLinks.length > 0 && (
+          <div className="px-4 py-4 border-b border-stone-100">
+            <h2 className="text-sm font-bold text-stone-700 mb-3 flex items-center gap-1.5">
+              <Sparkles className="w-4 h-4 text-amber-500" />
+              この商品の話題
+            </h2>
+            <div className="space-y-2.5">
+              {curatedLinks.map((link) => (
+                <a
+                  key={link.id}
+                  href={link.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-start gap-3 bg-stone-50 rounded-xl p-3 hover:bg-stone-100 transition-colors group"
+                >
+                  {/* サムネイル or アイコン */}
+                  <div className="w-14 h-14 rounded-lg overflow-hidden bg-stone-200 flex-shrink-0 flex items-center justify-center">
+                    {link.thumbnailUrl ? (
+                      <img
+                        src={link.thumbnailUrl}
+                        alt={link.title || ""}
+                        className="w-full h-full object-cover"
+                        onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
+                      />
+                    ) : (
+                      <CuratedLinkIcon type={link.type} />
+                    )}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-1.5 mb-0.5">
+                      <CuratedLinkIcon type={link.type} />
+                      <span className="text-[10px] text-stone-400 font-medium">
+                        {LINK_TYPE_LABELS[link.type] || "外部リンク"}
+                      </span>
+                      {link.authorName && (
+                        <span className="text-[10px] text-stone-400">· {link.authorName}</span>
+                      )}
+                    </div>
+                    <p className="text-xs font-bold text-stone-800 line-clamp-2 group-hover:text-emerald-700 transition-colors">
+                      {link.title || link.url}
+                    </p>
+                    {link.description && (
+                      <p className="text-[10px] text-stone-500 mt-0.5 line-clamp-1">{link.description}</p>
+                    )}
+                  </div>
+                  <ExternalLink className="w-3.5 h-3.5 text-stone-400 flex-shrink-0 mt-1 group-hover:text-emerald-600 transition-colors" />
+                </a>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* ── 口コミ・レビュー ── */}
+        <div className="px-4 py-4 border-b border-stone-100">
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="text-sm font-bold text-stone-700 flex items-center gap-1.5">
+              <MessageSquare className="w-4 h-4 text-emerald-600" />
+              口コミ
+              {reviewTotal > 0 && (
+                <span className="text-xs text-stone-400 font-normal">({reviewTotal}件)</span>
+              )}
+            </h2>
+            {isAuthenticated ? (
+              <button
+                onClick={() => setShowReviewForm(!showReviewForm)}
+                className="flex items-center gap-1 text-xs font-bold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-full hover:bg-emerald-100 transition-colors"
+              >
+                <Send className="w-3 h-3" />
+                口コミを書く
+                <span className="text-[10px] text-emerald-500 font-bold">+50pt</span>
+              </button>
+            ) : (
+              <a
+                href={getLoginUrl()}
+                className="text-xs font-bold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-full hover:bg-emerald-100 transition-colors"
+              >
+                ログインして口コミを書く
+              </a>
+            )}
+          </div>
+
+          {/* 口コミ投稿フォーム */}
+          {showReviewForm && isAuthenticated && (
+            <div className="mb-4 bg-emerald-50 rounded-xl p-4 border border-emerald-200">
+              <p className="text-xs font-bold text-emerald-800 mb-3">口コミを投稿する（+50pt獲得）</p>
+
+              {/* 星評価 */}
+              <div className="mb-3">
+                <p className="text-xs text-stone-600 mb-1.5">評価</p>
+                <StarRating value={reviewRating} onChange={setReviewRating} />
+              </div>
+
+              {/* テキスト */}
+              <textarea
+                value={reviewBody}
+                onChange={(e) => setReviewBody(e.target.value)}
+                placeholder="このお土産の感想を教えてください（10文字以上）"
+                rows={4}
+                className="w-full text-sm text-stone-800 bg-white border border-stone-200 rounded-lg px-3 py-2 resize-none focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+              />
+
+              {/* 匿名チェック */}
+              <label className="flex items-center gap-2 mt-2 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={reviewIsAnonymous}
+                  onChange={(e) => setReviewIsAnonymous(e.target.checked)}
+                  className="w-3.5 h-3.5 accent-emerald-600"
+                />
+                <span className="text-xs text-stone-600">匿名で投稿する</span>
+              </label>
+
+              {reviewError && (
+                <p className="text-xs text-red-600 mt-2">{reviewError}</p>
+              )}
+
+              <div className="flex gap-2 mt-3">
+                <button
+                  onClick={handleSubmitReview}
+                  disabled={createReview.isPending}
+                  className="flex-1 flex items-center justify-center gap-1.5 py-2 bg-emerald-700 text-white text-sm font-bold rounded-lg hover:bg-emerald-800 disabled:opacity-50 transition-colors"
+                >
+                  {createReview.isPending ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : (
+                    <Send className="w-3.5 h-3.5" />
+                  )}
+                  投稿する
+                </button>
+                <button
+                  onClick={() => { setShowReviewForm(false); setReviewError(""); }}
+                  className="px-4 py-2 bg-white border border-stone-200 text-stone-600 text-sm font-bold rounded-lg hover:bg-stone-50 transition-colors"
+                >
+                  キャンセル
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* 口コミ一覧 */}
+          {reviews.length > 0 ? (
+            <div className="space-y-3">
+              {reviews.map((review) => (
+                <div key={review.id} className="bg-stone-50 rounded-xl p-3">
+                  <div className="flex items-start justify-between gap-2 mb-2">
+                    <div className="flex items-center gap-2">
+                      <div className="w-7 h-7 rounded-full bg-emerald-100 flex items-center justify-center flex-shrink-0">
+                        <span className="text-xs font-bold text-emerald-700">
+                          {review.isAnonymous ? "匿" : (review.userName || review.authorName || "U").charAt(0)}
+                        </span>
+                      </div>
+                      <div>
+                        <p className="text-xs font-bold text-stone-800">
+                          {review.isAnonymous ? "匿名ユーザー" : (review.userName || review.authorName || "ユーザー")}
+                        </p>
+                        <StarRating value={review.rating} readonly />
+                      </div>
+                    </div>
+                    <p className="text-[10px] text-stone-400 flex-shrink-0">
+                      {new Date(review.createdAt).toLocaleDateString("ja-JP")}
+                    </p>
+                  </div>
+                  <p className="text-sm text-stone-700 leading-relaxed">{review.body}</p>
+                  {review.purposeTag && (
+                    <span className="inline-block mt-1.5 text-[10px] text-stone-500 bg-stone-100 px-1.5 py-0.5 rounded">
+                      #{review.purposeTag}
+                    </span>
+                  )}
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-6 text-stone-400">
+              <MessageSquare className="w-8 h-8 mx-auto mb-2 opacity-40" />
+              <p className="text-sm">まだ口コミがありません</p>
+              <p className="text-xs mt-0.5">最初の口コミを投稿して+50ptゲット！</p>
+            </div>
+          )}
+        </div>
 
         {/* ── メーカーについて ── */}
         {(product.makerStory || product.brandUrl) && (
@@ -458,7 +790,7 @@ export default function DBProductDetail() {
           </div>
         </div>
 
-        {/* ── キュレーション枠: 関連商品 ── */}
+        {/* ── 関連商品 ── */}
         {relatedProducts.length > 0 && (
           <div className="px-4 py-4 border-b border-stone-100">
             <div className="flex items-center justify-between mb-3">
@@ -501,23 +833,6 @@ export default function DBProductDetail() {
             </div>
           </div>
         )}
-
-        {/* ── 地域情報 ── */}
-        <div className="px-4 py-4 border-b border-stone-100">
-          <h2 className="text-sm font-bold text-stone-700 mb-3 flex items-center gap-1.5">
-            <MapPin className="w-4 h-4 text-emerald-600" />
-            産地・地域
-          </h2>
-          <div className="flex items-center gap-2">
-            <div className="w-10 h-10 rounded-full bg-emerald-50 flex items-center justify-center">
-              <MapPin className="w-5 h-5 text-emerald-600" />
-            </div>
-            <div>
-              <p className="text-sm font-bold text-stone-900">{product.prefecture}</p>
-              <p className="text-xs text-stone-500">{product.region}</p>
-            </div>
-          </div>
-        </div>
 
         {/* ── 同じ都道府県のお土産を探す ── */}
         <div className="px-4 py-4">

@@ -9,7 +9,11 @@ import {
   getAllReservations, createProduct, updateProduct, deleteProduct, searchProducts,
   getAvailablePrefectures, getAvailableCategories, getAvailableRegions, getSellerById,
   addLike, removeLike, getLikedProductIds, getActiveFeatures, getProductsByFacilityId,
-  getFacilityById, getSellersByFacilityId
+  getFacilityById, getSellersByFacilityId,
+  // 新規
+  getReviewsByProductId, createReview, processReviewReward,
+  getCuratedLinksByProductId, addCuratedLink, deleteCuratedLink, getAllCuratedLinks,
+  getUserPoints, getPointTransactions, getUserBadges, processLikeReward, processLoginBonus,
 } from "./db";
 
 export const appRouter = router({
@@ -38,7 +42,6 @@ export const appRouter = router({
         minPrice: z.number().optional(),
         maxPrice: z.number().optional(),
         badges: z.array(z.string()).optional(),
-        // 新規フィルター
         purposeTag: z.string().optional(),
         minShelfLife: z.number().optional(),
         isIndividualPackaged: z.boolean().optional(),
@@ -86,7 +89,6 @@ export const appRouter = router({
         const userId = ctx.user?.id;
         const sessionId = input.sessionId;
 
-        // 既にいいね済みか確認
         const likedIds = await getLikedProductIds(sessionId, userId);
         const isLiked = likedIds.includes(input.productId);
 
@@ -95,6 +97,10 @@ export const appRouter = router({
           return { liked: false };
         } else {
           await addLike(input.productId, sessionId, userId);
+          // ログイン済みユーザーにポイント付与
+          if (userId) {
+            await processLikeReward(userId);
+          }
           return { liked: true };
         }
       }),
@@ -105,6 +111,131 @@ export const appRouter = router({
         const userId = ctx.user?.id;
         return await getLikedProductIds(input.sessionId, userId);
       }),
+  }),
+
+  // ============================================================
+  // Omiyage Go - Reviews (口コミ) Router
+  // ============================================================
+  reviews: router({
+    list: publicProcedure
+      .input(z.object({
+        productId: z.string(),
+        limit: z.number().optional().default(10),
+        offset: z.number().optional().default(0),
+      }))
+      .query(async ({ input }) => {
+        return await getReviewsByProductId(input.productId, input.limit, input.offset);
+      }),
+
+    create: protectedProcedure
+      .input(z.object({
+        productId: z.string(),
+        rating: z.number().min(1).max(5),
+        body: z.string().min(10, "口コミは10文字以上で入力してください").max(1000),
+        purposeTag: z.string().optional(),
+        isAnonymous: z.boolean().optional().default(false),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        const userId = ctx.user.id;
+        const authorName = input.isAnonymous ? null : (ctx.user.name || null);
+
+        const { id: reviewId } = await createReview({
+          productId: input.productId,
+          userId,
+          rating: input.rating,
+          body: input.body,
+          purposeTag: input.purposeTag,
+          isAnonymous: input.isAnonymous,
+          authorName: authorName || undefined,
+        });
+
+        // ポイント・バッジ付与
+        await processReviewReward(userId, input.productId, reviewId);
+
+        return { success: true, reviewId };
+      }),
+  }),
+
+  // ============================================================
+  // Omiyage Go - Curated Links (キュレーションリンク) Router
+  // ============================================================
+  curatedLinks: router({
+    list: publicProcedure
+      .input(z.object({ productId: z.string() }))
+      .query(async ({ input }) => {
+        return await getCuratedLinksByProductId(input.productId);
+      }),
+
+    add: protectedProcedure
+      .input(z.object({
+        productId: z.string(),
+        type: z.enum(["youtube", "instagram", "twitter", "tiktok", "article", "news", "other"]),
+        url: z.string().url("有効なURLを入力してください"),
+        title: z.string().optional(),
+        thumbnailUrl: z.string().optional(),
+        description: z.string().optional(),
+        authorName: z.string().optional(),
+        sortOrder: z.number().optional().default(0),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        if (ctx.user.role !== "admin") {
+          throw new TRPCError({ code: "FORBIDDEN", message: "管理者のみ操作できます" });
+        }
+        const { id } = await addCuratedLink({ ...input, addedBy: ctx.user.id });
+        return { success: true, id };
+      }),
+
+    delete: protectedProcedure
+      .input(z.object({ id: z.number() }))
+      .mutation(async ({ ctx, input }) => {
+        if (ctx.user.role !== "admin") {
+          throw new TRPCError({ code: "FORBIDDEN", message: "管理者のみ操作できます" });
+        }
+        await deleteCuratedLink(input.id);
+        return { success: true };
+      }),
+
+    adminList: protectedProcedure
+      .input(z.object({
+        limit: z.number().optional().default(50),
+        offset: z.number().optional().default(0),
+      }))
+      .query(async ({ ctx, input }) => {
+        if (ctx.user.role !== "admin") {
+          throw new TRPCError({ code: "FORBIDDEN", message: "管理者のみ操作できます" });
+        }
+        return await getAllCuratedLinks(input.limit, input.offset);
+      }),
+  }),
+
+  // ============================================================
+  // Omiyage Go - Points & Badges Router
+  // ============================================================
+  points: router({
+    me: protectedProcedure.query(async ({ ctx }) => {
+      return await getUserPoints(ctx.user.id);
+    }),
+
+    transactions: protectedProcedure
+      .input(z.object({
+        limit: z.number().optional().default(20),
+        offset: z.number().optional().default(0),
+      }))
+      .query(async ({ ctx, input }) => {
+        return await getPointTransactions(ctx.user.id, input.limit, input.offset);
+      }),
+
+    loginBonus: protectedProcedure.mutation(async ({ ctx }) => {
+      await processLoginBonus(ctx.user.id);
+      const points = await getUserPoints(ctx.user.id);
+      return { success: true, points };
+    }),
+  }),
+
+  badges: router({
+    me: protectedProcedure.query(async ({ ctx }) => {
+      return await getUserBadges(ctx.user.id);
+    }),
   }),
 
   // ============================================================
@@ -168,7 +299,7 @@ export const appRouter = router({
     products: router({
       list: protectedProcedure.query(async ({ ctx }) => {
         if (ctx.user?.role !== "admin") {
-          throw new Error("Admin access required");
+          throw new TRPCError({ code: "FORBIDDEN", message: "Admin access required" });
         }
         return await getAllProducts();
       }),
@@ -177,7 +308,7 @@ export const appRouter = router({
         .input(z.object({ id: z.string() }))
         .query(async ({ ctx, input }) => {
           if (ctx.user?.role !== "admin") {
-            throw new Error("Admin access required");
+            throw new TRPCError({ code: "FORBIDDEN", message: "Admin access required" });
           }
           return await getProductById(input.id);
         }),
@@ -195,7 +326,7 @@ export const appRouter = router({
         }))
         .mutation(async ({ ctx, input }) => {
           if (ctx.user?.role !== "admin") {
-            throw new Error("Admin access required");
+            throw new TRPCError({ code: "FORBIDDEN", message: "Admin access required" });
           }
           const id = `product-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
           await createProduct({
@@ -227,7 +358,7 @@ export const appRouter = router({
         }))
         .mutation(async ({ ctx, input }) => {
           if (ctx.user?.role !== "admin") {
-            throw new Error("Admin access required");
+            throw new TRPCError({ code: "FORBIDDEN", message: "Admin access required" });
           }
           const { id, ...updateData } = input;
           await updateProduct(id, updateData);
@@ -238,7 +369,7 @@ export const appRouter = router({
         .input(z.object({ id: z.string() }))
         .mutation(async ({ ctx, input }) => {
           if (ctx.user?.role !== "admin") {
-            throw new Error("Admin access required");
+            throw new TRPCError({ code: "FORBIDDEN", message: "Admin access required" });
           }
           await deleteProduct(input.id);
           return { success: true };
@@ -266,7 +397,7 @@ export const appRouter = router({
         }))
         .mutation(async ({ ctx, input }) => {
           if (ctx.user?.role !== "admin") {
-            throw new Error("Admin access required");
+            throw new TRPCError({ code: "FORBIDDEN", message: "Admin access required" });
           }
           
           let successCount = 0;
@@ -311,7 +442,7 @@ export const appRouter = router({
     facilities: router({
       list: protectedProcedure.query(async ({ ctx }) => {
         if (ctx.user?.role !== "admin") {
-          throw new Error("Admin access required");
+          throw new TRPCError({ code: "FORBIDDEN", message: "Admin access required" });
         }
         return await getAllFacilities();
       }),
@@ -319,7 +450,7 @@ export const appRouter = router({
         .input(z.object({ id: z.string() }))
         .mutation(async ({ ctx, input }) => {
           if (ctx.user?.role !== "admin") {
-            throw new Error("Admin access required");
+            throw new TRPCError({ code: "FORBIDDEN", message: "Admin access required" });
           }
           return { success: true };
         }),
@@ -328,7 +459,7 @@ export const appRouter = router({
     reservations: router({
       list: protectedProcedure.query(async ({ ctx }) => {
         if (ctx.user?.role !== "admin") {
-          throw new Error("Admin access required");
+          throw new TRPCError({ code: "FORBIDDEN", message: "Admin access required" });
         }
         return await getAllReservations();
       }),

@@ -29,6 +29,13 @@
       "when": 1772870503102,
       "tag": "0003_early_husk",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "5",
+      "when": 1772873279952,
+      "tag": "0004_solid_rhodey",
+      "breakpoints": true
     }
   ]
 }

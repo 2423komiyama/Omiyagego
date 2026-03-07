@@ -27,6 +27,7 @@ import AdminProductForm from "./pages/AdminProductForm";
 import AdminDataMigration from "./pages/AdminDataMigration";
 import AdminFacilities from "./pages/AdminFacilities";
 import AdminSellers from "./pages/AdminSellers";
+import AdminCuratedLinks from "./pages/AdminCuratedLinks";
 import DBProductDetail from "./pages/DBProductDetail";
 import NichePage from "./pages/NichePage";
 import StationPage from "./pages/StationPage";
@@ -53,6 +54,7 @@ function Router() {
       <Route path="/admin/migration" component={AdminDataMigration} />
       <Route path="/admin/facilities" component={AdminFacilities} />
       <Route path="/admin/sellers" component={AdminSellers} />
+      <Route path="/admin/curated-links" component={AdminCuratedLinks} />
       <Route path="/niche" component={NichePage} />
       <Route path="/station/:facilityId" component={StationPage} />
       <Route path="/purpose/:purposeId" component={PurposePage} />

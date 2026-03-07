@@ -150,3 +150,13 @@
 
 ## バグ修正（2026-03-07 #2）
 - [x] /station/:facilityId でfacilities.getがundefinedを返すエラーを修正（getProductById/getSellerById/getFacilityById/getReservationByIdをundefined→nullに一括変更）
+
+## 新機能実装（2026-03-07 キュレーション・口コミ・ポイント）
+- [x] DBスキーマ拡張（curatedLinks/reviews強化/userPoints/userBadges/pointTransactions）
+- [x] tRPCエンドポイント追加（口コミCRUD・いいね・ポイント・キュレーションリンク）
+- [x] 商品詳細ページにキュレーションセクション追加（YouTube/SNS/記事）
+- [x] 商品詳細ページに口コミ投稿・一覧・いいねセクション追加
+- [x] マイページ実装（ポイント残高・バッジ・活動履歴）
+- [x] AdminCuratedLinksページ作成（YouTube/SNS/記事リンク登録・削除）
+- [x] AdminDashboardにキュレーションリンク管理へのナビゲーション追加
+- [x] テスト38件全パス・チェックポイント保存
