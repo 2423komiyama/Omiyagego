@@ -107,9 +107,9 @@ export async function getAllProducts() {
  */
 export async function getProductById(id: string) {
   const db = await getDb();
-  if (!db) return undefined;
+  if (!db) return null;
   const result = await db.select().from(products).where(eq(products.id, id)).limit(1);
-  return result.length > 0 ? result[0] : undefined;
+  return result.length > 0 ? result[0] : null;
 }
 
 /**
@@ -126,9 +126,9 @@ export async function getSellersByFacilityId(facilityId: string) {
  */
 export async function getSellerById(id: string) {
   const db = await getDb();
-  if (!db) return undefined;
+  if (!db) return null;
   const result = await db.select().from(sellers).where(eq(sellers.id, id)).limit(1);
-  return result.length > 0 ? result[0] : undefined;
+  return result.length > 0 ? result[0] : null;
 }
 
 /**
@@ -154,9 +154,9 @@ export async function getAllFacilities() {
  */
 export async function getFacilityById(id: string) {
   const db = await getDb();
-  if (!db) return undefined;
+  if (!db) return null;
   const result = await db.select().from(facilities).where(eq(facilities.id, id)).limit(1);
-  return result.length > 0 ? result[0] : undefined;
+  return result.length > 0 ? result[0] : null;
 }
 
 /**
@@ -182,9 +182,9 @@ export async function getAllReservations() {
  */
 export async function getReservationById(id: string) {
   const db = await getDb();
-  if (!db) return undefined;
+  if (!db) return null;
   const result = await db.select().from(reservations).where(eq(reservations.id, id)).limit(1);
-  return result.length > 0 ? result[0] : undefined;
+  return result.length > 0 ? result[0] : null;
 }
 
 // ============================================================
