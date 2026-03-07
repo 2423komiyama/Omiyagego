@@ -2,6 +2,7 @@ import { COOKIE_NAME } from "../shared/const";
 import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
 import { publicProcedure, protectedProcedure, router } from "./_core/trpc";
+import { collectorRouter } from "./routers/collector";
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
 import {
@@ -14,6 +15,9 @@ import {
   getReviewsByProductId, createReview, processReviewReward,
   getCuratedLinksByProductId, addCuratedLink, deleteCuratedLink, getAllCuratedLinks,
   getUserPoints, getPointTransactions, getUserBadges, processLikeReward, processLoginBonus,
+  // コレクター機能
+  getCollectionsByUserId, addToCollection, isProductCollected,
+  getOrCreateCollectorStats, updateCollectorStats, matchProductByOcrText,
 } from "./db";
 
 export const appRouter = router({
@@ -504,6 +508,11 @@ export const appRouter = router({
       }),
     }),
   }),
+
+  // ============================================================
+  // お土産コレクター機能（桃鉄風スタンプラリー）
+  // ============================================================
+  collector: collectorRouter,
 });
 
 export type AppRouter = typeof appRouter;
