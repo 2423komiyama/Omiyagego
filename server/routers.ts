@@ -18,6 +18,8 @@ import {
   // コレクター機能
   getCollectionsByUserId, addToCollection, isProductCollected,
   getOrCreateCollectorStats, updateCollectorStats, matchProductByOcrText,
+  // ユーザープロフィール
+  getUserById, updateUserProfile,
 } from "./db";
 
 export const appRouter = router({
@@ -513,6 +515,47 @@ export const appRouter = router({
   // お土産コレクター機能（桃鉄風スタンプラリー）
   // ============================================================
   collector: collectorRouter,
+
+  // ============================================================
+  // 会員登録・プロフィール管理
+  // ============================================================
+  user: router({
+    /**
+     * 自分のプロフィールを取得
+     */
+    profile: protectedProcedure.query(async ({ ctx }) => {
+      return await getUserById(ctx.user.id);
+    }),
+
+    /**
+     * 会員登録・プロフィール更新
+     */
+    updateProfile: protectedProcedure
+      .input(z.object({
+        nickname: z.string().min(1, "ニックネームを入力してください").max(64),
+        bio: z.string().max(200).optional(),
+        avatarUrl: z.string().url().optional().or(z.literal("")),
+        homePrefecture: z.string().max(16).optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        await updateUserProfile(ctx.user.id, {
+          nickname: input.nickname,
+          bio: input.bio ?? null,
+          avatarUrl: input.avatarUrl || null,
+          homePrefecture: input.homePrefecture ?? null,
+          isProfileComplete: true,
+        });
+        return { success: true };
+      }),
+
+    /**
+     * プロフィールが完成しているか確認
+     */
+    checkProfileComplete: protectedProcedure.query(async ({ ctx }) => {
+      const user = await getUserById(ctx.user.id);
+      return { isComplete: user?.isProfileComplete ?? false };
+    }),
+  }),
 });
 
 export type AppRouter = typeof appRouter;

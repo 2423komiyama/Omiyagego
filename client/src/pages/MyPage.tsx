@@ -13,7 +13,7 @@ import {
   Clock, Package, Settings, ChevronRight, Building2,
   RotateCcw, Eye, Trash2, X, Award, Star, Heart,
   MessageSquare, Loader2, Coins, Trophy, TrendingUp,
-  Gift, User, Lock, LogIn
+  Gift, User, Lock, LogIn, Pencil
 } from "lucide-react";
 import { useHistory } from "@/contexts/HistoryContext";
 import { useSearch } from "@/contexts/SearchContext";
@@ -214,6 +214,13 @@ export default function MyPage() {
             <p className="text-base font-black text-white truncate">{user?.name || "ゲスト"}</p>
             <p className="text-xs text-emerald-200 mt-0.5">{user?.email}</p>
           </div>
+          <button
+            onClick={() => navigate("/register")}
+            className="flex-shrink-0 flex items-center gap-1 bg-white/20 hover:bg-white/30 text-white text-xs font-bold px-3 py-1.5 rounded-full transition-colors"
+          >
+            <Pencil className="w-3 h-3" />
+            編集
+          </button>
         </div>
 
         {/* ポイントカード */}

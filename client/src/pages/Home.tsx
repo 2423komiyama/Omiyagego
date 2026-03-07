@@ -5,6 +5,7 @@
 // ============================================================
 import { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import { useLocation } from "wouter";
+import { useAuth } from "@/_core/hooks/useAuth";
 import { Helmet } from "react-helmet-async";
 import {
   Search, MapPin, ChevronRight, WifiOff,
@@ -182,7 +183,24 @@ function HeroCarousel({ slides }: { slides: CarouselSlide[] }) {
 // ── メインコンポーネント ──────────────────────────────────────
 export default function Home() {
   const [, navigate] = useLocation();
+  const { user, loading: authLoading } = useAuth();
   const { updateCondition, conditions } = useSearch();
+
+  // 初回ログイン後にプロフィール未設定ならregisterへ誘導
+  useEffect(() => {
+    if (!authLoading && user && !(user as { isProfileComplete?: boolean }).isProfileComplete) {
+      // URLにregister=skipがある場合はスキップ（後で設定するを押した場合）
+      const params = new URLSearchParams(window.location.search);
+      if (!params.has("skipRegister")) {
+        // 初回ログイン判定: localStorageで管理
+        const key = `omiyage_register_shown_${user.id}`;
+        if (!localStorage.getItem(key)) {
+          localStorage.setItem(key, "1");
+          navigate("/register");
+        }
+      }
+    }
+  }, [user, authLoading, navigate]);
   const [searchText, setSearchText] = useState("");
   const [locationState, setLocationState] = useState<LocationState>({ status: "idle" });
 

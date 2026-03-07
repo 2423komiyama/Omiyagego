@@ -43,6 +43,13 @@
       "when": 1772881837181,
       "tag": "0005_gray_rocket_raccoon",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "5",
+      "when": 1772883624938,
+      "tag": "0006_sticky_turbo",
+      "breakpoints": true
     }
   ]
 }

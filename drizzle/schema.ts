@@ -15,6 +15,12 @@ export const users = mysqlTable("users", {
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
   lastSignedIn: timestamp("lastSignedIn").defaultNow().notNull(),
+  // プロフィールフィールド（会員登録フォームで入力）
+  nickname: varchar("nickname", { length: 64 }),
+  bio: text("bio"),
+  avatarUrl: text("avatarUrl"),
+  homePrefecture: varchar("homePrefecture", { length: 16 }),
+  isProfileComplete: boolean("isProfileComplete").default(false).notNull(),
 });
 
 export type User = typeof users.$inferSelect;

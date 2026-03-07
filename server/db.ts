@@ -1250,3 +1250,41 @@ export async function getCollectorCountByProductId(productId: string) {
     .where(eq(collections.productId, productId));
   return Number(row?.count || 0);
 }
+
+// ============================================================
+// ユーザープロフィール管理
+// ============================================================
+
+/**
+ * IDでユーザーを取得
+ */
+export async function getUserById(userId: number) {
+  const db = await getDb();
+  if (!db) return null;
+  const rows = await db.select().from(users).where(eq(users.id, userId)).limit(1);
+  return rows[0] ?? null;
+}
+
+/**
+ * ユーザープロフィールを更新
+ */
+export async function updateUserProfile(
+  userId: number,
+  data: {
+    nickname: string;
+    bio: string | null;
+    avatarUrl: string | null;
+    homePrefecture: string | null;
+    isProfileComplete: boolean;
+  }
+) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.update(users).set({
+    nickname: data.nickname,
+    bio: data.bio,
+    avatarUrl: data.avatarUrl,
+    homePrefecture: data.homePrefecture,
+    isProfileComplete: data.isProfileComplete,
+  }).where(eq(users.id, userId));
+}
