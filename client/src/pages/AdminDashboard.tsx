@@ -6,7 +6,7 @@ import DashboardLayout from "@/components/DashboardLayout";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Plus, Package, MapPin, MessageSquare, ClipboardList, Database } from "lucide-react";
+import { Plus, Package, MapPin, MessageSquare, ClipboardList, Database, ExternalLink } from "lucide-react";
 import { useLocation } from "wouter";
 
 export default function AdminDashboard() {
@@ -259,6 +259,14 @@ export default function AdminDashboard() {
               >
                 <ClipboardList className="w-4 h-4 mr-2" />
                 予約一覧
+              </Button>
+              <Button
+                variant="outline"
+                className="justify-start"
+                onClick={() => navigate("/admin/curated-links")}
+              >
+                <ExternalLink className="w-4 h-4 mr-2" />
+                キュレーションリンク
               </Button>
             </div>
           </CardContent>

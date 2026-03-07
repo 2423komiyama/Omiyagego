@@ -1,6 +1,6 @@
 import { eq } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
-import { InsertUser, users, products, sellers, facilities, giftMessages, reservations, likes, reviews, features } from "../drizzle/schema";
+import { InsertUser, users, products, sellers, facilities, giftMessages, reservations, likes, reviews, features, curatedLinks, userPoints, userBadges, pointTransactions } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
 let _db: ReturnType<typeof drizzle> | null = null;
@@ -610,4 +610,420 @@ export async function getProductsByFacilityId(facilityId: string, limit = 20, of
     products: rows,
     total: Number(countRows[0]?.count || 0),
   };
+}
+
+// ============================================================
+// Reviews (口コミ) Operations
+// ============================================================
+
+/**
+ * 商品の口コミ一覧を取得（ユーザー情報付き）
+ */
+export async function getReviewsByProductId(productId: string, limit = 20, offset = 0) {
+  const db = await getDb();
+  if (!db) return { reviews: [], total: 0 };
+
+  const [rows, countRows] = await Promise.all([
+    db.select({
+      id: reviews.id,
+      productId: reviews.productId,
+      userId: reviews.userId,
+      authorName: reviews.authorName,
+      rating: reviews.rating,
+      purposeTag: reviews.purposeTag,
+      body: reviews.body,
+      isAnonymous: reviews.isAnonymous,
+      likeCount: reviews.likeCount,
+      createdAt: reviews.createdAt,
+      userName: users.name,
+    })
+      .from(reviews)
+      .leftJoin(users, eq(reviews.userId, users.id))
+      .where(and(eq(reviews.productId, productId), eq(reviews.isVisible, true)))
+      .orderBy(desc(reviews.createdAt))
+      .limit(limit)
+      .offset(offset),
+    db.select({ count: sql<number>`COUNT(*)` })
+      .from(reviews)
+      .where(and(eq(reviews.productId, productId), eq(reviews.isVisible, true))),
+  ]);
+
+  return {
+    reviews: rows,
+    total: Number(countRows[0]?.count || 0),
+  };
+}
+
+/**
+ * 口コミを投稿（ポイント付与トリガー付き）
+ */
+export async function createReview(data: {
+  productId: string;
+  userId: number;
+  rating: number;
+  body: string;
+  purposeTag?: string;
+  isAnonymous?: boolean;
+  authorName?: string;
+}) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  // 同一ユーザーの既存口コミをチェック（1商品1口コミ制限）
+  const existing = await db.select({ id: reviews.id })
+    .from(reviews)
+    .where(and(eq(reviews.productId, data.productId), eq(reviews.userId, data.userId)))
+    .limit(1);
+
+  if (existing.length > 0) {
+    throw new Error("既にこの商品に口コミを投稿済みです");
+  }
+
+  const [result] = await db.insert(reviews).values({
+    productId: data.productId,
+    userId: data.userId,
+    rating: data.rating,
+    body: data.body,
+    purposeTag: data.purposeTag || null,
+    isAnonymous: data.isAnonymous || false,
+    authorName: data.authorName || null,
+  });
+
+  // reviewCount・avgRatingを更新
+  await db.execute(
+    sql`UPDATE products SET
+      reviewCount = reviewCount + 1,
+      avgRating = (SELECT AVG(rating) FROM reviews WHERE productId = ${data.productId} AND isVisible = 1)
+    WHERE id = ${data.productId}`
+  );
+
+  return { id: (result as any).insertId };
+}
+
+/**
+ * ユーザーの口コミ数を取得
+ */
+export async function getUserReviewCount(userId: number): Promise<number> {
+  const db = await getDb();
+  if (!db) return 0;
+  const rows = await db.select({ count: sql<number>`COUNT(*)` })
+    .from(reviews)
+    .where(eq(reviews.userId, userId));
+  return Number(rows[0]?.count || 0);
+}
+
+// ============================================================
+// CuratedLinks (キュレーションリンク) Operations
+// ============================================================
+
+/**
+ * 商品のキュレーションリンク一覧を取得
+ */
+export async function getCuratedLinksByProductId(productId: string) {
+  const db = await getDb();
+  if (!db) return [];
+
+  return await db.select()
+    .from(curatedLinks)
+    .where(and(eq(curatedLinks.productId, productId), eq(curatedLinks.isActive, true)))
+    .orderBy(asc(curatedLinks.sortOrder), desc(curatedLinks.createdAt));
+}
+
+/**
+ * キュレーションリンクを追加（管理者のみ）
+ */
+export async function addCuratedLink(data: {
+  productId: string;
+  type: "youtube" | "instagram" | "twitter" | "tiktok" | "article" | "news" | "other";
+  url: string;
+  title?: string;
+  thumbnailUrl?: string;
+  description?: string;
+  authorName?: string;
+  publishedAt?: Date;
+  sortOrder?: number;
+  addedBy: number;
+}) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  const [result] = await db.insert(curatedLinks).values({
+    productId: data.productId,
+    type: data.type,
+    url: data.url,
+    title: data.title || null,
+    thumbnailUrl: data.thumbnailUrl || null,
+    description: data.description || null,
+    authorName: data.authorName || null,
+    publishedAt: data.publishedAt || null,
+    sortOrder: data.sortOrder || 0,
+    addedBy: data.addedBy,
+  });
+
+  return { id: (result as any).insertId };
+}
+
+/**
+ * キュレーションリンクを削除（管理者のみ）
+ */
+export async function deleteCuratedLink(id: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.delete(curatedLinks).where(eq(curatedLinks.id, id));
+}
+
+/**
+ * 全商品のキュレーションリンク一覧（管理者用）
+ */
+export async function getAllCuratedLinks(limit = 50, offset = 0) {
+  const db = await getDb();
+  if (!db) return { links: [], total: 0 };
+
+  const [rows, countRows] = await Promise.all([
+    db.select({
+      id: curatedLinks.id,
+      productId: curatedLinks.productId,
+      type: curatedLinks.type,
+      url: curatedLinks.url,
+      title: curatedLinks.title,
+      thumbnailUrl: curatedLinks.thumbnailUrl,
+      authorName: curatedLinks.authorName,
+      isActive: curatedLinks.isActive,
+      sortOrder: curatedLinks.sortOrder,
+      createdAt: curatedLinks.createdAt,
+      productName: products.name,
+    })
+      .from(curatedLinks)
+      .leftJoin(products, eq(curatedLinks.productId, products.id))
+      .orderBy(desc(curatedLinks.createdAt))
+      .limit(limit)
+      .offset(offset),
+    db.select({ count: sql<number>`COUNT(*)` }).from(curatedLinks),
+  ]);
+
+  return { links: rows, total: Number(countRows[0]?.count || 0) };
+}
+
+// ============================================================
+// Points & Badges Operations
+// ============================================================
+
+/**
+ * ユーザーのポイント残高を取得（なければ初期化）
+ */
+export async function getUserPoints(userId: number) {
+  const db = await getDb();
+  if (!db) return null;
+
+  const rows = await db.select().from(userPoints).where(eq(userPoints.userId, userId)).limit(1);
+
+  if (rows.length === 0) {
+    // 初回アクセス時に初期化
+    await db.insert(userPoints).values({
+      userId,
+      totalPoints: 0,
+      availablePoints: 0,
+      usedPoints: 0,
+      expiredPoints: 0,
+      tier: "bronze",
+    });
+    return { userId, totalPoints: 0, availablePoints: 0, usedPoints: 0, expiredPoints: 0, tier: "bronze" as const };
+  }
+
+  return rows[0];
+}
+
+/**
+ * ポイントを付与（取引履歴に記録）
+ */
+export async function awardPoints(data: {
+  userId: number;
+  points: number;
+  type: "earn_review" | "earn_like" | "earn_login" | "earn_bonus" | "earn_admin";
+  referenceType?: string;
+  referenceId?: string;
+  description: string;
+}) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  // 現在の残高を取得（なければ初期化）
+  const current = await getUserPoints(data.userId);
+  const currentAvailable = current?.availablePoints || 0;
+  const newBalance = currentAvailable + data.points;
+
+  // userPointsをUPSERT
+  await db.execute(
+    sql`INSERT INTO userPoints (userId, totalPoints, availablePoints, usedPoints, expiredPoints, tier)
+        VALUES (${data.userId}, ${data.points}, ${data.points}, 0, 0, 'bronze')
+        ON DUPLICATE KEY UPDATE
+          totalPoints = totalPoints + ${data.points},
+          availablePoints = availablePoints + ${data.points},
+          tier = CASE
+            WHEN totalPoints + ${data.points} >= 5000 THEN 'platinum'
+            WHEN totalPoints + ${data.points} >= 2000 THEN 'gold'
+            WHEN totalPoints + ${data.points} >= 500 THEN 'silver'
+            ELSE 'bronze'
+          END`
+  );
+
+  // 取引履歴を記録
+  await db.insert(pointTransactions).values({
+    userId: data.userId,
+    type: data.type,
+    points: data.points,
+    balanceAfter: newBalance,
+    referenceType: data.referenceType || null,
+    referenceId: data.referenceId || null,
+    description: data.description,
+  });
+
+  return { newBalance };
+}
+
+/**
+ * ポイント取引履歴を取得
+ */
+export async function getPointTransactions(userId: number, limit = 20, offset = 0) {
+  const db = await getDb();
+  if (!db) return { transactions: [], total: 0 };
+
+  const [rows, countRows] = await Promise.all([
+    db.select().from(pointTransactions)
+      .where(eq(pointTransactions.userId, userId))
+      .orderBy(desc(pointTransactions.createdAt))
+      .limit(limit)
+      .offset(offset),
+    db.select({ count: sql<number>`COUNT(*)` })
+      .from(pointTransactions)
+      .where(eq(pointTransactions.userId, userId)),
+  ]);
+
+  return { transactions: rows, total: Number(countRows[0]?.count || 0) };
+}
+
+/**
+ * ユーザーのバッジ一覧を取得
+ */
+export async function getUserBadges(userId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  return await db.select().from(userBadges)
+    .where(eq(userBadges.userId, userId))
+    .orderBy(desc(userBadges.earnedAt));
+}
+
+/**
+ * バッジを付与（重複チェック付き）
+ */
+export async function awardBadge(userId: number, badgeType: typeof userBadges.$inferInsert["badgeType"]) {
+  const db = await getDb();
+  if (!db) return { alreadyHas: true };
+
+  const existing = await db.select({ id: userBadges.id })
+    .from(userBadges)
+    .where(and(eq(userBadges.userId, userId), eq(userBadges.badgeType, badgeType)))
+    .limit(1);
+
+  if (existing.length > 0) return { alreadyHas: true };
+
+  await db.insert(userBadges).values({ userId, badgeType });
+  return { alreadyHas: false };
+}
+
+/**
+ * 口コミ投稿後のポイント・バッジ付与処理
+ */
+export async function processReviewReward(userId: number, productId: string, reviewId: number) {
+  const reviewCount = await getUserReviewCount(userId);
+
+  // ポイント付与
+  const points = reviewCount === 1 ? 50 : 20; // 初回50pt、2回目以降20pt
+  await awardPoints({
+    userId,
+    points,
+    type: "earn_review",
+    referenceType: "review",
+    referenceId: String(reviewId),
+    description: reviewCount === 1 ? "初めての口コミ投稿 +50pt" : "口コミ投稿 +20pt",
+  });
+
+  // バッジ付与チェック
+  if (reviewCount === 1) {
+    await awardBadge(userId, "first_review");
+    // 初回口コミボーナス
+    await awardPoints({
+      userId,
+      points: 30,
+      type: "earn_bonus",
+      referenceType: "badge",
+      referenceId: "first_review",
+      description: "バッジ「初めての口コミ」獲得ボーナス +30pt",
+    });
+  }
+  if (reviewCount >= 5) await awardBadge(userId, "review_5");
+  if (reviewCount >= 20) await awardBadge(userId, "review_20");
+}
+
+/**
+ * いいね後のポイント・バッジ付与処理
+ */
+export async function processLikeReward(userId: number) {
+  // いいね1回 +5pt
+  await awardPoints({
+    userId,
+    points: 5,
+    type: "earn_like",
+    description: "いいね +5pt",
+  });
+
+  // いいね数チェック（バッジ付与）
+  const db = await getDb();
+  if (!db) return;
+  const likeCountRows = await db.select({ count: sql<number>`COUNT(*)` })
+    .from(likes)
+    .where(eq(likes.userId, userId));
+  const likeCount = Number(likeCountRows[0]?.count || 0);
+
+  if (likeCount >= 10) {
+    const result = await awardBadge(userId, "like_10");
+    if (!result.alreadyHas) {
+      await awardPoints({
+        userId,
+        points: 30,
+        type: "earn_bonus",
+        referenceType: "badge",
+        referenceId: "like_10",
+        description: "バッジ「いいね王」獲得ボーナス +30pt",
+      });
+    }
+  }
+  if (likeCount >= 50) await awardBadge(userId, "like_50");
+}
+
+/**
+ * 初回ログインボーナス付与（1回のみ）
+ */
+export async function processLoginBonus(userId: number) {
+  const db = await getDb();
+  if (!db) return;
+
+  // 既にログインボーナスを受け取っているか確認
+  const existing = await db.select({ id: pointTransactions.id })
+    .from(pointTransactions)
+    .where(and(
+      eq(pointTransactions.userId, userId),
+      eq(pointTransactions.type, "earn_login")
+    ))
+    .limit(1);
+
+  if (existing.length === 0) {
+    await awardPoints({
+      userId,
+      points: 100,
+      type: "earn_login",
+      description: "初回ログインボーナス +100pt",
+    });
+    await awardBadge(userId, "first_login");
+  }
 }
