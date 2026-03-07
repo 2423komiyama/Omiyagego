@@ -147,3 +147,6 @@
 
 ## バグ修正（2026-03-07）
 - [x] 「現在地近くのお土産」セクションが位置情報取得後も表示されなくなった問題を修正（DBから最寄り施設の商品を取得して表示するセクションを復元）
+
+## バグ修正（2026-03-07 #2）
+- [x] /station/:facilityId でfacilities.getがundefinedを返すエラーを修正（getProductById/getSellerById/getFacilityById/getReservationByIdをundefined→nullに一括変更）
