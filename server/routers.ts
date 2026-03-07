@@ -268,13 +268,52 @@ export const appRouter = router({
         offset: z.number().optional().default(0),
       }))
       .query(async ({ input }) => {
-        return await getProductsByFacilityId(input.facilityId, input.limit, input.offset);
+        // URLのfacilityId（短縮形）→ DBのfacilityId（完全形）マッピング
+        const FACILITY_ID_MAP: Record<string, string> = {
+          "tokyo": "tokyo_station",
+          "shinjuku": "tokyo_station",
+          "shinagawa": "tokyo_station",
+          "shibuya": "tokyo_station",
+          "chitose": "shin_chitose_airport",
+          "kyoto": "kyoto_station",
+          "osaka": "shin_osaka_station",
+          "fukuoka": "hakata_station",
+          "naha": "naha_airport",
+          "hiroshima": "hiroshima_station",
+          "nagoya": "nagoya_station",
+          "sendai": "sendai_station",
+          "kanazawa": "kanazawa_station",
+          "haneda_t1": "haneda_t1",
+          "haneda_t2": "haneda_t2",
+          "haneda_t3": "haneda_t1",
+        };
+        const dbFacilityId = FACILITY_ID_MAP[input.facilityId] ?? input.facilityId;
+        return await getProductsByFacilityId(dbFacilityId, input.limit, input.offset);
       }),
 
     getSellers: publicProcedure
       .input(z.object({ facilityId: z.string() }))
       .query(async ({ input }) => {
-        return await getSellersByFacilityId(input.facilityId);
+        const FACILITY_ID_MAP: Record<string, string> = {
+          "tokyo": "tokyo_station",
+          "shinjuku": "tokyo_station",
+          "shinagawa": "tokyo_station",
+          "shibuya": "tokyo_station",
+          "chitose": "shin_chitose_airport",
+          "kyoto": "kyoto_station",
+          "osaka": "shin_osaka_station",
+          "fukuoka": "hakata_station",
+          "naha": "naha_airport",
+          "hiroshima": "hiroshima_station",
+          "nagoya": "nagoya_station",
+          "sendai": "sendai_station",
+          "kanazawa": "kanazawa_station",
+          "haneda_t1": "haneda_t1",
+          "haneda_t2": "haneda_t2",
+          "haneda_t3": "haneda_t1",
+        };
+        const dbFacilityId = FACILITY_ID_MAP[input.facilityId] ?? input.facilityId;
+        return await getSellersByFacilityId(dbFacilityId);
       }),
   }),
 
