@@ -5,6 +5,7 @@ import {
   getCollectionsByUserId, addToCollection, isProductCollected,
   getOrCreateCollectorStats, updateCollectorStats, matchProductByOcrText,
   getProductById, awardPoints,
+  getCollectionsByPrefecture, getTopCollectedProducts, getCollectorCountByProductId,
 } from "../db";
 
 export const collectorRouter = router({
@@ -175,6 +176,40 @@ export const collectorRouter = router({
         prefecturesCount: statsUpdate.prefecturesCount,
         product,
       };
+    }),
+
+  /**
+   * 都道府県別コレクション一覧を取得
+   */
+  listByPrefecture: protectedProcedure.query(async ({ ctx }) => {
+    const grouped = await getCollectionsByPrefecture(ctx.user.id);
+    // 各グループの商品情報を付与
+    const result: Record<string, Array<{ id: number; productId: string; photoUrl: string | null; prefecture: string; region: string; createdAt: Date; product: Awaited<ReturnType<typeof getProductById>> }>> = {};
+    for (const [pref, items] of Object.entries(grouped)) {
+      result[pref] = await Promise.all(
+        items.map(async (item) => ({
+          ...item,
+          product: await getProductById(item.productId),
+        }))
+      );
+    }
+    return result;
+  }),
+
+  /**
+   * みんなが買ったお土産ランキング（同じ商品を買ったコレクター数順）
+   */
+  popularRanking: protectedProcedure
+    .input(z.object({ limit: z.number().optional().default(10) }))
+    .query(async ({ input }) => {
+      const ranking = await getTopCollectedProducts(input.limit);
+      const withProducts = await Promise.all(
+        ranking.map(async (r) => ({
+          ...r,
+          product: await getProductById(r.productId),
+        }))
+      );
+      return withProducts.filter((r) => r.product !== null);
     }),
 
   /**

@@ -1201,3 +1201,52 @@ export async function matchProductByOcrText(ocrText: string): Promise<{ product:
   const normalizedScore = Math.min(100, (bestScore / (words.length * 3)) * 100);
   return { product: bestProduct, score: normalizedScore };
 }
+
+/**
+ * 都道府県別にコレクションをグループ取得
+ */
+export async function getCollectionsByPrefecture(userId: number) {
+  const db = await getDb();
+  if (!db) return {};
+  const rows = await db.select().from(collections)
+    .where(eq(collections.userId, userId))
+    .orderBy(desc(collections.createdAt));
+  const grouped: Record<string, typeof rows> = {};
+  for (const row of rows) {
+    const pref = row.prefecture || "不明";
+    if (!grouped[pref]) grouped[pref] = [];
+    grouped[pref].push(row);
+  }
+  return grouped;
+}
+
+/**
+ * 同じ商品を登録したユーザー数ランキング（上位N件）
+ */
+export async function getTopCollectedProducts(limit = 10) {
+  const db = await getDb();
+  if (!db) return [];
+  const rows = await db.select({
+    productId: collections.productId,
+    collectorCount: sql<number>`COUNT(DISTINCT ${collections.userId})`,
+  })
+    .from(collections)
+    .groupBy(collections.productId)
+    .orderBy(desc(sql<number>`COUNT(DISTINCT ${collections.userId})`))
+    .limit(limit);
+  return rows;
+}
+
+/**
+ * 特定商品を登録したコレクター数を取得
+ */
+export async function getCollectorCountByProductId(productId: string) {
+  const db = await getDb();
+  if (!db) return 0;
+  const [row] = await db.select({
+    count: sql<number>`COUNT(DISTINCT ${collections.userId})`,
+  })
+    .from(collections)
+    .where(eq(collections.productId, productId));
+  return Number(row?.count || 0);
+}
