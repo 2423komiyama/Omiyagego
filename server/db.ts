@@ -1,6 +1,6 @@
 import { eq } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
-import { InsertUser, users, products, sellers, facilities, giftMessages, reservations } from "../drizzle/schema";
+import { InsertUser, users, products, sellers, facilities, giftMessages, reservations, likes, reviews, features } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
 let _db: ReturnType<typeof drizzle> | null = null;
@@ -295,10 +295,10 @@ export async function deleteProduct(id: string) {
 // Product Search & Filter Operations
 // ============================================================
 
-import { like, and, or, gte, lte, inArray, sql } from "drizzle-orm";
+import { like, and, or, gte, lte, inArray, sql, desc, asc, isNotNull } from "drizzle-orm";
 
 /**
- * 商品を検索・フィルタリングして取得
+ * 商品を検索・フィルタリングして取得（強化版）
  */
 export async function searchProducts(params: {
   query?: string;
@@ -308,6 +308,14 @@ export async function searchProducts(params: {
   minPrice?: number;
   maxPrice?: number;
   badges?: string[];
+  // 新規フィルター
+  purposeTag?: string;
+  minShelfLife?: number;
+  isIndividualPackaged?: boolean;
+  minPeople?: number;
+  maxPeople?: number;
+  facilityId?: string;
+  sortBy?: 'popular' | 'editorial' | 'shelf_life_desc' | 'price_asc' | 'newest';
   limit?: number;
   offset?: number;
 }) {
@@ -348,15 +356,65 @@ export async function searchProducts(params: {
     conditions.push(lte(products.price, params.maxPrice));
   }
 
+  // 日持ちフィルター
+  if (params.minShelfLife !== undefined) {
+    conditions.push(gte(products.shelfLife, params.minShelfLife));
+  }
+
+  // 個包装フィルター
+  if (params.isIndividualPackaged === true) {
+    conditions.push(eq(products.isIndividualPackaged, true));
+  }
+
+  // 用途タグフィルター（JSON配列の中に含まれるかチェック）
+  if (params.purposeTag) {
+    conditions.push(
+      or(
+        like(products.purposeTags, `%"${params.purposeTag}"%`),
+        like(products.badges, `%${params.purposeTag}%`)
+      )
+    );
+  }
+
+  // badgesフィルター（editorialなど）
+  if (params.badges && params.badges.length > 0) {
+    const badgeConditions = params.badges.map(badge =>
+      like(products.badges, `%${badge}%`)
+    );
+    conditions.push(or(...badgeConditions));
+  }
+
   const whereClause = conditions.length > 0 ? and(...conditions) : undefined;
 
   const limit = params.limit || 20;
   const offset = params.offset || 0;
 
+  // ソート順
+  let orderBy;
+  switch (params.sortBy) {
+    case 'popular':
+      orderBy = desc(products.likeCount);
+      break;
+    case 'editorial':
+      orderBy = desc(products.editorialPick);
+      break;
+    case 'shelf_life_desc':
+      orderBy = desc(products.shelfLife);
+      break;
+    case 'price_asc':
+      orderBy = asc(products.price);
+      break;
+    case 'newest':
+      orderBy = desc(products.createdAt);
+      break;
+    default:
+      orderBy = desc(products.likeCount);
+  }
+
   const [rows, countRows] = await Promise.all([
     whereClause
-      ? db.select().from(products).where(whereClause).limit(limit).offset(offset)
-      : db.select().from(products).limit(limit).offset(offset),
+      ? db.select().from(products).where(whereClause).orderBy(orderBy).limit(limit).offset(offset)
+      : db.select().from(products).orderBy(orderBy).limit(limit).offset(offset),
     whereClause
       ? db.select({ count: sql<number>`COUNT(*)` }).from(products).where(whereClause)
       : db.select({ count: sql<number>`COUNT(*)` }).from(products),
@@ -405,4 +463,151 @@ export async function getAvailableRegions() {
     .from(products)
     .orderBy(products.region);
   return rows.map(r => r.region);
+}
+
+// ============================================================
+// Likes (いいね) Operations
+// ============================================================
+
+/**
+ * いいねを追加（重複チェック付き）
+ * sessionIdまたはuserIdで1商品1いいね制限
+ */
+export async function addLike(productId: string, sessionId?: string, userId?: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  // 重複チェック
+  const existing = await db.select().from(likes).where(
+    and(
+      eq(likes.productId, productId),
+      userId ? eq(likes.userId, userId) : eq(likes.sessionId, sessionId || '')
+    )
+  ).limit(1);
+
+  if (existing.length > 0) {
+    return { alreadyLiked: true };
+  }
+
+  await db.insert(likes).values({
+    productId,
+    userId: userId || null,
+    sessionId: sessionId || null,
+  });
+
+  // likeCountを更新
+  await db.execute(
+    sql`UPDATE products SET likeCount = likeCount + 1 WHERE id = ${productId}`
+  );
+
+  return { alreadyLiked: false };
+}
+
+/**
+ * いいねを削除
+ */
+export async function removeLike(productId: string, sessionId?: string, userId?: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  const existing = await db.select().from(likes).where(
+    and(
+      eq(likes.productId, productId),
+      userId ? eq(likes.userId, userId) : eq(likes.sessionId, sessionId || '')
+    )
+  ).limit(1);
+
+  if (existing.length === 0) {
+    return { wasLiked: false };
+  }
+
+  await db.delete(likes).where(eq(likes.id, existing[0].id));
+
+  // likeCountを更新
+  await db.execute(
+    sql`UPDATE products SET likeCount = GREATEST(likeCount - 1, 0) WHERE id = ${productId}`
+  );
+
+  return { wasLiked: true };
+}
+
+/**
+ * セッションまたはユーザーのいいね済み商品IDリストを取得
+ */
+export async function getLikedProductIds(sessionId?: string, userId?: number): Promise<string[]> {
+  const db = await getDb();
+  if (!db) return [];
+
+  const rows = await db.select({ productId: likes.productId }).from(likes).where(
+    userId ? eq(likes.userId, userId) : eq(likes.sessionId, sessionId || '')
+  );
+
+  return rows.map(r => r.productId);
+}
+
+// ============================================================
+// Features (特集カード) Operations
+// ============================================================
+
+/**
+ * アクティブな特集カードを取得（カルーセル用）
+ */
+export async function getActiveFeatures() {
+  const db = await getDb();
+  if (!db) return [];
+
+  const now = new Date();
+  const rows = await db.select().from(features).where(
+    and(
+      eq(features.isActive, true),
+      or(
+        sql`${features.startsAt} IS NULL`,
+        lte(features.startsAt, now)
+      ),
+      or(
+        sql`${features.endsAt} IS NULL`,
+        gte(features.endsAt, now)
+      )
+    )
+  ).orderBy(asc(features.sortOrder)).limit(10);
+
+  return rows;
+}
+
+// ============================================================
+// Facility-based product search (SEO入口ページ用)
+// ============================================================
+
+/**
+ * 施設IDに紐づく商品を取得（SEO入口ページ用）
+ */
+export async function getProductsByFacilityId(facilityId: string, limit = 20, offset = 0) {
+  const db = await getDb();
+  if (!db) return { products: [], total: 0 };
+
+  // sellersテーブルを経由して商品を取得
+  const sellerRows = await db.select({ productId: sellers.productId })
+    .from(sellers)
+    .where(eq(sellers.facilityId, facilityId));
+
+  const productIds = Array.from(new Set(sellerRows.map(s => s.productId)));
+
+  if (productIds.length === 0) {
+    return { products: [], total: 0 };
+  }
+
+  const [rows, countRows] = await Promise.all([
+    db.select().from(products)
+      .where(inArray(products.id, productIds))
+      .orderBy(desc(products.likeCount))
+      .limit(limit)
+      .offset(offset),
+    db.select({ count: sql<number>`COUNT(*)` }).from(products)
+      .where(inArray(products.id, productIds)),
+  ]);
+
+  return {
+    products: rows,
+    total: Number(countRows[0]?.count || 0),
+  };
 }

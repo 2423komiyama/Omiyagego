@@ -1,15 +1,17 @@
 // ============================================================
-// Omiyage Go - DB商品詳細ページ
-// デザイン哲学: 駅案内板スタイル - 商品情報を最短で伝える
-// 機能: DBから商品情報を取得・表示、売り場情報、保証理由
+// Omiyage Go - DB商品詳細ページ（強化版）
+// 機能: いいね・共有・キュレーション枠・OGP・公式サイトリンク
 // ============================================================
+import { useState, useEffect, useMemo } from "react";
 import { useParams, useLocation } from "wouter";
 import { AppLayout } from "@/components/omiyage/AppLayout";
 import { trpc } from "@/lib/trpc";
+import { Helmet } from "react-helmet-async";
 import {
   ArrowLeft, Package, MapPin, Clock, Tag, Star,
   ShoppingBag, Gift, ChevronRight, Loader2, AlertCircle,
-  CheckCircle2, Store, Building2, ExternalLink
+  CheckCircle2, Store, Building2, ExternalLink, Heart, Share2,
+  Sparkles
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -50,6 +52,16 @@ function getCategoryImage(category: string): string {
   return CATEGORY_IMAGES[category] || CATEGORY_IMAGES["その他"];
 }
 
+// セッションID取得
+function getSessionId(): string {
+  let sid = localStorage.getItem("omiyage_session_id");
+  if (!sid) {
+    sid = `anon-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    localStorage.setItem("omiyage_session_id", sid);
+  }
+  return sid;
+}
+
 export default function DBProductDetail() {
   const params = useParams<{ id: string }>();
   const [, navigate] = useLocation();
@@ -59,6 +71,26 @@ export default function DBProductDetail() {
     { id: productId },
     { enabled: !!productId }
   );
+
+  // いいね状態
+  const sessionId = useMemo(() => getSessionId(), []);
+  const { data: likedIds = [], refetch: refetchLikes } = trpc.likes.getLikedIds.useQuery({ sessionId });
+  const toggleLike = trpc.likes.toggle.useMutation({ onSuccess: () => refetchLikes() });
+  const isLiked = likedIds.includes(productId);
+  const [localLiked, setLocalLiked] = useState(false);
+  useEffect(() => { setLocalLiked(isLiked); }, [isLiked]);
+
+  // 関連商品（同じ都道府県・カテゴリ）
+  const relatedInput = useMemo(() => ({
+    prefecture: product?.prefecture,
+    category: product?.category,
+    limit: 4,
+    offset: 0,
+  }), [product?.prefecture, product?.category]);
+  const { data: relatedData } = trpc.products.search.useQuery(relatedInput, {
+    enabled: !!product,
+  });
+  const relatedProducts = (relatedData?.products ?? []).filter(p => p.id !== productId).slice(0, 3);
 
   if (isLoading) {
     return (
@@ -109,16 +141,63 @@ export default function DBProductDetail() {
   // 売り場情報
   const sellers = product.sellers || [];
 
-  // 表示する画像URL（商品画像 → カテゴリ別フォールバック）
+  // 表示する画像URL
   const displayImageUrl = product.imageUrl || getCategoryImage(product.category);
+
+  // 共有
+  const handleShare = () => {
+    const url = `${window.location.origin}/db-product/${productId}`;
+    const text = `${product.name}（${product.prefecture}）- ¥${product.price.toLocaleString()}`;
+    if (navigator.share) {
+      navigator.share({ title: product.name, text, url });
+    } else {
+      navigator.clipboard.writeText(url).then(() => alert("URLをコピーしました"));
+    }
+  };
+
+  // いいねトグル
+  const handleLike = () => {
+    setLocalLiked(!localLiked);
+    toggleLike.mutate({ productId, sessionId });
+  };
+
+  // SEOメタ
+  const pageTitle = `${product.name}（${product.prefecture}）| Omiyage Go`;
+  const pageDescription = product.description
+    ? `${product.description.slice(0, 100)}...`
+    : `${product.prefecture}のお土産「${product.name}」。${product.brand}。価格¥${product.price.toLocaleString()}。日持ち${product.shelfLife}日。`;
 
   return (
     <AppLayout>
+      <Helmet>
+        <title>{pageTitle}</title>
+        <meta name="description" content={pageDescription} />
+        <meta property="og:title" content={pageTitle} />
+        <meta property="og:description" content={pageDescription} />
+        <meta property="og:type" content="product" />
+        {displayImageUrl && <meta property="og:image" content={displayImageUrl} />}
+        <link rel="canonical" href={`https://omiyagego-axrcumbv.manus.space/db-product/${productId}`} />
+        <script type="application/ld+json">{JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "Product",
+          "name": product.name,
+          "description": product.description || pageDescription,
+          "image": displayImageUrl,
+          "brand": { "@type": "Brand", "name": product.brand },
+          "offers": {
+            "@type": "Offer",
+            "price": product.price,
+            "priceCurrency": "JPY",
+            "availability": "https://schema.org/InStock",
+          },
+        })}</script>
+      </Helmet>
+
       {/* ── ヘッダー ── */}
       <div className="sticky top-0 z-20 bg-white/95 backdrop-blur-sm border-b border-stone-100">
         <div className="flex items-center gap-3 px-4 py-3">
           <button
-            onClick={() => navigate("/db-search")}
+            onClick={() => window.history.back()}
             className="w-8 h-8 rounded-full bg-stone-100 flex items-center justify-center hover:bg-stone-200 transition-colors"
           >
             <ArrowLeft className="w-4 h-4 text-stone-600" />
@@ -126,6 +205,24 @@ export default function DBProductDetail() {
           <div className="flex-1 min-w-0">
             <p className="text-sm font-bold text-stone-900 truncate">{product.name}</p>
             <p className="text-xs text-stone-500">{product.prefecture}</p>
+          </div>
+          {/* いいね・共有ボタン（ヘッダー右） */}
+          <div className="flex items-center gap-2">
+            <button
+              onClick={handleLike}
+              className={cn(
+                "w-8 h-8 rounded-full flex items-center justify-center transition-all",
+                localLiked ? "bg-rose-50 text-rose-500" : "bg-stone-100 text-stone-500 hover:bg-rose-50 hover:text-rose-400"
+              )}
+            >
+              <Heart className={cn("w-4 h-4", localLiked && "fill-rose-500")} />
+            </button>
+            <button
+              onClick={handleShare}
+              className="w-8 h-8 rounded-full bg-stone-100 flex items-center justify-center text-stone-500 hover:bg-stone-200 transition-colors"
+            >
+              <Share2 className="w-4 h-4" />
+            </button>
           </div>
         </div>
       </div>
@@ -141,29 +238,21 @@ export default function DBProductDetail() {
               (e.target as HTMLImageElement).src = getCategoryImage("その他");
             }}
           />
-          {/* グラデーションオーバーレイ */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
-          {/* バッジ */}
           <div className="absolute top-3 left-3 flex gap-1.5 flex-wrap">
             {badges.map((badge) => {
               const config = BADGE_CONFIG[badge];
               if (!config) return null;
               return (
-                <span
-                  key={badge}
-                  className={cn("px-2 py-0.5 text-xs font-bold rounded-full", config.className)}
-                >
+                <span key={badge} className={cn("px-2 py-0.5 text-xs font-bold rounded-full", config.className)}>
                   {config.label}
                 </span>
               );
             })}
           </div>
-          {/* カテゴリ画像使用の場合のラベル */}
           {!product.imageUrl && (
             <div className="absolute bottom-2 right-2">
-              <span className="px-1.5 py-0.5 bg-black/40 text-white text-[10px] rounded">
-                イメージ画像
-              </span>
+              <span className="px-1.5 py-0.5 bg-black/40 text-white text-[10px] rounded">イメージ画像</span>
             </div>
           )}
         </div>
@@ -176,9 +265,7 @@ export default function DBProductDetail() {
               <p className="text-sm text-stone-500 mt-0.5">{product.brand}</p>
             </div>
             <div className="flex-shrink-0 text-right">
-              <p className="text-2xl font-black text-emerald-700">
-                ¥{product.price.toLocaleString()}
-              </p>
+              <p className="text-2xl font-black text-emerald-700">¥{product.price.toLocaleString()}</p>
               <p className="text-xs text-stone-400">税込</p>
             </div>
           </div>
@@ -205,6 +292,29 @@ export default function DBProductDetail() {
                 個包装
               </span>
             )}
+          </div>
+
+          {/* いいね・共有ボタン（メイン） */}
+          <div className="flex gap-3 mt-4">
+            <button
+              onClick={handleLike}
+              className={cn(
+                "flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl border text-sm font-bold transition-all",
+                localLiked
+                  ? "bg-rose-50 border-rose-300 text-rose-600"
+                  : "bg-white border-stone-200 text-stone-600 hover:border-rose-300 hover:text-rose-500"
+              )}
+            >
+              <Heart className={cn("w-4 h-4", localLiked && "fill-rose-500")} />
+              {localLiked ? "お気に入り済み" : "お気に入りに追加"}
+            </button>
+            <button
+              onClick={handleShare}
+              className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-stone-200 text-stone-600 text-sm font-bold hover:bg-stone-50 transition-all"
+            >
+              <Share2 className="w-4 h-4" />
+              共有
+            </button>
           </div>
         </div>
 
@@ -294,23 +404,26 @@ export default function DBProductDetail() {
           </div>
         )}
 
-        {/* ── メーカーストーリー ── */}
-        {product.makerStory && (
+        {/* ── メーカーについて ── */}
+        {(product.makerStory || product.brandUrl) && (
           <div className="px-4 py-4 border-b border-stone-100">
             <h2 className="text-sm font-bold text-stone-700 mb-2 flex items-center gap-1.5">
               <Store className="w-4 h-4 text-emerald-600" />
               メーカーについて
             </h2>
-            <p className="text-sm text-stone-600 leading-relaxed">{product.makerStory}</p>
+            {product.makerStory && (
+              <p className="text-sm text-stone-600 leading-relaxed mb-3">{product.makerStory}</p>
+            )}
             {product.brandUrl && (
               <a
                 href={product.brandUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="mt-3 flex items-center gap-2 w-full px-4 py-2.5 bg-emerald-700 text-white text-sm font-bold rounded-xl hover:bg-emerald-800 transition-colors justify-center"
+                onClick={(e) => e.stopPropagation()}
+                className="flex items-center gap-2 w-full px-4 py-2.5 bg-emerald-700 text-white text-sm font-bold rounded-xl hover:bg-emerald-800 transition-colors justify-center"
               >
                 <ExternalLink className="w-4 h-4" />
-                公式サイトを見る
+                {product.brand}の公式サイトを見る
               </a>
             )}
           </div>
@@ -328,9 +441,7 @@ export default function DBProductDetail() {
               <p className="text-xs text-stone-500 mb-1">日持ち</p>
               <p className="text-base font-black text-stone-900">
                 {product.shelfLife
-                  ? product.shelfLife >= 9999
-                    ? "長期保存可"
-                    : `${product.shelfLife}日`
+                  ? product.shelfLife >= 9999 ? "長期保存可" : `${product.shelfLife}日`
                   : "要確認"}
               </p>
             </div>
@@ -346,6 +457,50 @@ export default function DBProductDetail() {
             </div>
           </div>
         </div>
+
+        {/* ── キュレーション枠: 関連商品 ── */}
+        {relatedProducts.length > 0 && (
+          <div className="px-4 py-4 border-b border-stone-100">
+            <div className="flex items-center justify-between mb-3">
+              <h2 className="text-sm font-bold text-stone-700 flex items-center gap-1.5">
+                <Sparkles className="w-4 h-4 text-amber-500" />
+                {product.prefecture}の他のお土産
+              </h2>
+              <button
+                onClick={() => navigate(`/db-search?prefecture=${encodeURIComponent(product.prefecture)}`)}
+                className="text-xs text-emerald-700 font-bold flex items-center gap-0.5"
+              >
+                もっと見る <ChevronRight className="w-3 h-3" />
+              </button>
+            </div>
+            <div className="space-y-2">
+              {relatedProducts.map((related) => (
+                <button
+                  key={related.id}
+                  onClick={() => navigate(`/db-product/${related.id}`)}
+                  className="w-full flex items-center gap-3 bg-stone-50 rounded-xl p-3 hover:bg-emerald-50 transition-colors text-left"
+                >
+                  <div className="w-12 h-12 rounded-lg overflow-hidden bg-stone-200 flex-shrink-0">
+                    {related.imageUrl ? (
+                      <img src={related.imageUrl} alt={related.name} className="w-full h-full object-cover" />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center">
+                        <Package className="w-5 h-5 text-stone-400" />
+                      </div>
+                    )}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs font-bold text-stone-900 line-clamp-1">{related.name}</p>
+                    <p className="text-[10px] text-stone-500">{related.brand}</p>
+                  </div>
+                  <p className="text-sm font-black text-emerald-700 flex-shrink-0">
+                    ¥{related.price.toLocaleString()}
+                  </p>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* ── 地域情報 ── */}
         <div className="px-4 py-4 border-b border-stone-100">

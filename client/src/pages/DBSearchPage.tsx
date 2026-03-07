@@ -1,19 +1,22 @@
 // ============================================================
-// Omiyage Go - データベース検索ページ
-// デザイン哲学: 駅案内板スタイル - 全国1,200件以上の商品を検索
-// 機能: リアルタイム検索・地方フィルタ・都道府県フィルタ・カテゴリフィルタ・価格帯フィルタ
+// Omiyage Go - データベース検索ページ（強化版）
+// 機能: リアルタイム検索・地方/用途/日持ち/個包装フィルタ・ソート・いいね・共有
 // ============================================================
-import { useState, useEffect, useCallback, useMemo } from "react";
+import { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import { AppLayout } from "@/components/omiyage/AppLayout";
 import { trpc } from "@/lib/trpc";
-import { Search, X, SlidersHorizontal, ChevronDown, ChevronUp, MapPin, Loader2, Package } from "lucide-react";
+import {
+  Search, X, SlidersHorizontal, ChevronDown, ChevronUp, MapPin, Loader2,
+  Package, Heart, Share2, Clock, CheckSquare, ArrowUpDown
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useLocation } from "wouter";
 import { useDebounce } from "@/hooks/useDebounce";
+import { Helmet } from "react-helmet-async";
 
 // ── 価格帯フィルタ ──────────────────────────────────────────────
 const PRICE_FILTERS = [
-  { label: "すべて", min: undefined, max: undefined },
+  { label: "すべて", max: undefined },
   { label: "〜1,000円", max: 1000 },
   { label: "〜2,000円", max: 2000 },
   { label: "〜3,000円", max: 3000 },
@@ -39,8 +42,30 @@ const REGION_TABS = [
   { id: "近畿", label: "近畿" },
   { id: "中国", label: "中国" },
   { id: "四国", label: "四国" },
-  { id: "九州・沖縄", label: "九州・沖縄" },
+  { id: "九州・沖縄", label: "九州" },
 ];
+
+// ── 用途タグ ──────────────────────────────────────────────────
+const PURPOSE_TAGS = [
+  { id: "", label: "すべて" },
+  { id: "greeting", label: "挨拶" },
+  { id: "thanks", label: "御礼" },
+  { id: "apology", label: "お詫び" },
+  { id: "office", label: "社内配布" },
+  { id: "snack", label: "差し入れ" },
+  { id: "self", label: "自分用" },
+  { id: "family", label: "家族へ" },
+  { id: "kids", label: "子供向け" },
+];
+
+// ── ソート順 ──────────────────────────────────────────────────
+const SORT_OPTIONS = [
+  { id: "popular", label: "人気順" },
+  { id: "editorial", label: "おすすめ順" },
+  { id: "shelf_life_desc", label: "日持ち長い順" },
+  { id: "price_asc", label: "価格が安い順" },
+  { id: "newest", label: "新着順" },
+] as const;
 
 // ── 人気キーワード ──────────────────────────────────────────────
 const POPULAR_KEYWORDS = [
@@ -50,6 +75,16 @@ const POPULAR_KEYWORDS = [
 ];
 
 const ITEMS_PER_PAGE = 20;
+
+// ── セッションID生成（匿名いいね用） ──────────────────────────
+function getSessionId(): string {
+  let sid = localStorage.getItem("omiyage_session_id");
+  if (!sid) {
+    sid = `anon-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    localStorage.setItem("omiyage_session_id", sid);
+  }
+  return sid;
+}
 
 export default function DBSearchPage() {
   const [, navigate] = useLocation();
@@ -61,7 +96,11 @@ export default function DBSearchPage() {
   const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedPriceMax, setSelectedPriceMax] = useState<number | undefined>(undefined);
   const [selectedShelfMin, setSelectedShelfMin] = useState<number>(0);
+  const [selectedPurposeTag, setSelectedPurposeTag] = useState("");
+  const [isIndividualPackaged, setIsIndividualPackaged] = useState(false);
+  const [sortBy, setSortBy] = useState<"popular" | "editorial" | "shelf_life_desc" | "price_asc" | "newest">("popular");
   const [showFilters, setShowFilters] = useState(false);
+  const [showSort, setShowSort] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
   const [page, setPage] = useState(0);
   const [allResults, setAllResults] = useState<any[]>([]);
@@ -76,13 +115,21 @@ export default function DBSearchPage() {
     const pref = params.get("prefecture");
     const region = params.get("region");
     const cat = params.get("category");
+    const purposeTag = params.get("purposeTag");
+    const minShelfLife = params.get("minShelfLife");
+    const indivPkg = params.get("isIndividualPackaged");
+    const sort = params.get("sortBy");
     if (q) setQuery(q);
     if (pref) setSelectedPrefecture(pref);
     if (region) setSelectedRegion(region);
     if (cat) setSelectedCategory(cat);
+    if (purposeTag) setSelectedPurposeTag(purposeTag);
+    if (minShelfLife) setSelectedShelfMin(Number(minShelfLife));
+    if (indivPkg === "true") setIsIndividualPackaged(true);
+    if (sort && SORT_OPTIONS.some(o => o.id === sort)) setSortBy(sort as typeof sortBy);
   }, []);
 
-  // 都道府県・カテゴリ・地方の選択肢を取得
+  // 都道府県・カテゴリの選択肢を取得
   const { data: prefectures } = trpc.products.prefectures.useQuery();
   const { data: categories } = trpc.products.categories.useQuery();
 
@@ -94,18 +141,31 @@ export default function DBSearchPage() {
     category: selectedCategory || undefined,
     maxPrice: selectedPriceMax,
     minPrice: undefined as number | undefined,
+    purposeTag: selectedPurposeTag || undefined,
+    minShelfLife: selectedShelfMin > 0 ? selectedShelfMin : undefined,
+    isIndividualPackaged: isIndividualPackaged ? true : undefined,
+    sortBy,
     limit: ITEMS_PER_PAGE,
     offset: page * ITEMS_PER_PAGE,
-  }), [debouncedQuery, selectedRegion, selectedPrefecture, selectedCategory, selectedPriceMax, page]);
+  }), [debouncedQuery, selectedRegion, selectedPrefecture, selectedCategory, selectedPriceMax,
+       selectedPurposeTag, selectedShelfMin, isIndividualPackaged, sortBy, page]);
 
   const { data: searchResult, isLoading, isFetching } = trpc.products.search.useQuery(searchInput);
+
+  // いいね済みIDを取得
+  const sessionId = useMemo(() => getSessionId(), []);
+  const { data: likedIds = [], refetch: refetchLikes } = trpc.likes.getLikedIds.useQuery({ sessionId });
+  const toggleLike = trpc.likes.toggle.useMutation({
+    onSuccess: () => refetchLikes(),
+  });
 
   // 検索条件が変わったらページをリセット
   useEffect(() => {
     setPage(0);
     setAllResults([]);
     setHasMore(true);
-  }, [debouncedQuery, selectedRegion, selectedPrefecture, selectedCategory, selectedPriceMax]);
+  }, [debouncedQuery, selectedRegion, selectedPrefecture, selectedCategory, selectedPriceMax,
+      selectedPurposeTag, selectedShelfMin, isIndividualPackaged, sortBy]);
 
   // 検索結果を蓄積
   useEffect(() => {
@@ -131,13 +191,16 @@ export default function DBSearchPage() {
     setSelectedCategory("");
     setSelectedPriceMax(undefined);
     setSelectedShelfMin(0);
+    setSelectedPurposeTag("");
+    setIsIndividualPackaged(false);
+    setSortBy("popular");
     setPage(0);
     setAllResults([]);
   };
 
   const handleRegionChange = (region: string) => {
     setSelectedRegion(region);
-    setSelectedPrefecture(""); // 地方変更時は都道府県リセット
+    setSelectedPrefecture("");
   };
 
   const activeFilterCount = [
@@ -146,6 +209,8 @@ export default function DBSearchPage() {
     !!selectedCategory,
     !!selectedPriceMax,
     selectedShelfMin > 0,
+    !!selectedPurposeTag,
+    isIndividualPackaged,
   ].filter(Boolean).length;
 
   const hasQuery = query.trim().length > 0;
@@ -168,8 +233,24 @@ export default function DBSearchPage() {
     ? (regionPrefectureMap[selectedRegion] || []).filter(p => prefectures?.includes(p))
     : (prefectures || []);
 
+  // SEO用ページタイトル生成
+  const pageTitle = selectedPrefecture
+    ? `${selectedPrefecture}のお土産 | Omiyage Go`
+    : selectedRegion
+    ? `${selectedRegion}のお土産 | Omiyage Go`
+    : selectedPurposeTag
+    ? `${PURPOSE_TAGS.find(t => t.id === selectedPurposeTag)?.label ?? ""}向けお土産 | Omiyage Go`
+    : hasQuery
+    ? `「${query}」のお土産 | Omiyage Go`
+    : "お土産を探す | Omiyage Go";
+
   return (
     <AppLayout>
+      <Helmet>
+        <title>{pageTitle}</title>
+        <meta name="robots" content="noindex" />
+      </Helmet>
+
       {/* ── 検索バー（スティッキー） ── */}
       <div className="sticky top-0 z-30 bg-white border-b border-stone-100 shadow-sm">
         <div className="px-4 pt-4 pb-3">
@@ -192,7 +273,7 @@ export default function DBSearchPage() {
             />
             {(hasQuery || isLoading) && (
               <button
-                onClick={() => { setQuery(""); }}
+                onClick={() => setQuery("")}
                 className="w-5 h-5 rounded-full bg-stone-400 flex items-center justify-center flex-shrink-0"
               >
                 {isLoading ? (
@@ -206,8 +287,9 @@ export default function DBSearchPage() {
 
           {/* フィルタ行 */}
           <div className="flex items-center gap-2 mt-3">
+            {/* フィルタボタン */}
             <button
-              onClick={() => setShowFilters(!showFilters)}
+              onClick={() => { setShowFilters(!showFilters); setShowSort(false); }}
               className={cn(
                 "flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold border transition-colors flex-shrink-0",
                 showFilters || activeFilterCount > 0
@@ -223,6 +305,18 @@ export default function DBSearchPage() {
                 </span>
               )}
               {showFilters ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
+            </button>
+
+            {/* ソートボタン */}
+            <button
+              onClick={() => { setShowSort(!showSort); setShowFilters(false); }}
+              className={cn(
+                "flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold border transition-colors flex-shrink-0",
+                showSort ? "bg-emerald-700 text-white border-emerald-700" : "bg-white text-stone-600 border-stone-200"
+              )}
+            >
+              <ArrowUpDown className="w-3.5 h-3.5" />
+              {SORT_OPTIONS.find(o => o.id === sortBy)?.label ?? "並び替え"}
             </button>
 
             {/* 地方タブ（横スクロール） */}
@@ -247,12 +341,92 @@ export default function DBSearchPage() {
           </div>
         </div>
 
+        {/* ── ソートパネル ── */}
+        {showSort && (
+          <div className="px-4 pb-3 bg-stone-50 border-t border-stone-100">
+            <div className="flex flex-wrap gap-2 pt-3">
+              {SORT_OPTIONS.map((opt) => (
+                <button
+                  key={opt.id}
+                  onClick={() => { setSortBy(opt.id); setShowSort(false); }}
+                  className={cn(
+                    "px-3 py-1.5 rounded-full text-xs font-bold border transition-colors",
+                    sortBy === opt.id
+                      ? "bg-emerald-700 text-white border-emerald-700"
+                      : "bg-white text-stone-600 border-stone-200"
+                  )}
+                >
+                  {opt.label}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
         {/* ── フィルタパネル（展開） ── */}
         {showFilters && (
           <div className="px-4 pb-4 bg-stone-50 border-t border-stone-100 space-y-4">
+            {/* 用途タグ */}
+            <div>
+              <p className="text-xs font-bold text-stone-500 uppercase tracking-wide mt-3 mb-2">用途</p>
+              <div className="flex flex-wrap gap-1.5">
+                {PURPOSE_TAGS.map((tag) => (
+                  <button
+                    key={tag.id}
+                    onClick={() => setSelectedPurposeTag(tag.id === selectedPurposeTag ? "" : tag.id)}
+                    className={cn(
+                      "px-3 py-1.5 rounded-full text-xs font-medium border transition-colors",
+                      selectedPurposeTag === tag.id
+                        ? "bg-emerald-700 text-white border-emerald-700"
+                        : "bg-white text-stone-600 border-stone-200"
+                    )}
+                  >
+                    {tag.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* 日持ち */}
+            <div>
+              <p className="text-xs font-bold text-stone-500 uppercase tracking-wide mb-2">日持ち</p>
+              <div className="flex flex-wrap gap-1.5">
+                {SHELF_FILTERS.map((f) => (
+                  <button
+                    key={f.label}
+                    onClick={() => setSelectedShelfMin(f.min)}
+                    className={cn(
+                      "px-3 py-1.5 rounded-full text-xs font-medium border transition-colors",
+                      selectedShelfMin === f.min
+                        ? "bg-emerald-700 text-white border-emerald-700"
+                        : "bg-white text-stone-600 border-stone-200"
+                    )}
+                  >
+                    {f.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* 個包装トグル */}
+            <div>
+              <button
+                onClick={() => setIsIndividualPackaged(!isIndividualPackaged)}
+                className={cn(
+                  "flex items-center gap-2 px-3 py-2 rounded-xl border text-xs font-bold transition-colors",
+                  isIndividualPackaged
+                    ? "bg-emerald-700 text-white border-emerald-700"
+                    : "bg-white text-stone-600 border-stone-200"
+                )}
+              >
+                <CheckSquare className="w-3.5 h-3.5" />
+                個包装のみ表示
+              </button>
+            </div>
+
             {/* 都道府県 */}
             <div>
-              <p className="text-xs font-bold text-stone-500 uppercase tracking-wide mt-3 mb-2">
+              <p className="text-xs font-bold text-stone-500 uppercase tracking-wide mb-2">
                 都道府県 {selectedRegion && <span className="text-emerald-600">（{selectedRegion}）</span>}
               </p>
               <div className="flex flex-wrap gap-1.5 max-h-32 overflow-y-auto">
@@ -378,7 +552,9 @@ export default function DBSearchPage() {
             </div>
           ) : (
             <p className="text-sm font-bold text-stone-800">
-              {selectedPrefecture
+              {selectedPurposeTag
+                ? `${PURPOSE_TAGS.find(t => t.id === selectedPurposeTag)?.label ?? ""}向けお土産`
+                : selectedPrefecture
                 ? `${selectedPrefecture}のお土産`
                 : selectedRegion
                 ? `${selectedRegion}のお土産`
@@ -435,7 +611,12 @@ export default function DBSearchPage() {
         ) : (
           <>
             {allResults.map((product) => (
-              <DBProductCard key={product.id} product={product} />
+              <DBProductCard
+                key={product.id}
+                product={product}
+                isLiked={likedIds.includes(product.id)}
+                onToggleLike={() => toggleLike.mutate({ productId: product.id, sessionId })}
+              />
             ))}
 
             {/* もっと見るボタン */}
@@ -487,11 +668,20 @@ interface DBProductCardProps {
     shelfLife: number | null;
     isIndividualPackaged: boolean;
     badges: string | null;
+    likeCount?: number | null;
   };
+  isLiked: boolean;
+  onToggleLike: () => void;
 }
 
-function DBProductCard({ product }: DBProductCardProps) {
+function DBProductCard({ product, isLiked, onToggleLike }: DBProductCardProps) {
   const [, navigate] = useLocation();
+  const [localLiked, setLocalLiked] = useState(isLiked);
+
+  useEffect(() => {
+    setLocalLiked(isLiked);
+  }, [isLiked]);
+
   const badges = (() => {
     try {
       return product.badges ? JSON.parse(product.badges) : [];
@@ -503,6 +693,24 @@ function DBProductCard({ product }: DBProductCardProps) {
   const isEditorial = badges.includes("editorial");
   const isBestseller = badges.includes("bestseller");
   const isLocal = badges.includes("local");
+
+  const handleLike = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setLocalLiked(!localLiked); // 楽観的更新
+    onToggleLike();
+  };
+
+  const handleShare = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    const url = `${window.location.origin}/db-product/${product.id}`;
+    if (navigator.share) {
+      navigator.share({ title: product.name, url });
+    } else {
+      navigator.clipboard.writeText(url).then(() => {
+        alert("URLをコピーしました");
+      });
+    }
+  };
 
   return (
     <div
@@ -571,8 +779,9 @@ function DBProductCard({ product }: DBProductCardProps) {
                 {product.prefecture}
               </span>
               {product.shelfLife && (
-                <span className="px-2 py-0.5 bg-stone-100 text-stone-600 text-[10px] font-medium rounded-full">
-                  日持ち{product.shelfLife}日
+                <span className="px-2 py-0.5 bg-stone-100 text-stone-600 text-[10px] font-medium rounded-full flex items-center gap-0.5">
+                  <Clock className="w-2.5 h-2.5" />
+                  {product.shelfLife}日
                 </span>
               )}
               {product.isIndividualPackaged && (
@@ -584,21 +793,46 @@ function DBProductCard({ product }: DBProductCardProps) {
           </div>
         </div>
 
-        {/* 価格 */}
+        {/* 価格 + アクション */}
         <div className="flex items-center justify-between mt-3 pt-2 border-t border-stone-100">
           <p className="text-base font-black text-stone-900">
             ¥{product.price.toLocaleString()}
             <span className="text-xs font-normal text-stone-400 ml-1">（税込）</span>
           </p>
-          <button
-            className="px-3 py-1.5 bg-emerald-700 text-white text-xs font-bold rounded-lg"
-            onClick={(e) => {
-              e.stopPropagation();
-              navigate(`/db-product/${product.id}`);
-            }}
-          >
-            詳細を見る
-          </button>
+          <div className="flex items-center gap-2">
+            {/* いいねボタン */}
+            <button
+              onClick={handleLike}
+              className={cn(
+                "flex items-center gap-1 px-2.5 py-1.5 rounded-lg border text-xs font-bold transition-all",
+                localLiked
+                  ? "bg-rose-50 border-rose-300 text-rose-600"
+                  : "bg-white border-stone-200 text-stone-500 hover:border-rose-300 hover:text-rose-500"
+              )}
+            >
+              <Heart className={cn("w-3.5 h-3.5", localLiked && "fill-rose-500")} />
+              {product.likeCount != null && product.likeCount > 0 ? product.likeCount : ""}
+            </button>
+
+            {/* 共有ボタン */}
+            <button
+              onClick={handleShare}
+              className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-stone-200 text-stone-500 hover:border-stone-300 text-xs font-bold transition-all"
+            >
+              <Share2 className="w-3.5 h-3.5" />
+            </button>
+
+            {/* 詳細ボタン */}
+            <button
+              className="px-3 py-1.5 bg-emerald-700 text-white text-xs font-bold rounded-lg"
+              onClick={(e) => {
+                e.stopPropagation();
+                navigate(`/db-product/${product.id}`);
+              }}
+            >
+              詳細
+            </button>
+          </div>
         </div>
       </div>
     </div>
