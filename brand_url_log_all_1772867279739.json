@@ -1,0 +1,2302 @@
+[
+  {
+    "id": "prod-1772582498259-8pteaoet1",
+    "brandUrl": "https://www.glico.com/jp/product/snack/pretz/"
+  },
+  {
+    "id": "prod-1772582541399-vytouqe3l",
+    "brandUrl": "https://www.shouro.jp/"
+  },
+  {
+    "id": "prod-1772582544367-18p2y1h8s",
+    "brandUrl": "https://www.nao-washi.com/"
+  },
+  {
+    "id": "prod-1772582544593-f2l17vlzd",
+    "brandUrl": "https://www.hizen-vidro.co.jp/"
+  },
+  {
+    "id": "prod-1772582545278-wpp60b0qm",
+    "brandUrl": "https://nabeshima-dantsu.com/"
+  },
+  {
+    "id": "prod-1772582545507-1r2puwwe3",
+    "brandUrl": "https://www.saga-nori.jp/"
+  },
+  {
+    "id": "prod-1772582547331-9yehjg3j5",
+    "brandUrl": "https://saga-gyu.jp/"
+  },
+  {
+    "id": "prod-1772582547786-qoejmm530",
+    "brandUrl": "https://takeshita-seika.jp/"
+  },
+  {
+    "id": "prod-1772582549155-o4mprkbo8",
+    "brandUrl": "https://kinboshi-sagabuta.jp/"
+  },
+  {
+    "id": "prod-1772582549383-l159kfo4e",
+    "brandUrl": "https://aritadori.jp/"
+  },
+  {
+    "id": "prod-1772582550300-aepibl3ce",
+    "brandUrl": "https://tenzan.co.jp/"
+  },
+  {
+    "id": "prod-1772582550527-nkrhdm0cy",
+    "brandUrl": "https://azumaichi.com/"
+  },
+  {
+    "id": "prod-1772582550756-5zv5ai696",
+    "brandUrl": "https://www.sake-shochu.jp/shochu/detail.php?id=125"
+  },
+  {
+    "id": "prod-1772582550984-q0h1ifeht",
+    "brandUrl": "https://www.kiyoh.jp/"
+  },
+  {
+    "id": "prod-1772582551211-cgw3m46kj",
+    "brandUrl": "https://matsuo-shuzo.com/"
+  },
+  {
+    "id": "prod-1772582551439-oazerlldx",
+    "brandUrl": "https://sagabeer.jp/"
+  },
+  {
+    "id": "prod-1772582523448-jj3slmu3k",
+    "brandUrl": "https://www.nichinan-daifuku.jp/"
+  },
+  {
+    "id": "prod-1772582480422-icyinnd6m",
+    "brandUrl": "https://www.morinaga.co.jp/hi-chew/"
+  },
+  {
+    "id": "prod-1772582481106-55xh9kw0o",
+    "brandUrl": "https://www.okashigoten.co.jp/"
+  },
+  {
+    "id": "prod-1772582481333-izkzb8x45",
+    "brandUrl": "https://www.calbee.co.jp/shohin/potatochips/"
+  },
+  {
+    "id": "prod-1772582491399-rvw8584m8",
+    "brandUrl": "https://blueseal.co.jp/"
+  },
+  {
+    "id": "product-1771846428523-fqbeo4t9s",
+    "brandUrl": "https://www.okashigoten.co.jp/"
+  },
+  {
+    "id": "product-1771846429461-87d10wd4y",
+    "brandUrl": "https://www.nanpudo.co.jp/"
+  },
+  {
+    "id": "product-1771846612358-unmalh7l8",
+    "brandUrl": "https://www.okashigoten.co.jp/"
+  },
+  {
+    "id": "product-1771846613380-09ozlr4aa",
+    "brandUrl": "https://www.nanpudo.co.jp/"
+  },
+  {
+    "id": "product-1772343814684-4201twfs8",
+    "brandUrl": "https://www.okashigoten.co.jp/"
+  },
+  {
+    "id": "product-1772343815705-tyhnp6zhc",
+    "brandUrl": "https://www.nanpudo.co.jp/"
+  },
+  {
+    "id": "product-1772345116459-2142q1meo",
+    "brandUrl": "https://www.okashigoten.co.jp/"
+  },
+  {
+    "id": "product-1772345117415-xv1h4o1i3",
+    "brandUrl": "https://www.nanpudo.co.jp/"
+  },
+  {
+    "id": "product-1772345289046-7l5qprb2f",
+    "brandUrl": "https://www.okashigoten.co.jp/"
+  },
+  {
+    "id": "product-1772345289841-o0xrzrpsr",
+    "brandUrl": "https://www.nanpudo.co.jp/"
+  },
+  {
+    "id": "p-kumamoto-001",
+    "brandUrl": "https://www.fujibambi.com/"
+  },
+  {
+    "id": "p-kumamoto-002",
+    "brandUrl": "https://www.kobai.jp/"
+  },
+  {
+    "id": "p-kumamoto-003",
+    "brandUrl": "https://www.fugamaki.jp/"
+  },
+  {
+    "id": "p-kumamoto-004",
+    "brandUrl": "https://www.kobai.jp/"
+  },
+  {
+    "id": "p-kumamoto-005",
+    "brandUrl": "https://www.chojuan.co.jp/"
+  },
+  {
+    "id": "p-kumamoto-006",
+    "brandUrl": "https://karashirenkon.co.jp/"
+  },
+  {
+    "id": "p-kumamoto-007",
+    "brandUrl": "https://www.chuukaen.jp/"
+  },
+  {
+    "id": "p-kumamoto-008",
+    "brandUrl": "https://fukudaya.net/"
+  },
+  {
+    "id": "p-kumamoto-009",
+    "brandUrl": "https://www.ajisen.co.jp/"
+  },
+  {
+    "id": "p-kumamoto-010",
+    "brandUrl": "https://www.kumamotokabo.jp/"
+  },
+  {
+    "id": "p-kumamoto-011",
+    "brandUrl": "https://kumamoto-kabo.jp/"
+  },
+  {
+    "id": "p-kumamoto-012",
+    "brandUrl": "https://abeboku.jp/"
+  },
+  {
+    "id": "p-kumamoto-013",
+    "brandUrl": "https://www.iwata-corp.co.jp/"
+  },
+  {
+    "id": "p-kumamoto-015",
+    "brandUrl": "https://www.asokenkonouen.jp/"
+  },
+  {
+    "id": "p-kumamoto-016",
+    "brandUrl": "https://sonodaya.co.jp/"
+  },
+  {
+    "id": "p-kumamoto-017",
+    "brandUrl": "https://www.aso-takana.com/"
+  },
+  {
+    "id": "p-kumamoto-018",
+    "brandUrl": "https://www.suganoya.com/"
+  },
+  {
+    "id": "p-kumamoto-019",
+    "brandUrl": "https://www.hakutake.co.jp/"
+  },
+  {
+    "id": "p-kumamoto-021",
+    "brandUrl": "https://www.jakumamoto.or.jp/"
+  },
+  {
+    "id": "p-kumamoto-024",
+    "brandUrl": "https://oguni-milk.jp/"
+  },
+  {
+    "id": "p-kumamoto-025",
+    "brandUrl": "https://www.kurokawaonsen.or.jp/"
+  },
+  {
+    "id": "p-kumamoto-026",
+    "brandUrl": "https://kumamon-official.jp/"
+  },
+  {
+    "id": "p-kumamoto-030",
+    "brandUrl": "https://www.kurokawaonsen.or.jp/"
+  },
+  {
+    "id": "product-1771846426600-n6wpdf6ny",
+    "brandUrl": "https://www.kobai.jp/"
+  },
+  {
+    "id": "product-1771846610462-67k57l67d",
+    "brandUrl": "https://www.kobai.jp/"
+  },
+  {
+    "id": "product-1772343813044-xdch31x3z",
+    "brandUrl": "https://www.kobai.jp/"
+  },
+  {
+    "id": "product-1772345114400-oparvm8ba",
+    "brandUrl": "https://www.kobai.jp/"
+  },
+  {
+    "id": "product-1772345287194-zhyt808h0",
+    "brandUrl": "https://www.kobai.jp/"
+  },
+  {
+    "id": "p-fukuoka-001",
+    "brandUrl": "https://www.meigetsudo.co.jp/"
+  },
+  {
+    "id": "p-fukuoka-002",
+    "brandUrl": "https://www.josuian.jp/"
+  },
+  {
+    "id": "p-fukuoka-003",
+    "brandUrl": "https://www.fukutaro.co.jp/"
+  },
+  {
+    "id": "p-fukuoka-004",
+    "brandUrl": "https://www.ishimura.co.jp/"
+  },
+  {
+    "id": "p-fukuoka-005",
+    "brandUrl": "https://www.nikakudou.co.jp/"
+  },
+  {
+    "id": "p-fukuoka-007",
+    "brandUrl": "https://mikadukiya.com/"
+  },
+  {
+    "id": "p-fukuoka-008",
+    "brandUrl": "https://chikage.co.jp/"
+  },
+  {
+    "id": "p-fukuoka-009",
+    "brandUrl": "https://www.suzukake.co.jp/"
+  },
+  {
+    "id": "p-fukuoka-010",
+    "brandUrl": "https://www.fukuya.com/"
+  },
+  {
+    "id": "p-fukuoka-011",
+    "brandUrl": "https://fukutomi.jp/"
+  },
+  {
+    "id": "p-fukuoka-012",
+    "brandUrl": "https://www.yamaya.com/"
+  },
+  {
+    "id": "p-fukuoka-013",
+    "brandUrl": "https://www.ikkousha.com/"
+  },
+  {
+    "id": "p-fukuoka-014",
+    "brandUrl": "https://www.hakata-shinshin.com/"
+  },
+  {
+    "id": "p-fukuoka-015",
+    "brandUrl": "https://www.chidoriya.co.jp/"
+  },
+  {
+    "id": "p-fukuoka-016",
+    "brandUrl": "https://harapecolab.com/"
+  },
+  {
+    "id": "p-fukuoka-017",
+    "brandUrl": "https://www.yumeyumedori.co.jp/"
+  },
+  {
+    "id": "p-fukuoka-018",
+    "brandUrl": "https://yame-brewery.com/"
+  },
+  {
+    "id": "p-fukuoka-019",
+    "brandUrl": "https://thefirstday.jp/"
+  },
+  {
+    "id": "p-fukuoka-020",
+    "brandUrl": "https://www.kubara.jp/"
+  },
+  {
+    "id": "p-fukuoka-021",
+    "brandUrl": "https://uranoshouyu.com/"
+  },
+  {
+    "id": "p-fukuoka-022",
+    "brandUrl": "https://www.shobun-vinegar.co.jp/"
+  },
+  {
+    "id": "p-fukuoka-023",
+    "brandUrl": "https://www.sen-fukuoka.jp/"
+  },
+  {
+    "id": "p-fukuoka-024",
+    "brandUrl": "https://hakataori.or.jp/"
+  },
+  {
+    "id": "p-fukuoka-025",
+    "brandUrl": "https://koishiwara.jp/"
+  },
+  {
+    "id": "p-fukuoka-026",
+    "brandUrl": "https://www.chocolateshop.jp/"
+  },
+  {
+    "id": "p-fukuoka-027",
+    "brandUrl": "https://itoking.jp/"
+  },
+  {
+    "id": "p-fukuoka-028",
+    "brandUrl": "https://www.meigetsudo.co.jp/"
+  },
+  {
+    "id": "p-fukuoka-029",
+    "brandUrl": "https://www.kasanoya.com/"
+  },
+  {
+    "id": "p-fukuoka-030",
+    "brandUrl": "https://www.niwaka-senpei.co.jp/"
+  },
+  {
+    "id": "product-1771846423782-69mm2eaio",
+    "brandUrl": "https://www.meigetsudo.co.jp/"
+  },
+  {
+    "id": "product-1771846424663-uvj4sia65",
+    "brandUrl": "https://www.fukutaro.co.jp/"
+  },
+  {
+    "id": "product-1771846607720-f0qng0o89",
+    "brandUrl": "https://www.meigetsudo.co.jp/"
+  },
+  {
+    "id": "product-1771846608619-4e4pbmf1p",
+    "brandUrl": "https://www.fukutaro.co.jp/"
+  },
+  {
+    "id": "product-1772343809984-bitiqr3zt",
+    "brandUrl": "https://www.meigetsudo.co.jp/"
+  },
+  {
+    "id": "product-1772343810901-dwr4d87ip",
+    "brandUrl": "https://www.fukutaro.co.jp/"
+  },
+  {
+    "id": "product-1772345111517-tzu15bouc",
+    "brandUrl": "https://www.meigetsudo.co.jp/"
+  },
+  {
+    "id": "product-1772345112543-mii2bo0w4",
+    "brandUrl": "https://www.fukutaro.co.jp/"
+  },
+  {
+    "id": "product-1772345284538-46r3sf0h3",
+    "brandUrl": "https://www.meigetsudo.co.jp/"
+  },
+  {
+    "id": "product-1772345285580-lz5tnwuhq",
+    "brandUrl": "https://www.fukutaro.co.jp/"
+  },
+  {
+    "id": "p-nagasaki-001",
+    "brandUrl": "https://www.fukusaya.co.jp/"
+  },
+  {
+    "id": "p-nagasaki-002",
+    "brandUrl": "https://www.karakusa.co.jp/"
+  },
+  {
+    "id": "p-nagasaki-003",
+    "brandUrl": "https://www.porto.co.jp/"
+  },
+  {
+    "id": "p-nagasaki-004",
+    "brandUrl": "https://www.shooken.com/"
+  },
+  {
+    "id": "p-nagasaki-005",
+    "brandUrl": "https://www.karakusa.co.jp/"
+  },
+  {
+    "id": "p-nagasaki-006",
+    "brandUrl": "https://www.ichikou.net/"
+  },
+  {
+    "id": "p-nagasaki-007",
+    "brandUrl": "https://mirokuya.co.jp/"
+  },
+  {
+    "id": "p-nagasaki-008",
+    "brandUrl": "https://kakuni.jp/"
+  },
+  {
+    "id": "p-nagasaki-009",
+    "brandUrl": "http://nagasaki-kamaboko.co.jp/"
+  },
+  {
+    "id": "p-nagasaki-010",
+    "brandUrl": "https://mirokuya.co.jp/"
+  },
+  {
+    "id": "p-nagasaki-013",
+    "brandUrl": "http://fukken-yoriyori.com/"
+  },
+  {
+    "id": "p-nagasaki-014",
+    "brandUrl": "https://obama-shokuryo.com/"
+  },
+  {
+    "id": "p-nagasaki-015",
+    "brandUrl": "https://www.cherry-mame.jp/"
+  },
+  {
+    "id": "p-nagasaki-017",
+    "brandUrl": "https://ruri-an.com/"
+  },
+  {
+    "id": "p-nagasaki-018",
+    "brandUrl": "https://www.nishiyama-jp.com/"
+  },
+  {
+    "id": "p-nagasaki-024",
+    "brandUrl": "https://www.ichimaru.jp/"
+  },
+  {
+    "id": "p-nagasaki-026",
+    "brandUrl": "https://99grp.com/"
+  },
+  {
+    "id": "p-nagasaki-027",
+    "brandUrl": "https://newyorkdo.com/"
+  },
+  {
+    "id": "p-nagasaki-028",
+    "brandUrl": "https://nagasaki-minamiyamate-purin.com/"
+  },
+  {
+    "id": "product-1771846425682-oig868c5d",
+    "brandUrl": "https://www.fukusaya.co.jp/"
+  },
+  {
+    "id": "product-1771846609545-294a1x69j",
+    "brandUrl": "https://www.fukusaya.co.jp/"
+  },
+  {
+    "id": "product-1772343812029-q4e43tpdp",
+    "brandUrl": "https://www.fukusaya.co.jp/"
+  },
+  {
+    "id": "product-1772345113364-v5js4rxhl",
+    "brandUrl": "https://www.fukusaya.co.jp/"
+  },
+  {
+    "id": "product-1772345286396-j7niez9kk",
+    "brandUrl": "https://www.fukusaya.co.jp/"
+  },
+  {
+    "id": "p-kagoshima-001",
+    "brandUrl": "https://www.festivalo.co.jp/"
+  },
+  {
+    "id": "p-kagoshima-002",
+    "brandUrl": "http://www.steam.co.jp/"
+  },
+  {
+    "id": "p-kagoshima-003",
+    "brandUrl": "https://www.akarushiya.co.jp/"
+  },
+  {
+    "id": "p-kagoshima-004",
+    "brandUrl": "https://ikedaseicha.co.jp/"
+  },
+  {
+    "id": "p-kagoshima-005",
+    "brandUrl": "https://agetateya.co.jp/"
+  },
+  {
+    "id": "p-kagoshima-006",
+    "brandUrl": "https://yamahuku.co.jp/"
+  },
+  {
+    "id": "p-kagoshima-007",
+    "brandUrl": "https://yamahuku.co.jp/"
+  },
+  {
+    "id": "p-kagoshima-008",
+    "brandUrl": "https://www.royal.co.jp/sweets/"
+  },
+  {
+    "id": "p-kagoshima-009",
+    "brandUrl": "https://www.seikafoods.jp/"
+  },
+  {
+    "id": "p-kagoshima-010",
+    "brandUrl": "https://buntando.com/"
+  },
+  {
+    "id": "p-kagoshima-011",
+    "brandUrl": "https://babaseika.com/"
+  },
+  {
+    "id": "p-kagoshima-012",
+    "brandUrl": "https://kagoshima-yutaka.co.jp/"
+  },
+  {
+    "id": "p-kagoshima-013",
+    "brandUrl": "https://chinmikagoya.com/"
+  },
+  {
+    "id": "p-kagoshima-014",
+    "brandUrl": "https://www.kurozuya.com/"
+  },
+  {
+    "id": "p-kagoshima-015",
+    "brandUrl": "https://kurokatutei.com/"
+  },
+  {
+    "id": "p-kagoshima-016",
+    "brandUrl": "https://harafuku.jp/"
+  },
+  {
+    "id": "p-kagoshima-017",
+    "brandUrl": "https://eikyuya.com/"
+  },
+  {
+    "id": "p-kagoshima-018",
+    "brandUrl": "https://yakushima-karin.jp/"
+  },
+  {
+    "id": "p-kagoshima-019",
+    "brandUrl": "https://nakazono.co.jp/"
+  },
+  {
+    "id": "p-kagoshima-020",
+    "brandUrl": "https://buntando.com/"
+  },
+  {
+    "id": "p-kagoshima-021",
+    "brandUrl": "https://baigetsudo.com/"
+  },
+  {
+    "id": "p-kagoshima-022",
+    "brandUrl": "https://kanosuke.com/"
+  },
+  {
+    "id": "p-kagoshima-023",
+    "brandUrl": "https://fukuman.jp/"
+  },
+  {
+    "id": "p-kagoshima-024",
+    "brandUrl": "https://tanaka-chikusan.com/"
+  },
+  {
+    "id": "p-kagoshima-026",
+    "brandUrl": "https://yakushima-karin.com/"
+  },
+  {
+    "id": "p-kagoshima-027",
+    "brandUrl": "https://frasco-jp.com/"
+  },
+  {
+    "id": "p-kagoshima-028",
+    "brandUrl": "https://www.setonoyume.com/"
+  },
+  {
+    "id": "p-kagoshima-029",
+    "brandUrl": "http://www.ibusuki-saikan.com/"
+  },
+  {
+    "id": "p-kagoshima-030",
+    "brandUrl": "https://kirishimatea.com/"
+  },
+  {
+    "id": "product-1771846427600-hbw0ug5xo",
+    "brandUrl": "https://www.akarukan.com/"
+  },
+  {
+    "id": "product-1771846611371-y8zb8u1t9",
+    "brandUrl": "https://www.akarukan.com/"
+  },
+  {
+    "id": "product-1772343813848-n2rej9n01",
+    "brandUrl": "https://www.akarukan.com/"
+  },
+  {
+    "id": "product-1772345115280-vzx3i954v",
+    "brandUrl": "https://www.akarukan.com/"
+  },
+  {
+    "id": "product-1772345288050-xjmwk1lom",
+    "brandUrl": "https://www.akarukan.com/"
+  },
+  {
+    "id": "p-kyoto-001",
+    "brandUrl": "https://www.otabe.jp/"
+  },
+  {
+    "id": "p-kyoto-002",
+    "brandUrl": "https://www.ajyarimochi.com/"
+  },
+  {
+    "id": "p-kyoto-003",
+    "brandUrl": "https://www.malebranche.co.jp/"
+  },
+  {
+    "id": "p-kyoto-004",
+    "brandUrl": "https://kyobaum.com/"
+  },
+  {
+    "id": "p-kyoto-005",
+    "brandUrl": "https://www.kogetsu.com/"
+  },
+  {
+    "id": "p-kyoto-006",
+    "brandUrl": "https://www.nishiri.co.jp/"
+  },
+  {
+    "id": "p-kyoto-007",
+    "brandUrl": "https://www.tokichi.jp/"
+  },
+  {
+    "id": "p-kyoto-008",
+    "brandUrl": "https://kahou.kyoto/"
+  },
+  {
+    "id": "p-kyoto-009",
+    "brandUrl": "https://www.giontsujiri.co.jp/"
+  },
+  {
+    "id": "p-kyoto-010",
+    "brandUrl": "https://www.izutsu.jp/"
+  },
+  {
+    "id": "p-kyoto-011",
+    "brandUrl": "https://www.izutsu.jp/"
+  },
+  {
+    "id": "p-kyoto-012",
+    "brandUrl": "https://www.sasayaiori.com/"
+  },
+  {
+    "id": "p-kyoto-013",
+    "brandUrl": "https://www.mitakyu.co.jp/"
+  },
+  {
+    "id": "p-kyoto-014",
+    "brandUrl": "https://www.baikal.jp/"
+  },
+  {
+    "id": "p-kyoto-015",
+    "brandUrl": "https://www.toshoan.com/"
+  },
+  {
+    "id": "p-kyoto-016",
+    "brandUrl": "https://www.harema.co.jp/"
+  },
+  {
+    "id": "p-kyoto-017",
+    "brandUrl": "https://mamemasa.co.jp/"
+  },
+  {
+    "id": "p-kyoto-018",
+    "brandUrl": "https://www.tsuruyayoshinobu.jp/"
+  },
+  {
+    "id": "p-kyoto-019",
+    "brandUrl": "https://itotatsu.jp/"
+  },
+  {
+    "id": "p-kyoto-020",
+    "brandUrl": "https://kolme.jp/"
+  },
+  {
+    "id": "p-kyoto-021",
+    "brandUrl": "https://www.tsuruyayoshinobu.jp/"
+  },
+  {
+    "id": "p-kyoto-022",
+    "brandUrl": "https://ishigurokohou.com/"
+  },
+  {
+    "id": "p-kyoto-023",
+    "brandUrl": "https://www.sousou.co.jp/"
+  },
+  {
+    "id": "p-kyoto-024",
+    "brandUrl": "https://www.yojiya.co.jp/"
+  },
+  {
+    "id": "p-kyoto-025",
+    "brandUrl": "https://www.baikaru.jp/"
+  },
+  {
+    "id": "p-kyoto-026",
+    "brandUrl": "https://www.belleamer-kyoto.jp/"
+  },
+  {
+    "id": "p-kyoto-027",
+    "brandUrl": "https://www.belleamer-kyoto.jp/"
+  },
+  {
+    "id": "p-kyoto-028",
+    "brandUrl": "https://www.karancolon.jp/"
+  },
+  {
+    "id": "p-kyoto-029",
+    "brandUrl": "https://www.otabe.jp/"
+  },
+  {
+    "id": "p-kyoto-030",
+    "brandUrl": "https://www.tokichi.jp/"
+  },
+  {
+    "id": "p-034",
+    "brandUrl": "https://www.imabaritowel.jp/"
+  },
+  {
+    "id": "p-ehime-001",
+    "brandUrl": "https://www.itm-grp.co.jp/ichiroku/"
+  },
+  {
+    "id": "p-ehime-002",
+    "brandUrl": "http://www.kameiseika.co.jp/"
+  },
+  {
+    "id": "p-ehime-003",
+    "brandUrl": "https://poeme.co.jp/"
+  },
+  {
+    "id": "p-ehime-004",
+    "brandUrl": "https://yamadaya.co.jp/"
+  },
+  {
+    "id": "p-ehime-005",
+    "brandUrl": "https://www.kirinomori.co.jp/"
+  },
+  {
+    "id": "p-ehime-006",
+    "brandUrl": "https://www.ehime-inryo.co.jp/"
+  },
+  {
+    "id": "p-ehime-007",
+    "brandUrl": "https://yasuoka.co.jp/"
+  },
+  {
+    "id": "p-ehime-008",
+    "brandUrl": "https://tanabe-seika.jp/"
+  },
+  {
+    "id": "p-ehime-009",
+    "brandUrl": "https://kadoya-taimeshi.com/"
+  },
+  {
+    "id": "p-ehime-010",
+    "brandUrl": "https://www.goshikisomen.co.jp/"
+  },
+  {
+    "id": "p-ehime-011",
+    "brandUrl": "https://www.imabaritowel.jp/"
+  },
+  {
+    "id": "p-ehime-012",
+    "brandUrl": "https://hatada.co.jp/"
+  },
+  {
+    "id": "p-ehime-013",
+    "brandUrl": "https://seikodo-sweets.jp/"
+  },
+  {
+    "id": "p-ehime-014",
+    "brandUrl": "https://rokenmanju.jp/"
+  },
+  {
+    "id": "p-ehime-015",
+    "brandUrl": "https://ishizuchi.com/"
+  },
+  {
+    "id": "p-ehime-016",
+    "brandUrl": "https://www.rakuren.co.jp/"
+  },
+  {
+    "id": "p-ehime-017",
+    "brandUrl": "https://r-manju.co.jp/"
+  },
+  {
+    "id": "p-ehime-018",
+    "brandUrl": "https://www.hakatanoshio.co.jp/"
+  },
+  {
+    "id": "p-ehime-019",
+    "brandUrl": "https://www.boehm.jp/"
+  },
+  {
+    "id": "p-ehime-020",
+    "brandUrl": "https://tanimotokamaboko.co.jp/"
+  },
+  {
+    "id": "p-ehime-021",
+    "brandUrl": "https://www.uha-mikakuto.co.jp/"
+  },
+  {
+    "id": "p-ehime-022",
+    "brandUrl": "https://www.ichiroku.co.jp/"
+  },
+  {
+    "id": "p-ehime-023",
+    "brandUrl": "https://yawatahama.jf-net.ne.jp/"
+  },
+  {
+    "id": "p-ehime-024",
+    "brandUrl": "https://www.goshiki-soumen.co.jp/"
+  },
+  {
+    "id": "p-ehime-025",
+    "brandUrl": "https://matsuyamaage.co.jp/"
+  },
+  {
+    "id": "p-ehime-026",
+    "brandUrl": "https://dogo.jp/"
+  },
+  {
+    "id": "p-ehime-027",
+    "brandUrl": "https://www.towelmuseum.com/"
+  },
+  {
+    "id": "p-ehime-028",
+    "brandUrl": "https://shimanami-cycle.or.jp/"
+  },
+  {
+    "id": "p-ehime-029",
+    "brandUrl": "https://www.matsuyamajo.jp/"
+  },
+  {
+    "id": "p-ehime-030",
+    "brandUrl": "https://uchikoza.com/"
+  },
+  {
+    "id": "p-027",
+    "brandUrl": "https://www.merikenya.com/"
+  },
+  {
+    "id": "p-042",
+    "brandUrl": "https://yamada-ya.com/"
+  },
+  {
+    "id": "p-049",
+    "brandUrl": "https://www.kadoya.com/"
+  },
+  {
+    "id": "product-1772345177300-524cs8swd",
+    "brandUrl": "https://www.dategyu.jp/"
+  },
+  {
+    "id": "product-1772345200181-ltfmfie3t",
+    "brandUrl": "https://www.dategyu.jp/"
+  },
+  {
+    "id": "p-yamagata-001",
+    "brandUrl": "https://www.choeido.jp/"
+  },
+  {
+    "id": "p-yamagata-002",
+    "brandUrl": "https://usamisenbei.com/"
+  },
+  {
+    "id": "p-yamagata-003",
+    "brandUrl": "https://www.sakatabeika.co.jp/"
+  },
+  {
+    "id": "p-yamagata-004",
+    "brandUrl": "https://www.kiyokawaya.com/"
+  },
+  {
+    "id": "p-yamagata-005",
+    "brandUrl": "https://kimuraya-yamagata.jp/"
+  },
+  {
+    "id": "p-yamagata-006",
+    "brandUrl": "https://sagatanien.co.jp/"
+  },
+  {
+    "id": "p-yamagata-007",
+    "brandUrl": "https://www.kiyokawaya.com/"
+  },
+  {
+    "id": "p-yamagata-008",
+    "brandUrl": "https://usamisenbei.com/"
+  },
+  {
+    "id": "p-yamagata-009",
+    "brandUrl": "https://kimuraya-yamagata.jp/"
+  },
+  {
+    "id": "p-yamagata-010",
+    "brandUrl": "https://koino60ri.com/"
+  },
+  {
+    "id": "p-yamagata-011",
+    "brandUrl": "https://yamagata-imoni.com/"
+  },
+  {
+    "id": "p-yamagata-012",
+    "brandUrl": "https://tannokonnyaku.co.jp/"
+  },
+  {
+    "id": "p-yamagata-013",
+    "brandUrl": "https://www.hanzawa-keiran.co.jp/"
+  },
+  {
+    "id": "p-yamagata-014",
+    "brandUrl": "https://cybele.co.jp/"
+  },
+  {
+    "id": "p-yamagata-015",
+    "brandUrl": "https://www.nihonseinyu.co.jp/"
+  },
+  {
+    "id": "p-yamagata-016",
+    "brandUrl": "https://www.sanwa-can.co.jp/"
+  },
+  {
+    "id": "p-yamagata-017",
+    "brandUrl": "https://jindan.co.jp/"
+  },
+  {
+    "id": "p-yamagata-018",
+    "brandUrl": "https://www.sato-ya.jp/"
+  },
+  {
+    "id": "p-yamagata-019",
+    "brandUrl": "https://yonezawagyukousha.com/"
+  },
+  {
+    "id": "p-yamagata-020",
+    "brandUrl": "https://www.kiyokawaya.com/"
+  },
+  {
+    "id": "p-yamagata-021",
+    "brandUrl": "https://www.komatsuya-sakata.com/"
+  },
+  {
+    "id": "p-yamagata-022",
+    "brandUrl": "https://yamagata-maruhachi.jp/"
+  },
+  {
+    "id": "p-yamagata-024",
+    "brandUrl": "https://katobussan.com/"
+  },
+  {
+    "id": "p-yamagata-025",
+    "brandUrl": "https://www.chokai.jp/"
+  },
+  {
+    "id": "p-yamagata-026",
+    "brandUrl": "https://katobussan.com/"
+  },
+  {
+    "id": "p-yamagata-027",
+    "brandUrl": "https://www.sasanoittobori.com/"
+  },
+  {
+    "id": "p-yamagata-029",
+    "brandUrl": "https://zao-dairy.or.jp/"
+  },
+  {
+    "id": "prod-1772582530993-1cqvqobxm",
+    "brandUrl": "https://www.gassanwine.co.jp/"
+  },
+  {
+    "id": "prod-1772582532612-p0h45n2qv",
+    "brandUrl": "https://www.juhyoroman.jp/"
+  },
+  {
+    "id": "prod-1772582533306-ugz7yq748",
+    "brandUrl": "https://www.hiratabokujo.com/"
+  },
+  {
+    "id": "prod-1772582533537-atgx9erfl",
+    "brandUrl": "https://www.sawayaka-beverage.co.jp/"
+  },
+  {
+    "id": "prod-1772582534222-sdha99tq3",
+    "brandUrl": "https://www.dewazakura.co.jp/"
+  },
+  {
+    "id": "prod-1772582534453-f86v3v78p",
+    "brandUrl": "https://www.karakara.co.jp/"
+  },
+  {
+    "id": "prod-1772582534917-dqf708vfq",
+    "brandUrl": "https://www.tokomasamune.co.jp/"
+  },
+  {
+    "id": "prod-1772582537518-5e3sdxr2b",
+    "brandUrl": "https://yonezawagyukuroge.jp/"
+  },
+  {
+    "id": "prod-1772582538431-8unl5krjy",
+    "brandUrl": "https://zao-cheese.or.jp/"
+  },
+  {
+    "id": "prod-1772582512039-bfx4o9bxg",
+    "brandUrl": "https://www.pyonpyonsha.co.jp/"
+  },
+  {
+    "id": "prod-1772582512266-y0kr26stq",
+    "brandUrl": "https://iwate-nanbusenbei.jp/"
+  },
+  {
+    "id": "prod-1772582512494-k19kj4js8",
+    "brandUrl": "https://www.saitoseika.co.jp/"
+  },
+  {
+    "id": "prod-1772582512949-vvwpy55d5",
+    "brandUrl": "https://www.iwategyu.jp/"
+  },
+  {
+    "id": "prod-1772582513177-ebngc9d2m",
+    "brandUrl": "https://www.maesawagyu.jp/"
+  },
+  {
+    "id": "prod-1772582513405-c5mtgquy3",
+    "brandUrl": "https://www.iwate-daifuku.jp/"
+  },
+  {
+    "id": "prod-1772582513633-f8n21dnjw",
+    "brandUrl": "https://www.iwate-milk.co.jp/"
+  },
+  {
+    "id": "prod-1772582514087-g1lxh80xn",
+    "brandUrl": "https://www.sekinoichi.co.jp/"
+  },
+  {
+    "id": "product-1772345181316-wvl9dhv5s",
+    "brandUrl": "https://iwachu.co.jp/"
+  },
+  {
+    "id": "product-1772345204105-skqaokr58",
+    "brandUrl": "https://iwachu.co.jp/"
+  },
+  {
+    "id": "p-akita-001",
+    "brandUrl": "https://www.akisake.jp/"
+  },
+  {
+    "id": "p-akita-002",
+    "brandUrl": "https://www.akisake.jp/"
+  },
+  {
+    "id": "p-akita-003",
+    "brandUrl": "https://kimman.co.jp/"
+  },
+  {
+    "id": "p-akita-004",
+    "brandUrl": "https://saitou-foods.co.jp/"
+  },
+  {
+    "id": "p-akita-005",
+    "brandUrl": "https://yamakiu.co.jp/"
+  },
+  {
+    "id": "p-akita-006",
+    "brandUrl": "https://yamakiu.co.jp/"
+  },
+  {
+    "id": "p-akita-008",
+    "brandUrl": "https://www.takashimizu.co.jp/"
+  },
+  {
+    "id": "p-akita-009",
+    "brandUrl": "https://www.takashimizu.co.jp/"
+  },
+  {
+    "id": "p-akita-010",
+    "brandUrl": "https://www.takashimizu.co.jp/"
+  },
+  {
+    "id": "p-akita-011",
+    "brandUrl": "https://www.takashimizu.co.jp/"
+  },
+  {
+    "id": "p-akita-012",
+    "brandUrl": "https://www.takashimizu.co.jp/"
+  },
+  {
+    "id": "p-akita-013",
+    "brandUrl": "https://www.takashimizu.co.jp/"
+  },
+  {
+    "id": "p-akita-014",
+    "brandUrl": "https://www.takashimizu.co.jp/"
+  },
+  {
+    "id": "p-akita-015",
+    "brandUrl": "https://www.takashimizu.co.jp/"
+  },
+  {
+    "id": "p-akita-016",
+    "brandUrl": "https://akita-foods.com/"
+  },
+  {
+    "id": "p-akita-019",
+    "brandUrl": "https://akita-bijin.jp/"
+  },
+  {
+    "id": "p-akita-020",
+    "brandUrl": "https://akita-bijin.jp/"
+  },
+  {
+    "id": "p-akita-023",
+    "brandUrl": "https://akita-bijin.jp/"
+  },
+  {
+    "id": "p-akita-024",
+    "brandUrl": "https://akita-bijin.jp/"
+  },
+  {
+    "id": "p-akita-026",
+    "brandUrl": "https://namahagehonpo.jp/"
+  },
+  {
+    "id": "p-akita-027",
+    "brandUrl": "https://magewappa.com/"
+  },
+  {
+    "id": "p-akita-028",
+    "brandUrl": "https://namahagehonpo.jp/"
+  },
+  {
+    "id": "prod-1772582504195-mgv4aqu3p",
+    "brandUrl": "https://www.babahera.net/"
+  },
+  {
+    "id": "prod-1772582506111-zqgusveo8",
+    "brandUrl": "https://kinman.co.jp/"
+  },
+  {
+    "id": "prod-1772582507708-v5dlccj41",
+    "brandUrl": "https://www.takashimizu.co.jp/"
+  },
+  {
+    "id": "prod-1772582508620-8p96zbh27",
+    "brandUrl": "https://www.aqula.co.jp/"
+  },
+  {
+    "id": "prod-1772582509301-3efwtvdhy",
+    "brandUrl": "https://www.yukinobosha.jp/"
+  },
+  {
+    "id": "prod-1772582509983-sboeg8aam",
+    "brandUrl": "https://www.mansaku.co.jp/"
+  },
+  {
+    "id": "prod-1772582510211-gbczbqi8x",
+    "brandUrl": "https://akitainusabre.com/"
+  },
+  {
+    "id": "prod-1772582510440-dxq2rb1l9",
+    "brandUrl": "https://magewappa.com/"
+  },
+  {
+    "id": "prod-1772582510669-f71hisfo8",
+    "brandUrl": "https://www.iburi-gakko.com/"
+  },
+  {
+    "id": "prod-1772582510896-ijc5z5xhj",
+    "brandUrl": "https://www.aramasa.jp/"
+  },
+  {
+    "id": "prod-1772582511350-2xgjsv1kr",
+    "brandUrl": "https://www.akita-ginsenzaiku.jp/"
+  },
+  {
+    "id": "prod-1772582511582-f3zpj9jon",
+    "brandUrl": "https://www.ryozeki.co.jp/"
+  },
+  {
+    "id": "prod-1772582511811-xtr1xm6p8",
+    "brandUrl": "https://www.kanetaya.jp/"
+  },
+  {
+    "id": "p-aomori-003",
+    "brandUrl": "https://www.kakunoya.co.jp/"
+  },
+  {
+    "id": "p-aomori-004",
+    "brandUrl": "https://www.iwateya.co.jp/"
+  },
+  {
+    "id": "p-aomori-005",
+    "brandUrl": "https://knk.jp/"
+  },
+  {
+    "id": "p-aomori-006",
+    "brandUrl": "https://okinaya.com/"
+  },
+  {
+    "id": "p-aomori-007",
+    "brandUrl": "https://okinaya.com/"
+  },
+  {
+    "id": "p-aomori-009",
+    "brandUrl": "https://macurehouse.com/"
+  },
+  {
+    "id": "p-aomori-010",
+    "brandUrl": "https://www.hoko-shokuhin.co.jp/"
+  },
+  {
+    "id": "p-aomori-011",
+    "brandUrl": "https://www.jaorengroup.co.jp/"
+  },
+  {
+    "id": "p-aomori-012",
+    "brandUrl": "https://kujiramochi.com/"
+  },
+  {
+    "id": "p-aomori-013",
+    "brandUrl": "https://kujiramochi.com/"
+  },
+  {
+    "id": "p-aomori-014",
+    "brandUrl": "https://www.shinpachi.jp/"
+  },
+  {
+    "id": "p-aomori-015",
+    "brandUrl": "https://houhai.co.jp/"
+  },
+  {
+    "id": "p-aomori-016",
+    "brandUrl": "https://www.kudopan.co.jp/"
+  },
+  {
+    "id": "p-aomori-017",
+    "brandUrl": "https://www.kaiodo.co.jp/"
+  },
+  {
+    "id": "p-aomori-018",
+    "brandUrl": "https://www.agripark.jp/"
+  },
+  {
+    "id": "p-aomori-019",
+    "brandUrl": "https://ja-tsugaruhirosaki.or.jp/"
+  },
+  {
+    "id": "p-aomori-020",
+    "brandUrl": "https://tsugarunuri.org/"
+  },
+  {
+    "id": "p-aomori-021",
+    "brandUrl": "https://kogin.jp/"
+  },
+  {
+    "id": "p-aomori-022",
+    "brandUrl": "https://www.jakko.or.jp/"
+  },
+  {
+    "id": "p-aomori-023",
+    "brandUrl": "https://mutsuwan.jp/"
+  },
+  {
+    "id": "p-aomori-025",
+    "brandUrl": "https://www.kabucenter.co.jp/"
+  },
+  {
+    "id": "p-aomori-026",
+    "brandUrl": "https://www.jre-foods.co.jp/a-factory/"
+  },
+  {
+    "id": "p-aomori-027",
+    "brandUrl": "https://kaneiri.co.jp/"
+  },
+  {
+    "id": "p-aomori-028",
+    "brandUrl": "https://sannaimaruyama.pref.aomori.jp/"
+  },
+  {
+    "id": "p-aomori-029",
+    "brandUrl": "https://oirase-keiryuu.jp/"
+  },
+  {
+    "id": "p-aomori-030",
+    "brandUrl": "https://osorezan.or.jp/"
+  },
+  {
+    "id": "p-029",
+    "brandUrl": "https://www.sanfoods.co.jp/"
+  },
+  {
+    "id": "p-003",
+    "brandUrl": "https://www.akafuku.co.jp/"
+  },
+  {
+    "id": "p-mie-001",
+    "brandUrl": "https://www.akafuku.co.jp/"
+  },
+  {
+    "id": "p-mie-002",
+    "brandUrl": "https://www.matsusakaushi.co.jp/"
+  },
+  {
+    "id": "p-mie-004",
+    "brandUrl": "https://www.blanca.co.jp/"
+  },
+  {
+    "id": "p-mie-005",
+    "brandUrl": "https://henbaya.jp/"
+  },
+  {
+    "id": "p-mie-006",
+    "brandUrl": "https://nagashimochi.com/"
+  },
+  {
+    "id": "p-mie-007",
+    "brandUrl": "https://eimochiya.com/"
+  },
+  {
+    "id": "p-mie-008",
+    "brandUrl": "https://toraya-uiro.co.jp/"
+  },
+  {
+    "id": "p-mie-009",
+    "brandUrl": "https://yamamuramilk.co.jp/"
+  },
+  {
+    "id": "p-mie-010",
+    "brandUrl": "https://www.haritaya.co.jp/"
+  },
+  {
+    "id": "p-mie-011",
+    "brandUrl": "https://www.ise-takaraya.jp/"
+  },
+  {
+    "id": "p-mie-012",
+    "brandUrl": "https://www.masuya.co.jp/"
+  },
+  {
+    "id": "p-mie-013",
+    "brandUrl": "https://www.todaya.co.jp/"
+  },
+  {
+    "id": "p-mie-014",
+    "brandUrl": "https://sekino-to.com/"
+  },
+  {
+    "id": "p-mie-015",
+    "brandUrl": "https://ofukumochi.com/"
+  },
+  {
+    "id": "p-mie-016",
+    "brandUrl": "https://uoharu.jp/"
+  },
+  {
+    "id": "p-mie-017",
+    "brandUrl": "https://kaidokobo.jp/"
+  },
+  {
+    "id": "p-mie-018",
+    "brandUrl": "https://iseman.co.jp/"
+  },
+  {
+    "id": "p-mie-020",
+    "brandUrl": "https://okageyokocho.com/"
+  },
+  {
+    "id": "p-mie-021",
+    "brandUrl": "https://momenya-ai.com/"
+  },
+  {
+    "id": "p-mie-022",
+    "brandUrl": "https://hekoki.com/"
+  },
+  {
+    "id": "p-mie-023",
+    "brandUrl": "https://suzukasho.co.jp/"
+  },
+  {
+    "id": "p-mie-025",
+    "brandUrl": "https://thankyouya.jp/"
+  },
+  {
+    "id": "p-017",
+    "brandUrl": "https://www.giontsujiri.co.jp/"
+  },
+  {
+    "id": "product-1771846415140-w2yo83he8",
+    "brandUrl": "https://www.malebranche.co.jp/"
+  },
+  {
+    "id": "product-1771846416042-7ssr9k2vq",
+    "brandUrl": "https://www.otabe.jp/"
+  },
+  {
+    "id": "product-1771846417080-1elpxt71g",
+    "brandUrl": "https://www.ajyarimochi.com/"
+  },
+  {
+    "id": "product-1771846598619-8o827r3es",
+    "brandUrl": "https://www.malebranche.co.jp/"
+  },
+  {
+    "id": "product-1771846599616-4vo5t3q5d",
+    "brandUrl": "https://www.otabe.jp/"
+  },
+  {
+    "id": "product-1771846600600-v1635fa9j",
+    "brandUrl": "https://www.ajyarimochi.com/"
+  },
+  {
+    "id": "product-1772343801366-3rcgx72rh",
+    "brandUrl": "https://www.malebranche.co.jp/"
+  },
+  {
+    "id": "product-1772343802160-scwhb125b",
+    "brandUrl": "https://www.otabe.jp/"
+  },
+  {
+    "id": "product-1772343803231-b9lusfjt9",
+    "brandUrl": "https://www.ajyarimochi.com/"
+  },
+  {
+    "id": "product-1772345102888-wn0ocqt52",
+    "brandUrl": "https://www.malebranche.co.jp/"
+  },
+  {
+    "id": "product-1772345103863-ktaki5rqd",
+    "brandUrl": "https://www.otabe.jp/"
+  },
+  {
+    "id": "product-1772345104765-dbvnhagtu",
+    "brandUrl": "https://www.ajyarimochi.com/"
+  },
+  {
+    "id": "product-1772345178149-6r856v5z7",
+    "brandUrl": "https://www.izutsu.jp/"
+  },
+  {
+    "id": "product-1772345179097-9y4pk1f9z",
+    "brandUrl": "https://www.malebranche.co.jp/"
+  },
+  {
+    "id": "product-1772345201027-kmbamwpd0",
+    "brandUrl": "https://www.izutsu.jp/"
+  },
+  {
+    "id": "product-1772345201832-6tv5u00bk",
+    "brandUrl": "https://www.malebranche.co.jp/"
+  },
+  {
+    "id": "product-1772345276221-o8tr0k3o9",
+    "brandUrl": "https://www.malebranche.co.jp/"
+  },
+  {
+    "id": "product-1772345277161-i57lr72ay",
+    "brandUrl": "https://www.otabe.jp/"
+  },
+  {
+    "id": "product-1772345278100-i13hc6pzg",
+    "brandUrl": "https://www.ajyarimochi.com/"
+  },
+  {
+    "id": "p-018",
+    "brandUrl": "https://akashikaikyo.jp/"
+  },
+  {
+    "id": "p-wakayama-001",
+    "brandUrl": "https://www.ito-noen.com/"
+  },
+  {
+    "id": "p-wakayama-003",
+    "brandUrl": "https://fukusen.jp/"
+  },
+  {
+    "id": "p-wakayama-004",
+    "brandUrl": "https://fukubishi.co.jp/"
+  },
+  {
+    "id": "p-wakayama-005",
+    "brandUrl": "https://kinzanji-miso.co.jp/"
+  },
+  {
+    "id": "p-wakayama-006",
+    "brandUrl": "https://www.suzuyacake.jp/"
+  },
+  {
+    "id": "p-wakayama-007",
+    "brandUrl": "https://www.kumano-kodou.jp/"
+  },
+  {
+    "id": "p-wakayama-008",
+    "brandUrl": "https://siesta-cheesecake.com/"
+  },
+  {
+    "id": "p-wakayama-009",
+    "brandUrl": "https://gihei.jp/"
+  },
+  {
+    "id": "p-wakayama-010",
+    "brandUrl": "https://fukubishi.co.jp/"
+  },
+  {
+    "id": "p-wakayama-011",
+    "brandUrl": "https://www.godaiume.co.jp/"
+  },
+  {
+    "id": "p-wakayama-012",
+    "brandUrl": "https://anchin.jp/"
+  },
+  {
+    "id": "p-wakayama-013",
+    "brandUrl": "https://shichifukudo.jp/"
+  },
+  {
+    "id": "p-wakayama-014",
+    "brandUrl": "https://mahalo-baum.jp/"
+  },
+  {
+    "id": "p-wakayama-015",
+    "brandUrl": "https://www.sowakajuen.com/"
+  },
+  {
+    "id": "p-wakayama-016",
+    "brandUrl": "https://www.gyokurin-en.co.jp/"
+  },
+  {
+    "id": "p-wakayama-017",
+    "brandUrl": "https://shuneido.jp/"
+  },
+  {
+    "id": "p-wakayama-018",
+    "brandUrl": "https://maruichi-nouen.com/"
+  },
+  {
+    "id": "p-wakayama-019",
+    "brandUrl": "https://www.masuda-beika.co.jp/"
+  },
+  {
+    "id": "p-wakayama-020",
+    "brandUrl": "https://naniwadou.jp/"
+  },
+  {
+    "id": "p-wakayama-021",
+    "brandUrl": "https://kamikishiya.co.jp/"
+  },
+  {
+    "id": "p-wakayama-022",
+    "brandUrl": "https://kasho-ninomiya.jp/"
+  },
+  {
+    "id": "p-wakayama-023",
+    "brandUrl": "https://kihoan.jp/"
+  },
+  {
+    "id": "p-wakayama-024",
+    "brandUrl": "https://kihoan.jp/"
+  },
+  {
+    "id": "p-wakayama-025",
+    "brandUrl": "https://kihoan.jp/"
+  },
+  {
+    "id": "p-wakayama-026",
+    "brandUrl": "https://www.aws-s.com/"
+  },
+  {
+    "id": "p-wakayama-027",
+    "brandUrl": "https://kadoya-shop.jp/"
+  },
+  {
+    "id": "p-wakayama-028",
+    "brandUrl": "https://www.daikaku-h.jp/"
+  },
+  {
+    "id": "p-wakayama-029",
+    "brandUrl": "https://kumanokodou.jp/"
+  },
+  {
+    "id": "p-wakayama-030",
+    "brandUrl": "https://nachisan.com/"
+  },
+  {
+    "id": "p-osaka-001",
+    "brandUrl": "https://moncher.jp/"
+  },
+  {
+    "id": "p-osaka-002",
+    "brandUrl": "https://www.551horai.co.jp/"
+  },
+  {
+    "id": "p-osaka-003",
+    "brandUrl": "https://www.chidoriya.jp/"
+  },
+  {
+    "id": "p-osaka-004",
+    "brandUrl": "https://www.aokishofuan.co.jp/"
+  },
+  {
+    "id": "p-osaka-005",
+    "brandUrl": "https://www.daikoku.ne.jp/"
+  },
+  {
+    "id": "p-osaka-006",
+    "brandUrl": "https://rikuro.co.jp/"
+  },
+  {
+    "id": "p-osaka-007",
+    "brandUrl": "https://www.patisserie-gokan.co.jp/"
+  },
+  {
+    "id": "p-osaka-008",
+    "brandUrl": "https://www.calbee.co.jp/"
+  },
+  {
+    "id": "p-osaka-009",
+    "brandUrl": "https://www.hyogetsudo.com/"
+  },
+  {
+    "id": "p-osaka-010",
+    "brandUrl": "https://www.daikoku.ne.jp/"
+  },
+  {
+    "id": "p-osaka-011",
+    "brandUrl": "https://www.kagome.co.jp/greens/"
+  },
+  {
+    "id": "p-osaka-012",
+    "brandUrl": "https://canele.jp/"
+  },
+  {
+    "id": "p-osaka-013",
+    "brandUrl": "https://umedacheeselab.jp/"
+  },
+  {
+    "id": "p-osaka-014",
+    "brandUrl": "https://santa.ne.jp/"
+  },
+  {
+    "id": "p-osaka-015",
+    "brandUrl": "https://www.calbee.co.jp/"
+  },
+  {
+    "id": "p-osaka-016",
+    "brandUrl": "https://www.uegaki-beika.co.jp/"
+  },
+  {
+    "id": "p-osaka-017",
+    "brandUrl": "https://www.mangetsupon.com/"
+  },
+  {
+    "id": "p-osaka-018",
+    "brandUrl": "https://www.bonchi.co.jp/"
+  },
+  {
+    "id": "p-osaka-021",
+    "brandUrl": "https://www.asahi-ponzu.co.jp/"
+  },
+  {
+    "id": "p-osaka-022",
+    "brandUrl": "https://www.tenten.co.jp/"
+  },
+  {
+    "id": "p-osaka-023",
+    "brandUrl": "https://www.kansou.co.jp/"
+  },
+  {
+    "id": "p-osaka-024",
+    "brandUrl": "https://web.hh-online.jp/hanshin/foods/ikayaki/"
+  },
+  {
+    "id": "p-osaka-026",
+    "brandUrl": "https://yabuya.jp/"
+  },
+  {
+    "id": "p-osaka-027",
+    "brandUrl": "https://www.daikoku.ne.jp/"
+  },
+  {
+    "id": "p-osaka-029",
+    "brandUrl": "http://tarofoods.jp/"
+  },
+  {
+    "id": "p-osaka-030",
+    "brandUrl": "https://echizen-kaisen.com/"
+  },
+  {
+    "id": "product-1771846418120-fogaxvc3j",
+    "brandUrl": "https://www.moncher.jp/"
+  },
+  {
+    "id": "product-1771846419082-29ql67936",
+    "brandUrl": "https://rikuro.co.jp/"
+  },
+  {
+    "id": "product-1771846601700-i6tjvb5o0",
+    "brandUrl": "https://mon-cher.com/"
+  },
+  {
+    "id": "product-1771846602602-bke9vcn2e",
+    "brandUrl": "https://rikuro.co.jp/"
+  },
+  {
+    "id": "product-1772343804276-fjz74mgdr",
+    "brandUrl": "https://mon-cher.com/"
+  },
+  {
+    "id": "product-1772343805274-rmqetr6qi",
+    "brandUrl": "https://rikuro.co.jp/"
+  },
+  {
+    "id": "product-1772345105721-h0j9p6fw4",
+    "brandUrl": "https://mon-cher.com/"
+  },
+  {
+    "id": "product-1772345106611-l5jvbik9h",
+    "brandUrl": "https://rikuro.co.jp/"
+  },
+  {
+    "id": "product-1772345180311-r16k9qzxl",
+    "brandUrl": "https://551horai.co.jp/"
+  },
+  {
+    "id": "product-1772345203041-7024cv1nq",
+    "brandUrl": "https://551horai.co.jp/"
+  },
+  {
+    "id": "product-1772345279013-zviture6b",
+    "brandUrl": "https://mon-cher.com/"
+  },
+  {
+    "id": "product-1772345280051-r6z6jpm6m",
+    "brandUrl": "https://rikuro.co.jp/"
+  },
+  {
+    "id": "p-nara-001",
+    "brandUrl": "https://www.hiraso.jp/"
+  },
+  {
+    "id": "p-nara-002",
+    "brandUrl": "https://www.hiraso.jp/"
+  },
+  {
+    "id": "p-nara-003",
+    "brandUrl": "https://kakinosenmon.com/"
+  },
+  {
+    "id": "p-nara-004",
+    "brandUrl": "https://www.tamura-seihouen.com/"
+  },
+  {
+    "id": "p-nara-005",
+    "brandUrl": "https://yamazakiya.co.jp/"
+  },
+  {
+    "id": "p-nara-006",
+    "brandUrl": "https://daibutsu-purin.com/"
+  },
+  {
+    "id": "p-nara-007",
+    "brandUrl": "https://kakinosenmon.com/"
+  },
+  {
+    "id": "p-nara-008",
+    "brandUrl": "https://daibutsu-purin.com/"
+  },
+  {
+    "id": "p-nara-009",
+    "brandUrl": "https://kakijuga.co.jp/"
+  },
+  {
+    "id": "p-nara-010",
+    "brandUrl": "https://www.hiraso.jp/"
+  },
+  {
+    "id": "p-nara-011",
+    "brandUrl": "https://www.kudzu.co.jp/"
+  },
+  {
+    "id": "p-nara-012",
+    "brandUrl": "https://www.tenpyoan.com/"
+  },
+  {
+    "id": "p-nara-013",
+    "brandUrl": "https://sato-masuo.com/"
+  },
+  {
+    "id": "p-nara-014",
+    "brandUrl": "https://kakijuga.co.jp/"
+  },
+  {
+    "id": "p-nara-015",
+    "brandUrl": "https://www.hiraso.jp/"
+  },
+  {
+    "id": "p-nara-023",
+    "brandUrl": "https://uemurafarm.jp/"
+  },
+  {
+    "id": "p-nara-027",
+    "brandUrl": "https://sanrakudo.jp/"
+  },
+  {
+    "id": "p-nara-028",
+    "brandUrl": "https://sanrakudo.jp/"
+  },
+  {
+    "id": "product-1771846420063-lt0e91koa",
+    "brandUrl": "https://imanisi.com/"
+  },
+  {
+    "id": "product-1771846603585-fdj92drjt",
+    "brandUrl": "https://imanisi.com/"
+  },
+  {
+    "id": "product-1772343806186-2p6zeznhn",
+    "brandUrl": "https://imanisi.com/"
+  },
+  {
+    "id": "product-1772345107573-ktaqrlga7",
+    "brandUrl": "https://imanisi.com/"
+  },
+  {
+    "id": "product-1772345281052-k1y1mk8rc",
+    "brandUrl": "https://imanisi.com/"
+  },
+  {
+    "id": "p-046",
+    "brandUrl": "https://www.tsuruyapan.co.jp/"
+  },
+  {
+    "id": "p-shiga-001",
+    "brandUrl": "https://www.clubharie.jp/"
+  },
+  {
+    "id": "p-shiga-002",
+    "brandUrl": "https://rokube.co.jp/"
+  },
+  {
+    "id": "p-shiga-003",
+    "brandUrl": "https://kouboushusyu.jp/"
+  },
+  {
+    "id": "p-shiga-004",
+    "brandUrl": "https://shigatakarashop.com/"
+  },
+  {
+    "id": "p-shiga-005",
+    "brandUrl": "https://www.y-seimen.co.jp/"
+  },
+  {
+    "id": "p-shiga-006",
+    "brandUrl": "https://ayu-kimura.co.jp/"
+  },
+  {
+    "id": "p-shiga-007",
+    "brandUrl": "https://www.matsukiya.jp/"
+  },
+  {
+    "id": "p-shiga-008",
+    "brandUrl": "https://www.nihonsakari.co.jp/"
+  },
+  {
+    "id": "p-shiga-009",
+    "brandUrl": "https://www.tsuruyapan.co.jp/"
+  },
+  {
+    "id": "p-shiga-010",
+    "brandUrl": "https://taneya.jp/"
+  },
+  {
+    "id": "p-shiga-011",
+    "brandUrl": "https://tagaya.jp/"
+  },
+  {
+    "id": "p-shiga-012",
+    "brandUrl": "https://rokube.co.jp/"
+  },
+  {
+    "id": "p-shiga-013",
+    "brandUrl": "https://kanou.com/"
+  },
+  {
+    "id": "p-shiga-014",
+    "brandUrl": "https://maruyasuchagyo.jp/"
+  },
+  {
+    "id": "p-shiga-015",
+    "brandUrl": "https://www.kane-yoshi.co.jp/"
+  },
+  {
+    "id": "p-shiga-017",
+    "brandUrl": "https://shigashuzo.co.jp/"
+  },
+  {
+    "id": "p-shiga-018",
+    "brandUrl": "https://www.sakamotoya.biz/"
+  },
+  {
+    "id": "p-shiga-019",
+    "brandUrl": "https://www.tomita-shuzo.jp/"
+  },
+  {
+    "id": "p-shiga-020",
+    "brandUrl": "https://sanshoubou.jp/"
+  },
+  {
+    "id": "p-shiga-021",
+    "brandUrl": "https://www.dorayaki-toratetsu.jp/"
+  },
+  {
+    "id": "p-shiga-022",
+    "brandUrl": "https://fusou.jp/"
+  },
+  {
+    "id": "p-shiga-023",
+    "brandUrl": "https://www.tanukimura.com/"
+  },
+  {
+    "id": "p-shiga-024",
+    "brandUrl": "https://higashiomi.net/"
+  },
+  {
+    "id": "p-shiga-025",
+    "brandUrl": "https://sennaritei.co.jp/"
+  },
+  {
+    "id": "p-shiga-026",
+    "brandUrl": "https://taneya.jp/la_collina/"
+  },
+  {
+    "id": "p-shiga-027",
+    "brandUrl": "https://www.palette-jp.com/"
+  },
+  {
+    "id": "p-shiga-028",
+    "brandUrl": "https://mitsuiidera-chikaramochi.com/"
+  },
+  {
+    "id": "p-shiga-029",
+    "brandUrl": "https://nagatoya-miyage.com/"
+  },
+  {
+    "id": "p-shiga-030",
+    "brandUrl": "https://www.kurokabe.co.jp/shop/glass/"
+  },
+  {
+    "id": "product-1772343789195-duku3zw6f",
+    "brandUrl": "https://ginza-kanra.co.jp/"
+  },
+  {
+    "id": "product-1772343790005-eyk4hafp0",
+    "brandUrl": "https://www.henri-charpentier.com/"
+  },
+  {
+    "id": "product-1772343790816-4y0ygkj23",
+    "brandUrl": "https://parlour.shiseido.co.jp/"
+  },
+  {
+    "id": "product-1772343793183-t767fme4u",
+    "brandUrl": "https://www.letao.jp/"
+  },
+  {
+    "id": "product-1772345056864-6sjl1va66",
+    "brandUrl": "https://kissa-koi.jp/"
+  },
+  {
+    "id": "product-1772345057769-irqat5f51",
+    "brandUrl": "https://cocoris.jp/"
+  },
+  {
+    "id": "product-1772345058601-bp363gjxa",
+    "brandUrl": "https://themaplemania.jp/"
+  },
+  {
+    "id": "product-1772345059468-wly81afaa",
+    "brandUrl": "https://kouro-an.jp/"
+  },
+  {
+    "id": "product-1772345060477-jilz9vek9",
+    "brandUrl": "https://www.pierremarcolini.jp/"
+  },
+  {
+    "id": "product-1772345061308-2mgdkewjk",
+    "brandUrl": "https://www.pierreherme.co.jp/"
+  },
+  {
+    "id": "product-1772345062126-xnw8jzbb8",
+    "brandUrl": "https://no-raisin-sandwich.jp/"
+  },
+  {
+    "id": "product-1772345062934-cizy5zfzb",
+    "brandUrl": "https://www.colombin.co.jp/"
+  },
+  {
+    "id": "product-1772345063990-mv5s94soz",
+    "brandUrl": "https://butterbutler.jp/"
+  },
+  {
+    "id": "product-1772345064802-x2kj3q0iq",
+    "brandUrl": "https://tarte-ringo.jp/brand/amandtokyo/"
+  },
+  {
+    "id": "product-1772345065809-dxp7dryey",
+    "brandUrl": "https://ichigoshop.jp/"
+  },
+  {
+    "id": "product-1772345066736-pcvm0z1mj",
+    "brandUrl": "https://www.suzette-shop.jp/c3/c3-brand"
+  },
+  {
+    "id": "product-1772345067657-pp1r8vman",
+    "brandUrl": "https://kanou.com/"
+  },
+  {
+    "id": "product-1772345068588-9ejvirpdd",
+    "brandUrl": "https://buttersand.com/"
+  },
+  {
+    "id": "product-1772345069713-6qz6jdocw",
+    "brandUrl": "https://www.ogawaken.co.jp/"
+  },
+  {
+    "id": "product-1772345070537-znqes6oxh",
+    "brandUrl": "https://www.audrey-strawberry.com/"
+  },
+  {
+    "id": "product-1772345071558-7g6qsp5zv",
+    "brandUrl": "https://nycsand.com/"
+  },
+  {
+    "id": "product-1772345072572-q4bars1jw",
+    "brandUrl": "https://mangando.jp/"
+  },
+  {
+    "id": "product-1772345073597-3f1tds2ow",
+    "brandUrl": "https://cheesegarden.jp/"
+  },
+  {
+    "id": "product-1772345074626-uvwl75y02",
+    "brandUrl": "https://www.latelierdulait.com/"
+  },
+  {
+    "id": "product-1772345075875-rwvbg8vbd",
+    "brandUrl": "https://browncheesebrother.jp/"
+  },
+  {
+    "id": "product-1772345076802-awk02lw2s",
+    "brandUrl": "https://mikadoya.com/"
+  },
+  {
+    "id": "product-1772345077631-crcsezavz",
+    "brandUrl": "https://www.patisserie-qbg.com/"
+  },
+  {
+    "id": "product-1772345078623-ja5reahpj",
+    "brandUrl": "https://www.ginza-tamaya.com/"
+  },
+  {
+    "id": "product-1772345079478-0201hnt1c",
+    "brandUrl": "https://www.fugetsudo-ueno.co.jp/"
+  },
+  {
+    "id": "product-1772345080576-xrmg7fhm8",
+    "brandUrl": "https://www.hato.co.jp/"
+  },
+  {
+    "id": "product-1772345081587-d7x706mhz",
+    "brandUrl": "https://butternoitoko.jp/"
+  },
+  {
+    "id": "product-1772345082617-dvv0tla0p",
+    "brandUrl": "https://www.wagashi-yui.jp/"
+  },
+  {
+    "id": "product-1772345083677-zh7laaujg",
+    "brandUrl": "https://www.ginza-kikunoya.co.jp/"
+  },
+  {
+    "id": "product-1772345084653-hw1olisw8",
+    "brandUrl": "https://tokyomilkcheese.jp/"
+  },
+  {
+    "id": "product-1772345085687-fa8w3k3zz",
+    "brandUrl": "https://buttersand.com/"
+  },
+  {
+    "id": "product-1772345086717-lcsev4c2j",
+    "brandUrl": "https://www.kataoka.com/echire/patisserieaubuerre/"
+  },
+  {
+    "id": "product-1772345087625-945gexzp7",
+    "brandUrl": "https://www.keishindo.co.jp/"
+  },
+  {
+    "id": "product-1772345088548-jsiz6xvw8",
+    "brandUrl": "https://www.pierreherme.co.jp/"
+  },
+  {
+    "id": "product-1772345090637-30htrczt3",
+    "brandUrl": "https://www.kanra.co.jp/"
+  },
+  {
+    "id": "product-1772345091810-3zt7pubjn",
+    "brandUrl": "https://www.henri-charpentier.com/"
+  },
+  {
+    "id": "product-1772345092805-22j35d2eo",
+    "brandUrl": "https://parlour.shiseido.co.jp/"
+  },
+  {
+    "id": "product-1772345093759-u8xwhp34x",
+    "brandUrl": "https://www.letao.jp/"
+  },
+  {
+    "id": "product-1772345235350-znn6cebmv",
+    "brandUrl": "https://kissaten-koishite.jp/"
+  },
+  {
+    "id": "product-1772345236209-beetlaixx",
+    "brandUrl": "https://www.cocoris.jp/"
+  },
+  {
+    "id": "product-1772345237255-v63bhdaou",
+    "brandUrl": "https://themaplemania.jp/"
+  },
+  {
+    "id": "product-1772345238255-24sicnwwh",
+    "brandUrl": "https://kouro-an.jp/"
+  },
+  {
+    "id": "product-1772345239178-gkdk2kdot",
+    "brandUrl": "https://www.marcolini.jp/"
+  },
+  {
+    "id": "product-1772345240106-gvjxhaw0s",
+    "brandUrl": "https://www.pierreherme.co.jp/"
+  },
+  {
+    "id": "product-1772345241127-j7icpbz4t",
+    "brandUrl": "https://www.instagram.com/no_raisin_sandwich/"
+  },
+  {
+    "id": "product-1772345242048-qa7xdi4al",
+    "brandUrl": "https://www.colombin.co.jp/"
+  },
+  {
+    "id": "product-1772345242970-4k2e18vnm",
+    "brandUrl": "https://butterbutler.jp/"
+  },
+  {
+    "id": "product-1772345243874-7thcsa4p8",
+    "brandUrl": "https://tokyo-amand.jp/"
+  },
+  {
+    "id": "product-1772345244705-e4os960qh",
+    "brandUrl": "https://ichigoshop.jp/"
+  },
+  {
+    "id": "product-1772345245523-dacgtmn9q",
+    "brandUrl": "https://www.suzette-shop.jp/c3/c3-brand"
+  },
+  {
+    "id": "product-1772345246322-bn5bd111i",
+    "brandUrl": "https://kanou.com/"
+  },
+  {
+    "id": "product-1772345247119-vxvmspla1",
+    "brandUrl": "https://buttersand.com/"
+  },
+  {
+    "id": "product-1772345247957-27goavtdi",
+    "brandUrl": "https://www.ogawaken.co.jp/"
+  },
+  {
+    "id": "product-1772345248797-zz9cj6ng3",
+    "brandUrl": "https://www.audrey-strawberry.com/"
+  },
+  {
+    "id": "product-1772345249581-bjrlnxkx2",
+    "brandUrl": "https://nycsand.com/"
+  },
+  {
+    "id": "product-1772345250478-alszobtkp",
+    "brandUrl": "https://mangando.jp/"
+  },
+  {
+    "id": "product-1772345251506-j71g86cvl",
+    "brandUrl": "https://cheesegarden.jp/"
+  },
+  {
+    "id": "product-1772345252612-iam3ysnvu",
+    "brandUrl": "https://www.lateterre.com/"
+  },
+  {
+    "id": "product-1772345253417-e7ozg0hef",
+    "brandUrl": "https://browncheesebrother.tokyo/"
+  },
+  {
+    "id": "product-1772345254258-fujjaouhi",
+    "brandUrl": "https://www.mikadoya.com/"
+  },
+  {
+    "id": "product-1772345255254-5nay0u9b8",
+    "brandUrl": "https://www.patisserie-qbg.com/"
+  },
+  {
+    "id": "product-1772345256049-yj5o3dkmw",
+    "brandUrl": "https://www.tokyotamago.com/products/gomatamago.html"
+  },
+  {
+    "id": "product-1772345256848-klm4aufgw",
+    "brandUrl": "https://www.fugetsudo-ueno.co.jp/"
+  },
+  {
+    "id": "product-1772345257638-t1c9xqgvw",
+    "brandUrl": "https://www.hato.co.jp/"
+  },
+  {
+    "id": "product-1772345258536-exxvyslpz",
+    "brandUrl": "https://butternoitoko.com/"
+  },
+  {
+    "id": "product-1772345259430-31xp8h6cg",
+    "brandUrl": "https://www.wagashi-yui.co.jp/"
+  },
+  {
+    "id": "product-1772345260236-75ze5t8os",
+    "brandUrl": "https://kikunoya.jp/"
+  },
+  {
+    "id": "product-1772345261031-4lcpph27n",
+    "brandUrl": "https://tokyomilkcheese.jp/"
+  },
+  {
+    "id": "product-1772345262067-oo17t8f1y",
+    "brandUrl": "https://buttersand.com/"
+  },
+  {
+    "id": "product-1772345262909-hxp5f963n",
+    "brandUrl": "https://www.kataoka.com/echire/patisserieaubeurre/"
+  },
+  {
+    "id": "product-1772345263842-527rjfko4",
+    "brandUrl": "https://www.keishindo.co.jp/"
+  },
+  {
+    "id": "product-1772345264695-sjxi2nirc",
+    "brandUrl": "https://www.pierreherme.co.jp/"
+  },
+  {
+    "id": "product-1772345265703-h2pk93stt",
+    "brandUrl": "https://www.ginza-kanra.jp/"
+  },
+  {
+    "id": "product-1772345266506-l69an5rfh",
+    "brandUrl": "https://www.henri-charpentier.com/"
+  },
+  {
+    "id": "product-1772345267311-65kvn5dkw",
+    "brandUrl": "https://parlour.shiseido.co.jp/"
+  },
+  {
+    "id": "product-1772345268281-9nb52f6pj",
+    "brandUrl": "https://www.letao.jp/"
+  },
+  {
+    "id": "p-kanagawa-015",
+    "brandUrl": "https://www.yoseki-net.com/"
+  }
+]
