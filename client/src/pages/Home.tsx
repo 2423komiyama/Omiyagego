@@ -563,8 +563,13 @@ function DBHomeCard({ product }: { product: any }) {
       <div className="pl-4 pr-4 pt-3 pb-3">
         <div className="flex gap-3">
           <div className="w-16 h-16 rounded-lg overflow-hidden bg-stone-100 flex-shrink-0">
-            {product.imageUrl ? (
-              <img src={product.imageUrl} alt={product.name} className="w-full h-full object-cover" />
+            {(product.realImageUrl || product.imageUrl) ? (
+              <img
+                src={product.realImageUrl || product.imageUrl}
+                alt={product.name}
+                className="w-full h-full object-cover"
+                onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+              />
             ) : (
               <div className="w-full h-full flex items-center justify-center">
                 <Package className="w-6 h-6 text-stone-300" />

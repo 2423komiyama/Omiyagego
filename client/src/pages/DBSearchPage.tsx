@@ -665,6 +665,7 @@ interface DBProductCardProps {
     category: string;
     description: string | null;
     imageUrl: string | null;
+    realImageUrl?: string | null;
     shelfLife: number | null;
     isIndividualPackaged: boolean;
     badges: string | null;
@@ -728,9 +729,9 @@ function DBProductCard({ product, isLiked, onToggleLike }: DBProductCardProps) {
         <div className="flex gap-3">
           {/* 商品画像 */}
           <div className="flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden bg-stone-100 flex items-center justify-center">
-            {product.imageUrl ? (
+            {(product.realImageUrl || product.imageUrl) ? (
               <img
-                src={product.imageUrl}
+                src={product.realImageUrl || product.imageUrl || ""}
                 alt={product.name}
                 className="w-full h-full object-cover"
                 onError={(e) => {
