@@ -14,8 +14,8 @@ import { readFileSync } from 'fs';
 
 dotenv.config();
 
-const BATCH_SIZE = 20;
-const DELAY_MS = 2000;
+const BATCH_SIZE = 5;
+const DELAY_MS = 1500;
 
 const LLM_URL = process.env.BUILT_IN_FORGE_API_URL + '/v1/chat/completions';
 const LLM_KEY = process.env.BUILT_IN_FORGE_API_KEY;
