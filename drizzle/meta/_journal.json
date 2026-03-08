@@ -50,6 +50,13 @@
       "when": 1772883624938,
       "tag": "0006_sticky_turbo",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "5",
+      "when": 1772955224213,
+      "tag": "0007_icy_kree",
+      "breakpoints": true
     }
   ]
 }

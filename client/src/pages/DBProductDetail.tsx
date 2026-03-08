@@ -1,6 +1,17 @@
 // ============================================================
-// Omiyage Go - DB商品詳細ページ（強化版 v2）
-// 機能: いいね・共有・キュレーション枠・OGP・公式サイトリンク・口コミ・ポイント
+// Omiyage Go - DB商品詳細ページ（統一フォーマット v3）
+// セクション構成:
+//   1. 商品写真（実画像 or カテゴリフォールバック）
+//   2. 商品基本情報（名前・ブランド・価格・タグ）
+//   3. 商品説明
+//   4. 外さない保証（guaranteeDetail: 受賞歴・メディア掲載等）
+//   5. このお土産が選ばれる理由（reasonsToChoose）
+//   6. 今買える場所（sellers）
+//   7. この商品の話題（buzzTopics + curatedLinks）
+//   8. メーカーについて（makerName・makerStory・brandUrl）
+//   9. 商品スペック（productSpecs）
+//  10. 口コミ
+//  11. 関連商品
 // ============================================================
 import { useState, useEffect, useMemo } from "react";
 import { useParams, useLocation } from "wouter";
@@ -14,48 +25,49 @@ import {
   ShoppingBag, Gift, ChevronRight, Loader2, AlertCircle,
   CheckCircle2, Store, Building2, ExternalLink, Heart, Share2,
   Sparkles, Youtube, Instagram, Twitter, FileText, MessageSquare,
-  Send, X, ThumbsUp, Award
+  Send, X, ThumbsUp, Award, Trophy, Newspaper, BadgeCheck,
+  ChefHat, Scale, Info, Flame
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-// バッジ表示設定
+// ── バッジ表示設定 ─────────────────────────────────────────
 const BADGE_CONFIG: Record<string, { label: string; className: string }> = {
-  editorial: { label: "編集部推薦", className: "bg-amber-100 text-amber-700" },
-  popular: { label: "人気", className: "bg-red-100 text-red-700" },
-  limited: { label: "限定", className: "bg-purple-100 text-purple-700" },
-  new: { label: "新商品", className: "bg-blue-100 text-blue-700" },
-  regional: { label: "地元産", className: "bg-green-100 text-green-700" },
-  niche: { label: "ニッチ", className: "bg-orange-100 text-orange-700" },
-  bestseller: { label: "ベストセラー", className: "bg-red-100 text-red-700" },
-  local: { label: "地元産", className: "bg-green-100 text-green-700" },
+  editorial: { label: "編集部推薦", className: "bg-amber-100 text-amber-700 border border-amber-200" },
+  popular: { label: "人気", className: "bg-red-100 text-red-700 border border-red-200" },
+  limited: { label: "限定", className: "bg-purple-100 text-purple-700 border border-purple-200" },
+  new: { label: "新商品", className: "bg-blue-100 text-blue-700 border border-blue-200" },
+  regional: { label: "地元産", className: "bg-green-100 text-green-700 border border-green-200" },
+  niche: { label: "ニッチ", className: "bg-orange-100 text-orange-700 border border-orange-200" },
+  bestseller: { label: "ベストセラー", className: "bg-red-100 text-red-700 border border-red-200" },
+  local: { label: "地元産", className: "bg-green-100 text-green-700 border border-green-200" },
 };
 
-// カテゴリ別フォールバック画像
+// ── カテゴリ別フォールバック画像 ──────────────────────────
 const CATEGORY_IMAGES: Record<string, string> = {
-  "和菓子": "https://images.unsplash.com/photo-1563245372-f21724e3856d?w=600&q=80",
-  "洋菓子": "https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=600&q=80",
-  "焼き菓子": "https://images.unsplash.com/photo-1558961363-fa8fdf82db35?w=600&q=80",
-  "煎餅・おかき": "https://images.unsplash.com/photo-1547592180-85f173990554?w=600&q=80",
-  "スナック": "https://images.unsplash.com/photo-1566478989037-eec170784d0b?w=600&q=80",
-  "菓子": "https://images.unsplash.com/photo-1587132137056-bfbf0166836e?w=600&q=80",
-  "チョコレート": "https://images.unsplash.com/photo-1549007994-cb92caebd54b?w=600&q=80",
-  "飲料": "https://images.unsplash.com/photo-1544145945-f90425340c7e?w=600&q=80",
-  "お茶・飲料": "https://images.unsplash.com/photo-1556679343-c7306c1976bc?w=600&q=80",
-  "海産物": "https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?w=600&q=80",
-  "肉・加工品": "https://images.unsplash.com/photo-1529692236671-f1f6cf9683ba?w=600&q=80",
-  "調味料・ソース": "https://images.unsplash.com/photo-1472476443507-c7a5948772fc?w=600&q=80",
-  "麺類": "https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=600&q=80",
-  "弁当・惣菜": "https://images.unsplash.com/photo-1512058564366-18510be2db19?w=600&q=80",
-  "食品": "https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=600&q=80",
-  "工芸品": "https://images.unsplash.com/photo-1528360983277-13d401cdc186?w=600&q=80",
-  "その他": "https://images.unsplash.com/photo-1513519245088-0e12902e35a6?w=600&q=80",
+  "和菓子": "https://images.unsplash.com/photo-1563245372-f21724e3856d?w=800&q=80",
+  "洋菓子": "https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=800&q=80",
+  "焼き菓子": "https://images.unsplash.com/photo-1558961363-fa8fdf82db35?w=800&q=80",
+  "煎餅・おかき": "https://images.unsplash.com/photo-1547592180-85f173990554?w=800&q=80",
+  "スナック": "https://images.unsplash.com/photo-1566478989037-eec170784d0b?w=800&q=80",
+  "菓子": "https://images.unsplash.com/photo-1587132137056-bfbf0166836e?w=800&q=80",
+  "チョコレート": "https://images.unsplash.com/photo-1549007994-cb92caebd54b?w=800&q=80",
+  "飲料": "https://images.unsplash.com/photo-1544145945-f90425340c7e?w=800&q=80",
+  "お茶・飲料": "https://images.unsplash.com/photo-1556679343-c7306c1976bc?w=800&q=80",
+  "海産物": "https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?w=800&q=80",
+  "肉・加工品": "https://images.unsplash.com/photo-1529692236671-f1f6cf9683ba?w=800&q=80",
+  "調味料・ソース": "https://images.unsplash.com/photo-1472476443507-c7a5948772fc?w=800&q=80",
+  "麺類": "https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=800&q=80",
+  "弁当・惣菜": "https://images.unsplash.com/photo-1512058564366-18510be2db19?w=800&q=80",
+  "食品": "https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=800&q=80",
+  "工芸品": "https://images.unsplash.com/photo-1528360983277-13d401cdc186?w=800&q=80",
+  "その他": "https://images.unsplash.com/photo-1513519245088-0e12902e35a6?w=800&q=80",
 };
 
 function getCategoryImage(category: string): string {
   return CATEGORY_IMAGES[category] || CATEGORY_IMAGES["その他"];
 }
 
-// セッションID取得
+// ── セッションID取得 ──────────────────────────────────────
 function getSessionId(): string {
   let sid = localStorage.getItem("omiyage_session_id");
   if (!sid) {
@@ -65,7 +77,7 @@ function getSessionId(): string {
   return sid;
 }
 
-// キュレーションリンクのアイコン
+// ── キュレーションリンクのアイコン ────────────────────────
 function CuratedLinkIcon({ type }: { type: string }) {
   switch (type) {
     case "youtube": return <Youtube className="w-4 h-4 text-red-500" />;
@@ -73,12 +85,11 @@ function CuratedLinkIcon({ type }: { type: string }) {
     case "twitter": return <Twitter className="w-4 h-4 text-sky-500" />;
     case "tiktok": return <span className="text-xs font-black text-stone-800">TT</span>;
     case "article": return <FileText className="w-4 h-4 text-blue-500" />;
-    case "news": return <FileText className="w-4 h-4 text-stone-500" />;
+    case "news": return <Newspaper className="w-4 h-4 text-stone-500" />;
     default: return <ExternalLink className="w-4 h-4 text-stone-500" />;
   }
 }
 
-// キュレーションリンクのラベル
 const LINK_TYPE_LABELS: Record<string, string> = {
   youtube: "YouTube",
   instagram: "Instagram",
@@ -89,7 +100,18 @@ const LINK_TYPE_LABELS: Record<string, string> = {
   other: "外部リンク",
 };
 
-// 星評価コンポーネント
+// ── 保証タイプのアイコン ──────────────────────────────────
+function GuaranteeIcon({ type }: { type: string }) {
+  switch (type) {
+    case "award": return <Trophy className="w-4 h-4 text-amber-500" />;
+    case "media": return <Newspaper className="w-4 h-4 text-blue-500" />;
+    case "certification": return <BadgeCheck className="w-4 h-4 text-emerald-500" />;
+    case "popular": return <Flame className="w-4 h-4 text-orange-500" />;
+    default: return <Star className="w-4 h-4 text-amber-500" />;
+  }
+}
+
+// ── 星評価コンポーネント ──────────────────────────────────
 function StarRating({ value, onChange, readonly = false }: {
   value: number;
   onChange?: (v: number) => void;
@@ -120,7 +142,7 @@ function StarRating({ value, onChange, readonly = false }: {
   );
 }
 
-// ポイント獲得通知
+// ── ポイント獲得通知 ──────────────────────────────────────
 function PointToast({ points, message, onClose }: { points: number; message: string; onClose: () => void }) {
   useEffect(() => {
     const t = setTimeout(onClose, 4000);
@@ -128,7 +150,7 @@ function PointToast({ points, message, onClose }: { points: number; message: str
   }, [onClose]);
 
   return (
-    <div className="fixed bottom-24 left-1/2 -translate-x-1/2 z-50 flex items-center gap-2 bg-emerald-700 text-white px-4 py-2.5 rounded-full shadow-lg animate-bounce-in">
+    <div className="fixed bottom-24 left-1/2 -translate-x-1/2 z-50 flex items-center gap-2 bg-emerald-700 text-white px-4 py-2.5 rounded-full shadow-lg">
       <Award className="w-4 h-4 text-amber-300" />
       <span className="text-sm font-bold">+{points}pt {message}</span>
       <button onClick={onClose} className="ml-1 opacity-70 hover:opacity-100">
@@ -138,6 +160,26 @@ function PointToast({ points, message, onClose }: { points: number; message: str
   );
 }
 
+// ── セクションヘッダー ────────────────────────────────────
+function SectionHeader({ icon, title, subtitle }: {
+  icon: React.ReactNode;
+  title: string;
+  subtitle?: string;
+}) {
+  return (
+    <div className="flex items-start gap-2 mb-3">
+      <div className="w-7 h-7 rounded-lg bg-emerald-50 flex items-center justify-center flex-shrink-0 mt-0.5">
+        {icon}
+      </div>
+      <div>
+        <h2 className="text-sm font-bold text-stone-800">{title}</h2>
+        {subtitle && <p className="text-xs text-stone-500 mt-0.5">{subtitle}</p>}
+      </div>
+    </div>
+  );
+}
+
+// ── メインコンポーネント ──────────────────────────────────
 export default function DBProductDetail() {
   const params = useParams<{ id: string }>();
   const [, navigate] = useLocation();
@@ -182,13 +224,12 @@ export default function DBProductDetail() {
   const [pointToast, setPointToast] = useState<{ points: number; message: string } | null>(null);
 
   const createReview = trpc.reviews.create.useMutation({
-    onSuccess: (data) => {
+    onSuccess: () => {
       setShowReviewForm(false);
       setReviewBody("");
       setReviewRating(5);
       setReviewError("");
       refetchReviews();
-      // ポイント通知
       setPointToast({ points: 50, message: "口コミ投稿ありがとうございます！" });
     },
     onError: (err) => {
@@ -208,6 +249,7 @@ export default function DBProductDetail() {
   });
   const relatedProducts = (relatedData?.products ?? []).filter(p => p.id !== productId).slice(0, 3);
 
+  // ─── ローディング ───────────────────────────────────────
   if (isLoading) {
     return (
       <AppLayout>
@@ -243,21 +285,57 @@ export default function DBProductDetail() {
     );
   }
 
-  // バッジ・保証理由をパース
+  // ─── データパース ────────────────────────────────────────
   const badges: string[] = (() => {
     try { return product.badges ? JSON.parse(product.badges) : []; }
     catch { return []; }
   })();
 
+  // 旧フィールド（guaranteeReason）との互換性を保ちつつ新フィールドを優先
   const guaranteeReasons: string[] = (() => {
     try { return product.guaranteeReason ? JSON.parse(product.guaranteeReason) : []; }
     catch { return []; }
   })();
 
-  const sellers = product.sellers || [];
-  const displayImageUrl = product.imageUrl || getCategoryImage(product.category);
+  const reasonsToChoose: Array<{ title: string; body: string }> = (() => {
+    try { return product.reasonsToChoose ? JSON.parse(product.reasonsToChoose) : []; }
+    catch { return []; }
+  })();
 
-  // 共有
+  const guaranteeDetail: Array<{ type: string; title: string; year?: string; detail: string }> = (() => {
+    try { return product.guaranteeDetail ? JSON.parse(product.guaranteeDetail) : []; }
+    catch { return []; }
+  })();
+
+  const productSpecs: {
+    weight?: string;
+    size?: string;
+    ingredients?: string;
+    allergens?: string;
+    storage?: string;
+    calories?: string;
+    pieces?: string;
+    [key: string]: string | undefined;
+  } = (() => {
+    try { return product.productSpecs ? JSON.parse(product.productSpecs) : {}; }
+    catch { return {}; }
+  })();
+
+  const buzzTopics: Array<{ source: string; title: string; detail?: string; url?: string }> = (() => {
+    try { return product.buzzTopics ? JSON.parse(product.buzzTopics) : []; }
+    catch { return []; }
+  })();
+
+  const sellers = product.sellers || [];
+
+  // 画像URL: realImageUrl（楽天API取得）> imageUrl（元データ）> カテゴリフォールバック
+  const displayImageUrl = product.realImageUrl || product.imageUrl || getCategoryImage(product.category);
+  const isRealImage = !!(product.realImageUrl || product.imageUrl);
+
+  // 平均評価
+  const avgRating = product.avgRating ? Number(product.avgRating) : 0;
+
+  // ─── 共有・いいね ────────────────────────────────────────
   const handleShare = () => {
     const url = `${window.location.origin}/db-product/${productId}`;
     const text = `${product.name}（${product.prefecture}）- ¥${product.price.toLocaleString()}`;
@@ -268,7 +346,6 @@ export default function DBProductDetail() {
     }
   };
 
-  // いいねトグル
   const handleLike = () => {
     setLocalLiked(!localLiked);
     toggleLike.mutate({ productId, sessionId });
@@ -277,7 +354,6 @@ export default function DBProductDetail() {
     }
   };
 
-  // 口コミ投稿
   const handleSubmitReview = () => {
     if (reviewBody.trim().length < 10) {
       setReviewError("口コミは10文字以上で入力してください");
@@ -291,15 +367,13 @@ export default function DBProductDetail() {
     });
   };
 
-  // SEOメタ
+  // ─── SEOメタ ─────────────────────────────────────────────
   const pageTitle = `${product.name}（${product.prefecture}）| Omiyage Go`;
   const pageDescription = product.description
     ? `${product.description.slice(0, 100)}...`
     : `${product.prefecture}のお土産「${product.name}」。${product.brand}。価格¥${product.price.toLocaleString()}。日持ち${product.shelfLife}日。`;
 
-  // 平均評価
-  const avgRating = product.avgRating ? Number(product.avgRating) : 0;
-
+  // ─── レンダリング ────────────────────────────────────────
   return (
     <AppLayout>
       <Helmet>
@@ -347,15 +421,15 @@ export default function DBProductDetail() {
         <div className="flex items-center gap-3 px-4 py-3">
           <button
             onClick={() => window.history.back()}
-            className="w-8 h-8 rounded-full bg-stone-100 flex items-center justify-center hover:bg-stone-200 transition-colors"
+            className="w-8 h-8 rounded-full bg-stone-100 flex items-center justify-center hover:bg-stone-200 transition-colors flex-shrink-0"
           >
             <ArrowLeft className="w-4 h-4 text-stone-600" />
           </button>
           <div className="flex-1 min-w-0">
             <p className="text-sm font-bold text-stone-900 truncate">{product.name}</p>
-            <p className="text-xs text-stone-500">{product.prefecture}</p>
+            <p className="text-xs text-stone-500">{product.prefecture} · {product.brand}</p>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-shrink-0">
             <button
               onClick={handleLike}
               className={cn(
@@ -376,8 +450,11 @@ export default function DBProductDetail() {
       </div>
 
       <div className="pb-24">
-        {/* ── 商品画像 ── */}
-        <div className="relative w-full h-56 bg-stone-100 overflow-hidden">
+
+        {/* ══════════════════════════════════════════════════
+            セクション 1: 商品写真
+        ══════════════════════════════════════════════════ */}
+        <div className="relative w-full bg-stone-100 overflow-hidden" style={{ height: "280px" }}>
           <img
             src={displayImageUrl}
             alt={product.name}
@@ -386,49 +463,68 @@ export default function DBProductDetail() {
               (e.target as HTMLImageElement).src = getCategoryImage("その他");
             }}
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
+          {/* グラデーションオーバーレイ */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
+
+          {/* バッジ */}
           <div className="absolute top-3 left-3 flex gap-1.5 flex-wrap">
             {badges.map((badge) => {
               const config = BADGE_CONFIG[badge];
               if (!config) return null;
               return (
-                <span key={badge} className={cn("px-2 py-0.5 text-xs font-bold rounded-full", config.className)}>
+                <span key={badge} className={cn("px-2 py-0.5 text-xs font-bold rounded-full backdrop-blur-sm", config.className)}>
                   {config.label}
                 </span>
               );
             })}
           </div>
-          {!product.imageUrl && (
-            <div className="absolute bottom-2 right-2">
-              <span className="px-1.5 py-0.5 bg-black/40 text-white text-[10px] rounded">イメージ画像</span>
+
+          {/* 画像ソース表示 */}
+          {!isRealImage && (
+            <div className="absolute bottom-3 right-3">
+              <span className="px-2 py-0.5 bg-black/50 text-white text-[10px] rounded-full backdrop-blur-sm">
+                イメージ画像
+              </span>
             </div>
           )}
-        </div>
-
-        {/* ── 商品基本情報 ── */}
-        <div className="px-4 pt-4 pb-3 border-b border-stone-100">
-          <div className="flex items-start justify-between gap-3">
-            <div className="flex-1 min-w-0">
-              <p className="text-xl font-black text-stone-900 leading-tight">{product.name}</p>
-              <p className="text-sm text-stone-500 mt-0.5">{product.brand}</p>
-              {/* 評価サマリー */}
-              {avgRating > 0 && reviewTotal > 0 && (
-                <div className="flex items-center gap-1.5 mt-1.5">
-                  <StarRating value={Math.round(avgRating)} readonly />
-                  <span className="text-sm font-bold text-amber-600">{avgRating.toFixed(1)}</span>
-                  <span className="text-xs text-stone-400">({reviewTotal}件)</span>
-                </div>
-              )}
+          {product.realImageUrl && (
+            <div className="absolute bottom-3 right-3">
+              <span className="px-2 py-0.5 bg-black/50 text-white text-[10px] rounded-full backdrop-blur-sm flex items-center gap-1">
+                <CheckCircle2 className="w-2.5 h-2.5 text-emerald-400" />
+                実際の商品画像
+              </span>
             </div>
-            <div className="flex-shrink-0 text-right">
-              <p className="text-2xl font-black text-emerald-700">¥{product.price.toLocaleString()}</p>
-              <p className="text-xs text-stone-400">税込</p>
+          )}
+
+          {/* 価格バッジ（画像下部左） */}
+          <div className="absolute bottom-3 left-3">
+            <div className="bg-white/90 backdrop-blur-sm rounded-xl px-3 py-1.5 shadow-sm">
+              <p className="text-lg font-black text-emerald-700">¥{product.price.toLocaleString()}</p>
+              <p className="text-[10px] text-stone-500 -mt-0.5">税込</p>
             </div>
           </div>
+        </div>
+
+        {/* ══════════════════════════════════════════════════
+            セクション 2: 商品基本情報
+        ══════════════════════════════════════════════════ */}
+        <div className="px-4 pt-4 pb-4 border-b border-stone-100">
+          {/* 商品名・ブランド */}
+          <h1 className="text-xl font-black text-stone-900 leading-tight">{product.name}</h1>
+          <p className="text-sm text-stone-500 mt-0.5">{product.brand}</p>
+
+          {/* 評価サマリー */}
+          {avgRating > 0 && reviewTotal > 0 && (
+            <div className="flex items-center gap-1.5 mt-2">
+              <StarRating value={Math.round(avgRating)} readonly />
+              <span className="text-sm font-bold text-amber-600">{avgRating.toFixed(1)}</span>
+              <span className="text-xs text-stone-400">({reviewTotal}件の口コミ)</span>
+            </div>
+          )}
 
           {/* タグ行 */}
           <div className="flex flex-wrap gap-1.5 mt-3">
-            <span className="flex items-center gap-1 px-2.5 py-1 bg-emerald-50 text-emerald-700 text-xs font-medium rounded-full">
+            <span className="flex items-center gap-1 px-2.5 py-1 bg-emerald-50 text-emerald-700 text-xs font-medium rounded-full border border-emerald-100">
               <MapPin className="w-3 h-3" />
               {product.prefecture}
             </span>
@@ -443,7 +539,7 @@ export default function DBProductDetail() {
               </span>
             )}
             {product.isIndividualPackaged && (
-              <span className="flex items-center gap-1 px-2.5 py-1 bg-blue-50 text-blue-700 text-xs font-medium rounded-full">
+              <span className="flex items-center gap-1 px-2.5 py-1 bg-blue-50 text-blue-700 text-xs font-medium rounded-full border border-blue-100">
                 <Gift className="w-3 h-3" />
                 個包装
               </span>
@@ -477,24 +573,59 @@ export default function DBProductDetail() {
           </div>
         </div>
 
-        {/* ── 商品説明 ── */}
+        {/* ══════════════════════════════════════════════════
+            セクション 3: 商品説明
+        ══════════════════════════════════════════════════ */}
         {product.description && (
           <div className="px-4 py-4 border-b border-stone-100">
-            <h2 className="text-sm font-bold text-stone-700 mb-2 flex items-center gap-1.5">
-              <ShoppingBag className="w-4 h-4 text-emerald-600" />
-              商品について
-            </h2>
+            <SectionHeader
+              icon={<ShoppingBag className="w-4 h-4 text-emerald-600" />}
+              title="商品について"
+            />
             <p className="text-sm text-stone-600 leading-relaxed">{product.description}</p>
           </div>
         )}
 
-        {/* ── 保証理由 ── */}
-        {guaranteeReasons.length > 0 && (
+        {/* ══════════════════════════════════════════════════
+            セクション 4: 外さない保証（受賞歴・メディア掲載等）
+        ══════════════════════════════════════════════════ */}
+        {guaranteeDetail.length > 0 && (
           <div className="px-4 py-4 border-b border-stone-100">
-            <h2 className="text-sm font-bold text-stone-700 mb-3 flex items-center gap-1.5">
-              <Star className="w-4 h-4 text-amber-500" />
-              このお土産が選ばれる理由
-            </h2>
+            <SectionHeader
+              icon={<Trophy className="w-4 h-4 text-amber-500" />}
+              title="外さない保証"
+              subtitle="受賞歴・メディア掲載・認定実績"
+            />
+            <div className="space-y-2.5">
+              {guaranteeDetail.map((item, i) => (
+                <div key={i} className="flex items-start gap-3 bg-amber-50 rounded-xl p-3 border border-amber-100">
+                  <div className="w-8 h-8 rounded-lg bg-white flex items-center justify-center flex-shrink-0 shadow-sm">
+                    <GuaranteeIcon type={item.type} />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <p className="text-xs font-bold text-stone-800">{item.title}</p>
+                      {item.year && (
+                        <span className="text-[10px] text-stone-400 bg-white px-1.5 py-0.5 rounded-full border border-stone-200">
+                          {item.year}
+                        </span>
+                      )}
+                    </div>
+                    <p className="text-xs text-stone-600 mt-0.5 leading-relaxed">{item.detail}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* 旧フィールドの保証理由（guaranteeDetail がない場合のフォールバック） */}
+        {guaranteeDetail.length === 0 && guaranteeReasons.length > 0 && (
+          <div className="px-4 py-4 border-b border-stone-100">
+            <SectionHeader
+              icon={<Star className="w-4 h-4 text-amber-500" />}
+              title="外さない保証"
+            />
             <div className="space-y-2">
               {guaranteeReasons.map((reason, i) => (
                 <div key={i} className="flex items-start gap-2">
@@ -506,19 +637,47 @@ export default function DBProductDetail() {
           </div>
         )}
 
-        {/* ── 今買える場所（売り場情報） ── */}
+        {/* ══════════════════════════════════════════════════
+            セクション 5: このお土産が選ばれる理由
+        ══════════════════════════════════════════════════ */}
+        {reasonsToChoose.length > 0 && (
+          <div className="px-4 py-4 border-b border-stone-100">
+            <SectionHeader
+              icon={<Sparkles className="w-4 h-4 text-emerald-600" />}
+              title="このお土産が選ばれる理由"
+            />
+            <div className="space-y-3">
+              {reasonsToChoose.map((reason, i) => (
+                <div key={i} className="flex items-start gap-3">
+                  <div className="w-6 h-6 rounded-full bg-emerald-700 text-white flex items-center justify-center flex-shrink-0 text-xs font-black mt-0.5">
+                    {i + 1}
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-sm font-bold text-stone-800">{reason.title}</p>
+                    <p className="text-xs text-stone-600 mt-0.5 leading-relaxed">{reason.body}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* ══════════════════════════════════════════════════
+            セクション 6: 今買える場所（売り場情報）
+        ══════════════════════════════════════════════════ */}
         {sellers.length > 0 && (
           <div className="px-4 py-4 border-b border-stone-100">
-            <h2 className="text-sm font-bold text-stone-700 mb-3 flex items-center gap-1.5">
-              <Building2 className="w-4 h-4 text-emerald-600" />
-              今買える場所
-            </h2>
+            <SectionHeader
+              icon={<Building2 className="w-4 h-4 text-emerald-600" />}
+              title="今買える場所"
+              subtitle={`${sellers.length}か所で取り扱い中`}
+            />
             <div className="space-y-2">
               {sellers.map((seller) => (
                 <button
                   key={seller.id}
                   onClick={() => navigate(`/seller/${seller.id}`)}
-                  className="w-full bg-stone-50 rounded-xl p-3 hover:bg-emerald-50 hover:border-emerald-200 border border-transparent transition-all text-left"
+                  className="w-full bg-stone-50 rounded-xl p-3 hover:bg-emerald-50 border border-transparent hover:border-emerald-200 transition-all text-left"
                 >
                   <div className="flex items-start justify-between gap-2">
                     <div className="flex-1 min-w-0">
@@ -535,16 +694,23 @@ export default function DBProductDetail() {
                     </div>
                     <div className="flex-shrink-0 flex flex-col items-end gap-1">
                       {seller.insideGate && (
-                        <span className="px-1.5 py-0.5 bg-emerald-100 text-emerald-700 text-[10px] font-bold rounded">改札内</span>
+                        <span className="px-2 py-0.5 bg-emerald-100 text-emerald-700 text-[10px] font-bold rounded-full border border-emerald-200">
+                          改札内
+                        </span>
+                      )}
+                      {!seller.insideGate && (
+                        <span className="px-2 py-0.5 bg-stone-100 text-stone-600 text-[10px] font-bold rounded-full">
+                          改札外
+                        </span>
                       )}
                       {seller.stockStatus === "in_stock" && (
-                        <span className="px-1.5 py-0.5 bg-green-100 text-green-700 text-[10px] font-bold rounded">在庫あり</span>
+                        <span className="px-1.5 py-0.5 bg-green-100 text-green-700 text-[10px] font-bold rounded-full">在庫あり</span>
                       )}
                       {seller.stockStatus === "low_stock" && (
-                        <span className="px-1.5 py-0.5 bg-amber-100 text-amber-700 text-[10px] font-bold rounded">残りわずか</span>
+                        <span className="px-1.5 py-0.5 bg-amber-100 text-amber-700 text-[10px] font-bold rounded-full">残りわずか</span>
                       )}
                       {seller.stockStatus === "out_of_stock" && (
-                        <span className="px-1.5 py-0.5 bg-red-100 text-red-700 text-[10px] font-bold rounded">在庫なし</span>
+                        <span className="px-1.5 py-0.5 bg-red-100 text-red-700 text-[10px] font-bold rounded-full">在庫なし</span>
                       )}
                       <ChevronRight className="w-3.5 h-3.5 text-stone-400 mt-0.5" />
                     </div>
@@ -555,73 +721,243 @@ export default function DBProductDetail() {
           </div>
         )}
 
-        {/* ── キュレーションリンク（SNS/YouTube/記事） ── */}
-        {curatedLinks.length > 0 && (
+        {/* ══════════════════════════════════════════════════
+            セクション 7: この商品の話題（buzzTopics + curatedLinks）
+        ══════════════════════════════════════════════════ */}
+        {(buzzTopics.length > 0 || curatedLinks.length > 0) && (
           <div className="px-4 py-4 border-b border-stone-100">
-            <h2 className="text-sm font-bold text-stone-700 mb-3 flex items-center gap-1.5">
-              <Sparkles className="w-4 h-4 text-amber-500" />
-              この商品の話題
-            </h2>
-            <div className="space-y-2.5">
-              {curatedLinks.map((link) => (
-                <a
-                  key={link.id}
-                  href={link.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-start gap-3 bg-stone-50 rounded-xl p-3 hover:bg-stone-100 transition-colors group"
-                >
-                  {/* サムネイル or アイコン */}
-                  <div className="w-14 h-14 rounded-lg overflow-hidden bg-stone-200 flex-shrink-0 flex items-center justify-center">
-                    {link.thumbnailUrl ? (
-                      <img
-                        src={link.thumbnailUrl}
-                        alt={link.title || ""}
-                        className="w-full h-full object-cover"
-                        onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
-                      />
-                    ) : (
-                      <CuratedLinkIcon type={link.type} />
-                    )}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-1.5 mb-0.5">
-                      <CuratedLinkIcon type={link.type} />
-                      <span className="text-[10px] text-stone-400 font-medium">
-                        {LINK_TYPE_LABELS[link.type] || "外部リンク"}
-                      </span>
-                      {link.authorName && (
-                        <span className="text-[10px] text-stone-400">· {link.authorName}</span>
+            <SectionHeader
+              icon={<Flame className="w-4 h-4 text-orange-500" />}
+              title="この商品の話題"
+            />
+
+            {/* buzzTopics（LLM生成の話題） */}
+            {buzzTopics.length > 0 && (
+              <div className="space-y-2 mb-3">
+                {buzzTopics.map((topic, i) => (
+                  <div key={i} className="flex items-start gap-3 bg-orange-50 rounded-xl p-3 border border-orange-100">
+                    <div className="flex-shrink-0 px-2 py-0.5 bg-orange-100 text-orange-700 text-[10px] font-bold rounded-full mt-0.5">
+                      {topic.source}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-xs font-bold text-stone-800">{topic.title}</p>
+                      {topic.detail && (
+                        <p className="text-xs text-stone-600 mt-0.5 leading-relaxed">{topic.detail}</p>
                       )}
                     </div>
-                    <p className="text-xs font-bold text-stone-800 line-clamp-2 group-hover:text-emerald-700 transition-colors">
-                      {link.title || link.url}
-                    </p>
-                    {link.description && (
-                      <p className="text-[10px] text-stone-500 mt-0.5 line-clamp-1">{link.description}</p>
+                    {topic.url && (
+                      <a
+                        href={topic.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={(e) => e.stopPropagation()}
+                        className="flex-shrink-0"
+                      >
+                        <ExternalLink className="w-3.5 h-3.5 text-stone-400 hover:text-emerald-600 transition-colors" />
+                      </a>
                     )}
                   </div>
-                  <ExternalLink className="w-3.5 h-3.5 text-stone-400 flex-shrink-0 mt-1 group-hover:text-emerald-600 transition-colors" />
-                </a>
-              ))}
-            </div>
+                ))}
+              </div>
+            )}
+
+            {/* curatedLinks（管理者が追加したリンク） */}
+            {curatedLinks.length > 0 && (
+              <div className="space-y-2.5">
+                {curatedLinks.map((link) => (
+                  <a
+                    key={link.id}
+                    href={link.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-start gap-3 bg-stone-50 rounded-xl p-3 hover:bg-stone-100 transition-colors group"
+                  >
+                    <div className="w-14 h-14 rounded-lg overflow-hidden bg-stone-200 flex-shrink-0 flex items-center justify-center">
+                      {link.thumbnailUrl ? (
+                        <img
+                          src={link.thumbnailUrl}
+                          alt={link.title || ""}
+                          className="w-full h-full object-cover"
+                          onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
+                        />
+                      ) : (
+                        <CuratedLinkIcon type={link.type} />
+                      )}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-1.5 mb-0.5">
+                        <CuratedLinkIcon type={link.type} />
+                        <span className="text-[10px] text-stone-400 font-medium">
+                          {LINK_TYPE_LABELS[link.type] || "外部リンク"}
+                        </span>
+                        {link.authorName && (
+                          <span className="text-[10px] text-stone-400">· {link.authorName}</span>
+                        )}
+                      </div>
+                      <p className="text-xs font-bold text-stone-800 line-clamp-2 group-hover:text-emerald-700 transition-colors">
+                        {link.title || link.url}
+                      </p>
+                      {link.description && (
+                        <p className="text-[10px] text-stone-500 mt-0.5 line-clamp-1">{link.description}</p>
+                      )}
+                    </div>
+                    <ExternalLink className="w-3.5 h-3.5 text-stone-400 flex-shrink-0 mt-1 group-hover:text-emerald-600 transition-colors" />
+                  </a>
+                ))}
+              </div>
+            )}
           </div>
         )}
 
-        {/* ── 口コミ・レビュー ── */}
+        {/* ══════════════════════════════════════════════════
+            セクション 8: メーカーについて
+        ══════════════════════════════════════════════════ */}
+        {(product.makerName || product.makerStory || product.brandUrl) && (
+          <div className="px-4 py-4 border-b border-stone-100">
+            <SectionHeader
+              icon={<Store className="w-4 h-4 text-emerald-600" />}
+              title="メーカーについて"
+            />
+
+            {/* メーカー基本情報 */}
+            {(product.makerName || product.makerFoundedYear || product.makerAddress) && (
+              <div className="bg-stone-50 rounded-xl p-3 mb-3">
+                {product.makerName && (
+                  <p className="text-sm font-bold text-stone-900">{product.makerName}</p>
+                )}
+                <div className="flex flex-wrap gap-x-4 gap-y-1 mt-1">
+                  {product.makerFoundedYear && (
+                    <p className="text-xs text-stone-500">創業 {product.makerFoundedYear}年</p>
+                  )}
+                  {product.makerAddress && (
+                    <p className="text-xs text-stone-500 flex items-center gap-1">
+                      <MapPin className="w-3 h-3" />
+                      {product.makerAddress}
+                    </p>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* メーカーストーリー */}
+            {product.makerStory && (
+              <p className="text-sm text-stone-600 leading-relaxed mb-3">{product.makerStory}</p>
+            )}
+
+            {/* 公式サイトリンク */}
+            {product.brandUrl && (
+              <a
+                href={product.brandUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 w-full px-4 py-2.5 bg-stone-800 text-white text-sm font-bold rounded-xl hover:bg-stone-900 transition-colors justify-center"
+              >
+                <ExternalLink className="w-4 h-4" />
+                {product.makerName || product.brand}の公式サイトを見る
+              </a>
+            )}
+          </div>
+        )}
+
+        {/* ══════════════════════════════════════════════════
+            セクション 9: 商品スペック
+        ══════════════════════════════════════════════════ */}
+        <div className="px-4 py-4 border-b border-stone-100">
+          <SectionHeader
+            icon={<Info className="w-4 h-4 text-stone-500" />}
+            title="商品スペック"
+          />
+          <div className="space-y-0 divide-y divide-stone-100 bg-stone-50 rounded-xl overflow-hidden">
+            {/* 基本スペック（常に表示） */}
+            <div className="flex items-center justify-between px-3 py-2.5">
+              <span className="text-xs text-stone-500">価格</span>
+              <span className="text-sm font-bold text-stone-900">¥{product.price.toLocaleString()}（税込）</span>
+            </div>
+            <div className="flex items-center justify-between px-3 py-2.5">
+              <span className="text-xs text-stone-500">日持ち</span>
+              <span className="text-sm font-bold text-stone-900">
+                {product.shelfLife
+                  ? product.shelfLife >= 9999 ? "長期保存可" : `${product.shelfLife}日`
+                  : "要確認"}
+              </span>
+            </div>
+            <div className="flex items-center justify-between px-3 py-2.5">
+              <span className="text-xs text-stone-500">カテゴリ</span>
+              <span className="text-sm font-bold text-stone-900">{product.category}</span>
+            </div>
+            <div className="flex items-center justify-between px-3 py-2.5">
+              <span className="text-xs text-stone-500">個包装</span>
+              <span className="text-sm font-bold text-stone-900">
+                {product.isIndividualPackaged ? "あり" : "なし"}
+              </span>
+            </div>
+            {product.servingSize && (
+              <div className="flex items-center justify-between px-3 py-2.5">
+                <span className="text-xs text-stone-500">内容量</span>
+                <span className="text-sm font-bold text-stone-900">{product.servingSize}個入り</span>
+              </div>
+            )}
+
+            {/* 詳細スペック（productSpecsがある場合） */}
+            {productSpecs.weight && (
+              <div className="flex items-center justify-between px-3 py-2.5">
+                <span className="text-xs text-stone-500">重量</span>
+                <span className="text-sm font-bold text-stone-900">{productSpecs.weight}</span>
+              </div>
+            )}
+            {productSpecs.size && (
+              <div className="flex items-center justify-between px-3 py-2.5">
+                <span className="text-xs text-stone-500">サイズ</span>
+                <span className="text-sm font-bold text-stone-900">{productSpecs.size}</span>
+              </div>
+            )}
+            {productSpecs.calories && (
+              <div className="flex items-center justify-between px-3 py-2.5">
+                <span className="text-xs text-stone-500">カロリー</span>
+                <span className="text-sm font-bold text-stone-900">{productSpecs.calories}</span>
+              </div>
+            )}
+            {productSpecs.storage && (
+              <div className="flex items-center justify-between px-3 py-2.5">
+                <span className="text-xs text-stone-500">保存方法</span>
+                <span className="text-sm font-bold text-stone-900">{productSpecs.storage}</span>
+              </div>
+            )}
+            {productSpecs.allergens && (
+              <div className="flex items-center justify-between px-3 py-2.5">
+                <span className="text-xs text-stone-500">アレルゲン</span>
+                <span className="text-sm font-bold text-stone-900">{productSpecs.allergens}</span>
+              </div>
+            )}
+            {productSpecs.ingredients && (
+              <div className="flex items-start justify-between px-3 py-2.5 gap-4">
+                <span className="text-xs text-stone-500 flex-shrink-0">原材料</span>
+                <span className="text-xs font-medium text-stone-700 text-right leading-relaxed">{productSpecs.ingredients}</span>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* ══════════════════════════════════════════════════
+            セクション 10: 口コミ・レビュー
+        ══════════════════════════════════════════════════ */}
         <div className="px-4 py-4 border-b border-stone-100">
           <div className="flex items-center justify-between mb-3">
-            <h2 className="text-sm font-bold text-stone-700 flex items-center gap-1.5">
-              <MessageSquare className="w-4 h-4 text-emerald-600" />
-              口コミ
-              {reviewTotal > 0 && (
-                <span className="text-xs text-stone-400 font-normal">({reviewTotal}件)</span>
-              )}
-            </h2>
+            <div className="flex items-start gap-2">
+              <div className="w-7 h-7 rounded-lg bg-emerald-50 flex items-center justify-center flex-shrink-0">
+                <MessageSquare className="w-4 h-4 text-emerald-600" />
+              </div>
+              <div>
+                <h2 className="text-sm font-bold text-stone-800">口コミ</h2>
+                {reviewTotal > 0 && (
+                  <p className="text-xs text-stone-500">{reviewTotal}件の口コミ</p>
+                )}
+              </div>
+            </div>
             {isAuthenticated ? (
               <button
                 onClick={() => setShowReviewForm(!showReviewForm)}
-                className="flex items-center gap-1 text-xs font-bold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-full hover:bg-emerald-100 transition-colors"
+                className="flex items-center gap-1 text-xs font-bold text-emerald-700 bg-emerald-50 px-2.5 py-1.5 rounded-full hover:bg-emerald-100 transition-colors border border-emerald-200"
               >
                 <Send className="w-3 h-3" />
                 口コミを書く
@@ -630,9 +966,9 @@ export default function DBProductDetail() {
             ) : (
               <a
                 href={getLoginUrl()}
-                className="text-xs font-bold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-full hover:bg-emerald-100 transition-colors"
+                className="text-xs font-bold text-emerald-700 bg-emerald-50 px-2.5 py-1.5 rounded-full hover:bg-emerald-100 transition-colors border border-emerald-200"
               >
-                ログインして口コミを書く
+                ログインして書く
               </a>
             )}
           </div>
@@ -641,14 +977,10 @@ export default function DBProductDetail() {
           {showReviewForm && isAuthenticated && (
             <div className="mb-4 bg-emerald-50 rounded-xl p-4 border border-emerald-200">
               <p className="text-xs font-bold text-emerald-800 mb-3">口コミを投稿する（+50pt獲得）</p>
-
-              {/* 星評価 */}
               <div className="mb-3">
                 <p className="text-xs text-stone-600 mb-1.5">評価</p>
                 <StarRating value={reviewRating} onChange={setReviewRating} />
               </div>
-
-              {/* テキスト */}
               <textarea
                 value={reviewBody}
                 onChange={(e) => setReviewBody(e.target.value)}
@@ -656,8 +988,6 @@ export default function DBProductDetail() {
                 rows={4}
                 className="w-full text-sm text-stone-800 bg-white border border-stone-200 rounded-lg px-3 py-2 resize-none focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
               />
-
-              {/* 匿名チェック */}
               <label className="flex items-center gap-2 mt-2 cursor-pointer">
                 <input
                   type="checkbox"
@@ -667,11 +997,9 @@ export default function DBProductDetail() {
                 />
                 <span className="text-xs text-stone-600">匿名で投稿する</span>
               </label>
-
               {reviewError && (
                 <p className="text-xs text-red-600 mt-2">{reviewError}</p>
               )}
-
               <div className="flex gap-2 mt-3">
                 <button
                   onClick={handleSubmitReview}
@@ -736,61 +1064,9 @@ export default function DBProductDetail() {
           )}
         </div>
 
-        {/* ── メーカーについて ── */}
-        {(product.makerStory || product.brandUrl) && (
-          <div className="px-4 py-4 border-b border-stone-100">
-            <h2 className="text-sm font-bold text-stone-700 mb-2 flex items-center gap-1.5">
-              <Store className="w-4 h-4 text-emerald-600" />
-              メーカーについて
-            </h2>
-            {product.makerStory && (
-              <p className="text-sm text-stone-600 leading-relaxed mb-3">{product.makerStory}</p>
-            )}
-            {product.brandUrl && (
-              <a
-                href={product.brandUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={(e) => e.stopPropagation()}
-                className="flex items-center gap-2 w-full px-4 py-2.5 bg-emerald-700 text-white text-sm font-bold rounded-xl hover:bg-emerald-800 transition-colors justify-center"
-              >
-                <ExternalLink className="w-4 h-4" />
-                {product.brand}の公式サイトを見る
-              </a>
-            )}
-          </div>
-        )}
-
-        {/* ── 商品スペック ── */}
-        <div className="px-4 py-4 border-b border-stone-100">
-          <h2 className="text-sm font-bold text-stone-700 mb-3">商品スペック</h2>
-          <div className="grid grid-cols-2 gap-3">
-            <div className="bg-stone-50 rounded-xl p-3">
-              <p className="text-xs text-stone-500 mb-1">価格</p>
-              <p className="text-base font-black text-stone-900">¥{product.price.toLocaleString()}</p>
-            </div>
-            <div className="bg-stone-50 rounded-xl p-3">
-              <p className="text-xs text-stone-500 mb-1">日持ち</p>
-              <p className="text-base font-black text-stone-900">
-                {product.shelfLife
-                  ? product.shelfLife >= 9999 ? "長期保存可" : `${product.shelfLife}日`
-                  : "要確認"}
-              </p>
-            </div>
-            <div className="bg-stone-50 rounded-xl p-3">
-              <p className="text-xs text-stone-500 mb-1">カテゴリ</p>
-              <p className="text-base font-black text-stone-900">{product.category}</p>
-            </div>
-            <div className="bg-stone-50 rounded-xl p-3">
-              <p className="text-xs text-stone-500 mb-1">個包装</p>
-              <p className="text-base font-black text-stone-900">
-                {product.isIndividualPackaged ? "あり" : "なし"}
-              </p>
-            </div>
-          </div>
-        </div>
-
-        {/* ── 関連商品 ── */}
+        {/* ══════════════════════════════════════════════════
+            セクション 11: 関連商品
+        ══════════════════════════════════════════════════ */}
         {relatedProducts.length > 0 && (
           <div className="px-4 py-4 border-b border-stone-100">
             <div className="flex items-center justify-between mb-3">
@@ -812,18 +1088,27 @@ export default function DBProductDetail() {
                   onClick={() => navigate(`/db-product/${related.id}`)}
                   className="w-full flex items-center gap-3 bg-stone-50 rounded-xl p-3 hover:bg-emerald-50 transition-colors text-left"
                 >
-                  <div className="w-12 h-12 rounded-lg overflow-hidden bg-stone-200 flex-shrink-0">
-                    {related.imageUrl ? (
-                      <img src={related.imageUrl} alt={related.name} className="w-full h-full object-cover" />
+                  <div className="w-14 h-14 rounded-lg overflow-hidden bg-stone-200 flex-shrink-0">
+                    {(related.realImageUrl || related.imageUrl) ? (
+                      <img
+                        src={related.realImageUrl || related.imageUrl || ""}
+                        alt={related.name}
+                        className="w-full h-full object-cover"
+                        onError={(e) => {
+                          (e.target as HTMLImageElement).src = getCategoryImage(related.category || "その他");
+                        }}
+                      />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center">
-                        <Package className="w-5 h-5 text-stone-400" />
-                      </div>
+                      <img
+                        src={getCategoryImage(related.category || "その他")}
+                        alt={related.name}
+                        className="w-full h-full object-cover"
+                      />
                     )}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-xs font-bold text-stone-900 line-clamp-1">{related.name}</p>
-                    <p className="text-[10px] text-stone-500">{related.brand}</p>
+                    <p className="text-xs font-bold text-stone-900 line-clamp-2">{related.name}</p>
+                    <p className="text-[10px] text-stone-500 mt-0.5">{related.brand}</p>
                   </div>
                   <p className="text-sm font-black text-emerald-700 flex-shrink-0">
                     ¥{related.price.toLocaleString()}
@@ -849,6 +1134,7 @@ export default function DBProductDetail() {
             <ChevronRight className="w-4 h-4 text-emerald-600" />
           </button>
         </div>
+
       </div>
     </AppLayout>
   );

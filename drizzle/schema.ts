@@ -72,6 +72,17 @@ export const products = mysqlTable("products", {
   likeCount: int("likeCount").default(0).notNull(),
   reviewCount: int("reviewCount").default(0).notNull(), // 口コミ数（非正規化カウンタ）
   avgRating: decimal("avgRating", { precision: 3, scale: 2 }), // 平均評価（非正規化）
+  // 商品ページ充実化フィールド
+  realImageUrl: text("realImageUrl"), // 実際の商品画像URL（公式・楽天等から取得）
+  imageSource: varchar("imageSource", { length: 256 }), // 画像の出典元
+  reasonsToChoose: text("reasonsToChoose"), // このお土産が選ばれる理由（JSON配列: [{title, body}]）
+  guaranteeDetail: text("guaranteeDetail"), // 保証書詳細（受賞歴・メディア掲載等のJSON配列）
+  makerName: varchar("makerName", { length: 128 }), // メーカー正式名称
+  makerFoundedYear: int("makerFoundedYear"), // 創業年
+  makerAddress: varchar("makerAddress", { length: 256 }), // メーカー所在地
+  makerPhone: varchar("makerPhone", { length: 32 }), // メーカー電話番号
+  productSpecs: text("productSpecs"), // 商品スペック（JSON: {weight, size, ingredients, allergens, storage, calories}）
+  buzzTopics: text("buzzTopics"), // この商品の話題（JSON配列: [{source, title, url, date}]）
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
   createdBy: int("createdBy"),
