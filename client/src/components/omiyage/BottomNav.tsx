@@ -10,7 +10,7 @@ const NAV_ITEMS = [
   { id: "home", label: "ホーム", icon: Home, path: "/" },
   { id: "search", label: "探す", icon: Search, path: "/db-search" },
   { id: "collector", label: "コレクター", icon: Trophy, path: "/collector" },
-  { id: "favorites", label: "お気に入り", icon: Heart, path: "/favorites" },
+  { id: "favorites", label: "お気に入り", icon: Heart, path: "/db-favorites" },
   { id: "mypage", label: "マイページ", icon: User, path: "/mypage" },
 ];
 

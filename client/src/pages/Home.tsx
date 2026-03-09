@@ -10,7 +10,7 @@ import { Helmet } from "react-helmet-async";
 import {
   Search, MapPin, ChevronRight, WifiOff,
   Navigation, Loader2, AlertCircle, CheckCircle2,
-  Clock, Package, Heart, ChevronLeft, Sparkles, Users
+  Clock, Package, Heart, ChevronLeft, Sparkles, Users, TrendingUp
 } from "lucide-react";
 import { AppLayout } from "@/components/omiyage/AppLayout";
 import { useSearch } from "@/contexts/SearchContext";
@@ -285,7 +285,23 @@ export default function Home() {
   // DB: 編集部おすすめ
   const editorialInput = useMemo(() => ({ badges: ["editorial"], limit: 4, offset: 0 }), []);
   const { data: editorialData } = trpc.products.search.useQuery(editorialInput);
-  const editorialProducts = editorialData?.products ?? [];;
+  const editorialProducts = editorialData?.products ?? [];
+
+  // DB: 近隣エリアの注目お土産（位置情報取得済みの場合）
+  const nearbyTrendingInput = useMemo(
+    () => locationState.status === "granted"
+      ? { latitude: locationState.lat, longitude: locationState.lng, limit: 5 }
+      : null,
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [locationState.status === "granted" ? locationState.lat : null, locationState.status === "granted" ? locationState.lng : null]
+  );
+  const { data: nearbyTrendingData, isLoading: isNearbyTrendingLoading } = trpc.notifications.getNearbyTrending.useQuery(
+    nearbyTrendingInput ?? { latitude: 0, longitude: 0, limit: 5 },
+    { enabled: !!nearbyTrendingInput }
+  );
+  const nearbyTrendingProducts = nearbyTrendingData?.products ?? [];
+  const nearbyTrendingFacilityName = nearbyTrendingData?.facilityName ?? null;
+  const nearbyTrendingFacilityId = nearbyTrendingData?.facilityId ?? null;
 
   return (
     <AppLayout>
@@ -471,6 +487,42 @@ export default function Home() {
           </div>
         </section>
 
+        {/* ── あなたの近くで注目（位置情報取得済みの場合） ── */}
+        {locationState.status === "granted" && nearbyTrendingProducts.length > 0 && (
+          <section>
+            <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center gap-2">
+                <TrendingUp className="w-4 h-4 text-orange-500" />
+                <div>
+                  <h2 className="text-base font-black text-stone-900">
+                    {nearbyTrendingFacilityName ? `${nearbyTrendingFacilityName}で注目` : "あなたの近くで注目"}
+                  </h2>
+                  <p className="text-xs text-stone-500">今このエリアで人気のお土産</p>
+                </div>
+              </div>
+              {nearbyTrendingFacilityId && (
+                <button
+                  onClick={() => navigate(`/station/${nearbyTrendingFacilityId}`)}
+                  className="flex items-center gap-1 text-xs font-bold text-emerald-700"
+                >
+                  すべて見る <ChevronRight className="w-3.5 h-3.5" />
+                </button>
+              )}
+            </div>
+            {isNearbyTrendingLoading ? (
+              <div className="flex justify-center py-6">
+                <Loader2 className="w-5 h-5 text-orange-500 animate-spin" />
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {nearbyTrendingProducts.map((product) => (
+                  <DBHomeCard key={product.id} product={product} accent="orange" />
+                ))}
+              </div>
+            )}
+          </section>
+        )}
+
         {/* ── 人気のお土産 ── */}
         <section>
           <div className="flex items-center justify-between mb-3">
@@ -551,15 +603,16 @@ export default function Home() {
   );
 }
 
-// ── DBHomeCard: DBデータ対応の商品カード ──────────────────────
-function DBHomeCard({ product }: { product: any }) {
+// ── DBHomeCard: DBデータ対応の商品カード ────────────────────
+function DBHomeCard({ product, accent = "emerald" }: { product: any; accent?: "emerald" | "orange" }) {
   const [, navigate] = useLocation();
+  const accentClass = accent === "orange" ? "bg-orange-500" : "bg-emerald-700";
   return (
     <div
       className="relative bg-white rounded-xl border border-stone-200 overflow-hidden cursor-pointer hover:shadow-md transition-all"
       onClick={() => navigate(`/db-product/${product.id}`)}
     >
-      <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-emerald-700" />
+      <div className={`absolute left-0 top-0 bottom-0 w-1.5 ${accentClass}`} />
       <div className="pl-4 pr-4 pt-3 pb-3">
         <div className="flex gap-3">
           <div className="w-16 h-16 rounded-lg overflow-hidden bg-stone-100 flex-shrink-0">
