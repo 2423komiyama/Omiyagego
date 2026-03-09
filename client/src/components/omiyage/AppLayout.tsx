@@ -18,7 +18,7 @@ const NAV_ITEMS = [
   { href: "/", icon: Home, label: "ホーム" },
   { href: "/db-search", icon: Search, label: "探す" },
   { href: "/map", icon: MapPin, label: "マップ" },
-  { href: "/favorites", icon: Heart, label: "お気に入り" },
+  { href: "/db-favorites", icon: Heart, label: "お気に入り" },
   { href: "/mypage", icon: User, label: "マイページ" },
 ];
 

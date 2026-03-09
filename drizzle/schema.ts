@@ -368,3 +368,66 @@ export const collectorStats = mysqlTable("collectorStats", {
 
 export type CollectorStats = typeof collectorStats.$inferSelect;
 export type InsertCollectorStats = typeof collectorStats.$inferInsert;
+
+// ============================================================
+// プッシュ通知・お気に入り機能
+// ============================================================
+
+/**
+ * Web Push購読情報テーブル
+ * ユーザーのブラウザごとのWeb Push購読情報を保存
+ */
+export const pushSubscriptions = mysqlTable("pushSubscriptions", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId"), // ログイン済みの場合はユーザーID、匿名はセッションIDで管理
+  sessionId: varchar("sessionId", { length: 128 }), // 匿名ユーザー用
+  endpoint: text("endpoint").notNull(), // PushサービスのURL
+  p256dh: text("p256dh").notNull(), // 暗号化鍵
+  auth: text("auth").notNull(), // 認証秘密鍵
+  userAgent: varchar("userAgent", { length: 256 }), // ブラウザ情報
+  isActive: boolean("isActive").default(true).notNull(),
+  // 通知設定
+  notifyNearby: boolean("notifyNearby").default(true).notNull(), // 近くの売り場通知
+  notifyTrending: boolean("notifyTrending").default(true).notNull(), // エリアトレンド通知
+  lastNotifiedAt: timestamp("lastNotifiedAt"), // 最後の通知日時
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type PushSubscription = typeof pushSubscriptions.$inferSelect;
+export type InsertPushSubscription = typeof pushSubscriptions.$inferInsert;
+
+/**
+ * お気に入りテーブル
+ * ログイン済みユーザーのお気に入り商品を管理（まだない場合は作成）
+ */
+export const favorites = mysqlTable("favorites", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  productId: varchar("productId", { length: 32 }).notNull(),
+  // 近接通知設定
+  notifyNearby: boolean("notifyNearby").default(true).notNull(), // 近くの売り場に近づいたら通知
+  lastNearbyNotifiedAt: timestamp("lastNearbyNotifiedAt"), // 最後に近接通知を送った日時
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type Favorite = typeof favorites.$inferSelect;
+export type InsertFavorite = typeof favorites.$inferInsert;
+
+/**
+ * エリア別トレンドテーブル
+ * 施設・都道府県別の注目商品データをキャッシュ
+ */
+export const areaTrends = mysqlTable("areaTrends", {
+  id: int("id").autoincrement().primaryKey(),
+  facilityId: varchar("facilityId", { length: 32 }), // 施設別トレンド（null=都道府県別）
+  prefecture: varchar("prefecture", { length: 16 }), // 都道府県別トレンド
+  topProductIds: text("topProductIds").notNull(), // JSON配列: ["商品ID1", ...]
+  calculatedAt: timestamp("calculatedAt").defaultNow().notNull(), // 最後計算日時
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type AreaTrend = typeof areaTrends.$inferSelect;
+export type InsertAreaTrend = typeof areaTrends.$inferInsert;

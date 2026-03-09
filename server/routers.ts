@@ -3,6 +3,7 @@ import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
 import { publicProcedure, protectedProcedure, router } from "./_core/trpc";
 import { collectorRouter } from "./routers/collector";
+import { notificationsRouter } from "./routers/notifications";
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
 import {
@@ -24,6 +25,7 @@ import {
 
 export const appRouter = router({
   system: systemRouter,
+  notifications: notificationsRouter,
   auth: router({
     me: publicProcedure.query(opts => opts.ctx.user),
     logout: publicProcedure.mutation(({ ctx }) => {

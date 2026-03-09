@@ -199,6 +199,31 @@ export default function DBProductDetail() {
   const [localLiked, setLocalLiked] = useState(false);
   useEffect(() => { setLocalLiked(isLiked); }, [isLiked]);
 
+  // DBお気に入り状態
+  const { data: favData, refetch: refetchFav } = trpc.notifications.isFavorite.useQuery(
+    { productId },
+    { enabled: !!productId && isAuthenticated }
+  );
+  const isFavorite = favData?.isFavorite ?? false;
+  const [localFavorite, setLocalFavorite] = useState(false);
+  useEffect(() => { setLocalFavorite(isFavorite); }, [isFavorite]);
+  const addFavMutation = trpc.notifications.addFavorite.useMutation({ onSuccess: () => refetchFav() });
+  const removeFavMutation = trpc.notifications.removeFavorite.useMutation({ onSuccess: () => refetchFav() });
+
+  const handleFavoriteToggle = () => {
+    if (!isAuthenticated) {
+      window.location.href = getLoginUrl();
+      return;
+    }
+    if (localFavorite) {
+      setLocalFavorite(false);
+      removeFavMutation.mutate({ productId });
+    } else {
+      setLocalFavorite(true);
+      addFavMutation.mutate({ productId, notifyNearby: true });
+    }
+  };
+
   // キュレーションリンク
   const { data: curatedLinks = [] } = trpc.curatedLinks.list.useQuery(
     { productId },
@@ -546,29 +571,44 @@ export default function DBProductDetail() {
             )}
           </div>
 
-          {/* いいね・共有ボタン */}
-          <div className="flex gap-3 mt-4">
+          {/* お気に入り・いいね・共有ボタン */}
+          <div className="flex gap-2 mt-4">
+            {/* DBお気に入りボタン */}
+            <button
+              onClick={handleFavoriteToggle}
+              className={cn(
+                "flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl border text-sm font-bold transition-all",
+                localFavorite
+                  ? "bg-rose-50 border-rose-300 text-rose-600"
+                  : "bg-white border-stone-200 text-stone-600 hover:border-rose-300 hover:text-rose-500"
+              )}
+            >
+              <Heart className={cn("w-4 h-4", localFavorite && "fill-rose-500")} />
+              {localFavorite ? "保存済み" : "保存"}
+              {!isAuthenticated && (
+                <span className="text-[10px] text-stone-400">要ログイン</span>
+              )}
+            </button>
+            {/* いいねボタン */}
             <button
               onClick={handleLike}
               className={cn(
-                "flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl border text-sm font-bold transition-all",
+                "flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl border text-sm font-bold transition-all",
                 localLiked
                   ? "bg-rose-50 border-rose-300 text-rose-600"
                   : "bg-white border-stone-200 text-stone-600 hover:border-rose-300 hover:text-rose-500"
               )}
             >
               <Heart className={cn("w-4 h-4", localLiked && "fill-rose-500")} />
-              {localLiked ? "お気に入り済み" : "お気に入りに追加"}
               {isAuthenticated && !localLiked && (
                 <span className="text-[10px] text-emerald-600 font-bold bg-emerald-50 px-1.5 py-0.5 rounded-full">+5pt</span>
               )}
             </button>
             <button
               onClick={handleShare}
-              className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-stone-200 text-stone-600 text-sm font-bold hover:bg-stone-50 transition-all"
+              className="flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl border border-stone-200 text-stone-600 text-sm font-bold hover:bg-stone-50 transition-all"
             >
               <Share2 className="w-4 h-4" />
-              共有
             </button>
           </div>
         </div>

@@ -214,3 +214,23 @@
 - [x] テスト38/38パス
 - [x] 楽天画像バッチ完了！1049/1611件取得完了（65%）・チェックポイント保存・公開
 - [x] brandUrl未設定商品へのLLM生成URL追加完了（1601/1611件、99%）
+
+## 新機能実装（2026-03-09 #9）
+- [ ] 楽天未取得562件の画像をカテゴリ別高品質画像で補完
+- [ ] Web Push通知基盤（VAPID鍵生成・Service Worker・pushSubscriptionsテーブル）
+- [ ] お気に入り商品の売り場近接検知とプッシュ通知送信（位置情報連携）
+- [ ] エリア別・近隣注目お土産キュレーション（トップページ「あなたの近くで人気」セクション）
+- [ ] 注目お土産の通知機能（エリア別トレンド通知）
+- [ ] テスト・チェックポイント保存・公開
+
+## 新機能実装（2026-03-09）
+- [x] 楽天未取得562件の画像をカテゴリ別Unsplash画像で補完（全1,611件に画像設定完了）
+- [x] DBスキーマ拡張：pushSubscriptions・favorites・areaTrendsテーブル追加
+- [x] Web Push通知基盤：VAPID鍵設定・Service Worker（sw.js）・server/push.ts
+- [x] tRPCルーター追加：notifications（subscribe/unsubscribe/addFavorite/removeFavorite/getFavorites/checkNearby/getAreaTrends/getNearbyTrending）
+- [x] フロントエンドhook：usePushNotifications.ts（通知許可・購読・近接チェック）
+- [x] DBFavorites.tsx：お気に入り一覧・通知設定・近接チェックUI
+- [x] DBProductDetail.tsxにDBお気に入り保存ボタン追加
+- [x] Home.tsxに「あなたの近くで注目」セクション追加（位置情報取得時に最寄り施設の人気商品を表示）
+- [x] AppLayout・BottomNavのお気に入りリンクをDBFavoritesに変更
+- [x] テスト38/38パス・チェックポイント保存

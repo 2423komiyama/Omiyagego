@@ -29,6 +29,7 @@ import AdminFacilities from "./pages/AdminFacilities";
 import AdminSellers from "./pages/AdminSellers";
 import AdminCuratedLinks from "./pages/AdminCuratedLinks";
 import DBProductDetail from "./pages/DBProductDetail";
+import DBFavorites from "./pages/DBFavorites";
 import NichePage from "./pages/NichePage";
 import StationPage from "./pages/StationPage";
 import PurposePage from "./pages/PurposePage";
@@ -48,6 +49,7 @@ function Router() {
       <Route path="/db-product/:id" component={DBProductDetail} />
       <Route path="/seller/:id" component={SellerDetail} />
       <Route path="/favorites" component={Favorites} />
+      <Route path="/db-favorites" component={DBFavorites} />
       <Route path="/mypage" component={MyPage} />
       <Route path="/map" component={MapPage} />
       <Route path="/admin" component={AdminDashboard} />
