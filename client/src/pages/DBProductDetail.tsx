@@ -26,7 +26,7 @@ import {
   CheckCircle2, Store, Building2, ExternalLink, Heart, Share2,
   Sparkles, Youtube, Instagram, Twitter, FileText, MessageSquare,
   Send, X, ThumbsUp, Award, Trophy, Newspaper, BadgeCheck,
-  ChefHat, Scale, Info, Flame
+  ChefHat, Scale, Info, Flame, Navigation, Timer
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -714,48 +714,72 @@ export default function DBProductDetail() {
             />
             <div className="space-y-2">
               {sellers.map((seller) => (
-                <button
+                <div
                   key={seller.id}
-                  onClick={() => navigate(`/seller/${seller.id}`)}
-                  className="w-full bg-stone-50 rounded-xl p-3 hover:bg-emerald-50 border border-transparent hover:border-emerald-200 transition-all text-left"
+                  className="bg-stone-50 rounded-xl p-3 border border-transparent hover:bg-emerald-50 hover:border-emerald-200 transition-all"
                 >
-                  <div className="flex items-start justify-between gap-2">
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-bold text-stone-900">{seller.storeName}</p>
-                      {seller.floor && (
-                        <p className="text-xs text-stone-500 mt-0.5">{seller.floor}</p>
-                      )}
-                      {seller.businessHours && (
-                        <p className="text-xs text-stone-500 mt-0.5 flex items-center gap-1">
-                          <Clock className="w-3 h-3" />
-                          {seller.businessHours}
-                        </p>
-                      )}
+                  <button
+                    className="w-full text-left"
+                    onClick={() => navigate(`/station/${seller.facilityId}`)}
+                  >
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-bold text-stone-900">{seller.storeName}</p>
+                        <div className="flex flex-wrap gap-x-3 gap-y-0.5 mt-1">
+                          {seller.floor && (
+                            <p className="text-xs text-stone-500 flex items-center gap-1">
+                              <Building2 className="w-3 h-3" />{seller.floor}
+                            </p>
+                          )}
+                          {seller.walkMinutes != null && (
+                            <p className="text-xs text-emerald-700 flex items-center gap-1 font-medium">
+                              <Timer className="w-3 h-3" />徒歩{seller.walkMinutes}分
+                            </p>
+                          )}
+                          {seller.businessHours && (
+                            <p className="text-xs text-stone-500 flex items-center gap-1">
+                              <Clock className="w-3 h-3" />{seller.businessHours}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                      <div className="flex-shrink-0 flex flex-col items-end gap-1">
+                        {seller.insideGate ? (
+                          <span className="px-2 py-0.5 bg-emerald-100 text-emerald-700 text-[10px] font-bold rounded-full border border-emerald-200">
+                            改札内
+                          </span>
+                        ) : (
+                          <span className="px-2 py-0.5 bg-stone-100 text-stone-600 text-[10px] font-bold rounded-full">
+                            改札外
+                          </span>
+                        )}
+                        {seller.stockStatus === "in_stock" && (
+                          <span className="px-1.5 py-0.5 bg-green-100 text-green-700 text-[10px] font-bold rounded-full">在庫あり</span>
+                        )}
+                        {seller.stockStatus === "low_stock" && (
+                          <span className="px-1.5 py-0.5 bg-amber-100 text-amber-700 text-[10px] font-bold rounded-full">残りわずか</span>
+                        )}
+                        {seller.stockStatus === "out_of_stock" && (
+                          <span className="px-1.5 py-0.5 bg-red-100 text-red-700 text-[10px] font-bold rounded-full">在庫なし</span>
+                        )}
+                        <ChevronRight className="w-3.5 h-3.5 text-stone-400 mt-0.5" />
+                      </div>
                     </div>
-                    <div className="flex-shrink-0 flex flex-col items-end gap-1">
-                      {seller.insideGate && (
-                        <span className="px-2 py-0.5 bg-emerald-100 text-emerald-700 text-[10px] font-bold rounded-full border border-emerald-200">
-                          改札内
-                        </span>
-                      )}
-                      {!seller.insideGate && (
-                        <span className="px-2 py-0.5 bg-stone-100 text-stone-600 text-[10px] font-bold rounded-full">
-                          改札外
-                        </span>
-                      )}
-                      {seller.stockStatus === "in_stock" && (
-                        <span className="px-1.5 py-0.5 bg-green-100 text-green-700 text-[10px] font-bold rounded-full">在庫あり</span>
-                      )}
-                      {seller.stockStatus === "low_stock" && (
-                        <span className="px-1.5 py-0.5 bg-amber-100 text-amber-700 text-[10px] font-bold rounded-full">残りわずか</span>
-                      )}
-                      {seller.stockStatus === "out_of_stock" && (
-                        <span className="px-1.5 py-0.5 bg-red-100 text-red-700 text-[10px] font-bold rounded-full">在庫なし</span>
-                      )}
-                      <ChevronRight className="w-3.5 h-3.5 text-stone-400 mt-0.5" />
-                    </div>
-                  </div>
-                </button>
+                  </button>
+                  {/* Googleマップリンク */}
+                  {seller.mapUrl && (
+                    <a
+                      href={seller.mapUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="mt-2 inline-flex items-center gap-1.5 text-xs font-bold text-emerald-700 hover:text-emerald-800"
+                    >
+                      <Navigation className="w-3 h-3" />
+                      Googleマップで見る
+                      <ExternalLink className="w-3 h-3" />
+                    </a>
+                  )}
+                </div>
               ))}
             </div>
           </div>
