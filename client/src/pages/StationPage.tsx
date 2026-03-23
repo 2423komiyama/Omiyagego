@@ -9,7 +9,8 @@ import { trpc } from "@/lib/trpc";
 import { Helmet } from "react-helmet-async";
 import {
   ArrowLeft, MapPin, ChevronRight, Package, Loader2, AlertCircle,
-  Clock, Heart, Share2, Building2, Train, Plane
+  Clock, Heart, Share2, Building2, Train, Plane, Navigation, ExternalLink,
+  Timer, Store
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useState, useMemo } from "react";
@@ -127,6 +128,26 @@ const FACILITY_META: Record<string, {
   },
 };
 
+// URLのfacilityId（短縮形）→ DBのfacilityId（完全形）マッピング（フロント用）
+const FACILITY_ID_MAP_FRONT: Record<string, string> = {
+  "tokyo": "tokyo_station",
+  "shinjuku": "shinjuku_station",
+  "shinagawa": "tokyo_station",
+  "shibuya": "shibuya_station",
+  "chitose": "shin_chitose_airport",
+  "kyoto": "kyoto_station",
+  "osaka": "shin_osaka_station",
+  "fukuoka": "hakata_station",
+  "naha": "naha_airport",
+  "hiroshima": "hiroshima_station",
+  "nagoya": "nagoya_station",
+  "sendai": "sendai_station",
+  "kanazawa": "kanazawa_station",
+  "haneda_t1": "haneda_t1",
+  "haneda_t2": "haneda_t2",
+  "haneda_t3": "haneda_t3",
+};
+
 // セッションID取得
 function getSessionId(): string {
   let sid = localStorage.getItem("omiyage_session_id");
@@ -150,9 +171,15 @@ export default function StationPage() {
     { enabled: !!facilityId }
   );
 
-  // 施設情報を取得
+  // 施設マスター情報を取得
   const { data: facility } = trpc.facilities.get.useQuery(
-    { id: facilityId },
+    { id: FACILITY_ID_MAP_FRONT[facilityId] ?? facilityId },
+    { enabled: !!facilityId }
+  );
+
+  // 施設の売り場一覧を取得
+  const { data: facilitySellers = [] } = trpc.facilities.getSellers.useQuery(
+    { facilityId },
     { enabled: !!facilityId }
   );
 
@@ -245,7 +272,82 @@ export default function StationPage() {
               </span>
             ))}
           </div>
+          {/* 施設マスターデータ（座標・アクセス） */}
+          {facility && (facility.latitude || facility.longitude) && (
+            <a
+              href={`https://maps.google.com/?q=${facility.latitude},${facility.longitude}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-3 inline-flex items-center gap-1.5 text-xs font-bold text-emerald-700 hover:text-emerald-800"
+            >
+              <Navigation className="w-3.5 h-3.5" />
+              Googleマップで見る
+              <ExternalLink className="w-3 h-3" />
+            </a>
+          )}
         </div>
+
+        {/* ── 売り場一覧（施設内の店舗） ── */}
+        {facilitySellers.length > 0 && (
+          <div className="px-4 py-4 border-b border-stone-100">
+            <h2 className="text-sm font-bold text-stone-700 mb-3 flex items-center gap-1.5">
+              <Store className="w-4 h-4 text-emerald-600" />
+              店舗・売り場一覧
+            </h2>
+            <div className="space-y-2">
+              {/* 重複除去：storeNameでユニーク化 */}
+              {Array.from(new Map(facilitySellers.map(s => [s.storeName, s])).values()).slice(0, 8).map((seller) => (
+                <div key={seller.id} className="bg-stone-50 rounded-xl p-3 border border-stone-100">
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-bold text-stone-900">{seller.storeName}</p>
+                      <div className="flex flex-wrap gap-x-3 gap-y-0.5 mt-1">
+                        {seller.floor && (
+                          <p className="text-xs text-stone-500 flex items-center gap-1">
+                            <Building2 className="w-3 h-3" />{seller.floor}
+                          </p>
+                        )}
+                        {seller.walkMinutes != null && (
+                          <p className="text-xs text-emerald-700 flex items-center gap-1 font-medium">
+                            <Timer className="w-3 h-3" />徒歩{seller.walkMinutes}分
+                          </p>
+                        )}
+                        {seller.businessHours && (
+                          <p className="text-xs text-stone-500 flex items-center gap-1">
+                            <Clock className="w-3 h-3" />{seller.businessHours}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                    <div className="flex-shrink-0">
+                      {seller.insideGate ? (
+                        <span className="px-2 py-0.5 bg-emerald-100 text-emerald-700 text-[10px] font-bold rounded-full border border-emerald-200">
+                          改札内
+                        </span>
+                      ) : (
+                        <span className="px-2 py-0.5 bg-stone-100 text-stone-600 text-[10px] font-bold rounded-full">
+                          改札外
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                  {seller.mapUrl && (
+                    <a
+                      href={seller.mapUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="mt-2 inline-flex items-center gap-1.5 text-xs font-bold text-emerald-700 hover:text-emerald-800"
+                    >
+                      <Navigation className="w-3 h-3" />
+                      Googleマップで見る
+                      <ExternalLink className="w-3 h-3" />
+                    </a>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* ── 用途別クイックリンク ── */}
         <div className="px-4 py-4 border-b border-stone-100">
