@@ -241,3 +241,9 @@
 - [x] DBProductDetail「今買える場所」セクションにmapUrl・walkMinutes・徒歩分数を表示
 - [x] StationPageに施設マスターデータ（座標・Googleマップリンク）と売り場一覧セクションを追加
 - [x] テスト38/38パス・チェックポイント保存
+
+## バグ修正（2026-03-24）
+- [x] StationPageで「施設が見つかりませんでした」エラーを修正（facilityIdマッピング問題）
+- [x] 施設に無関係な商品が表示される問題を修正（shinjuku→shinjuku_station、shibuya→shibuya_stationにマッピング修正）
+- [x] FACILITY_META未登録のfacilityIdでもDB施設情報からフォールバック表示できるように対応
+- [x] テスト38/38パス・チェックポイント保存

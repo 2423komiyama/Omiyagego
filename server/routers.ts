@@ -279,9 +279,9 @@ export const appRouter = router({
         // URLのfacilityId（短縮形）→ DBのfacilityId（完全形）マッピング
         const FACILITY_ID_MAP: Record<string, string> = {
           "tokyo": "tokyo_station",
-          "shinjuku": "tokyo_station",
-          "shinagawa": "tokyo_station",
-          "shibuya": "tokyo_station",
+          "shinjuku": "shinjuku_station",
+          "shinagawa": "tokyo_station",   // 品川駅はDBデータなし→東京駅にフォールバック
+          "shibuya": "shibuya_station",
           "chitose": "shin_chitose_airport",
           "kyoto": "kyoto_station",
           "osaka": "shin_osaka_station",
@@ -293,7 +293,7 @@ export const appRouter = router({
           "kanazawa": "kanazawa_station",
           "haneda_t1": "haneda_t1",
           "haneda_t2": "haneda_t2",
-          "haneda_t3": "haneda_t1",
+          "haneda_t3": "haneda_t3",
         };
         const dbFacilityId = FACILITY_ID_MAP[input.facilityId] ?? input.facilityId;
         return await getProductsByFacilityId(dbFacilityId, input.limit, input.offset);
@@ -304,9 +304,9 @@ export const appRouter = router({
       .query(async ({ input }) => {
         const FACILITY_ID_MAP: Record<string, string> = {
           "tokyo": "tokyo_station",
-          "shinjuku": "tokyo_station",
+          "shinjuku": "shinjuku_station",
           "shinagawa": "tokyo_station",
-          "shibuya": "tokyo_station",
+          "shibuya": "shibuya_station",
           "chitose": "shin_chitose_airport",
           "kyoto": "kyoto_station",
           "osaka": "shin_osaka_station",
@@ -318,7 +318,7 @@ export const appRouter = router({
           "kanazawa": "kanazawa_station",
           "haneda_t1": "haneda_t1",
           "haneda_t2": "haneda_t2",
-          "haneda_t3": "haneda_t1",
+          "haneda_t3": "haneda_t3",
         };
         const dbFacilityId = FACILITY_ID_MAP[input.facilityId] ?? input.facilityId;
         return await getSellersByFacilityId(dbFacilityId);
