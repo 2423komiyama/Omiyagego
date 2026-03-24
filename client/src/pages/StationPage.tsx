@@ -129,6 +129,7 @@ const FACILITY_META: Record<string, {
 };
 
 // URLのfacilityId（短縮形）→ DBのfacilityId（完全形）マッピング（フロント用）
+// 注意: routers.tsのFACILITY_ID_MAPと必ず同期すること
 const FACILITY_ID_MAP_FRONT: Record<string, string> = {
   "tokyo": "tokyo_station",
   "shinjuku": "shinjuku_station",
@@ -188,7 +189,18 @@ export default function StationPage() {
   const { data: likedIds = [], refetch: refetchLikes } = trpc.likes.getLikedIds.useQuery({ sessionId });
   const toggleLike = trpc.likes.toggle.useMutation({ onSuccess: () => refetchLikes() });
 
-  if (!meta) {
+  // FACILITY_METAにない場合、DBの施設情報からフォールバックメタを生成
+  const effectiveMeta = meta ?? (facility ? {
+    name: facility.name,
+    nameKana: "",
+    type: (facility.name.includes("空港") ? "airport" : "station") as "station" | "airport",
+    prefecture: facility.prefecture ?? "",
+    region: facility.region,
+    description: `${facility.name}のお土産を紹介。日持ちするお土産・手土産・個包装などを検索できます。`,
+    keywords: [`${facility.name} お土産`, `${facility.prefecture ?? facility.region} お土産`],
+  } : null);
+
+  if (!effectiveMeta) {
     return (
       <AppLayout>
         <div className="flex flex-col items-center justify-center py-24 gap-4 px-4">
@@ -202,25 +214,25 @@ export default function StationPage() {
     );
   }
 
-  const pageTitle = `${meta.name}のお土産 おすすめ${facilityProducts?.total ?? ""}選 | Omiyage Go`;
+  const pageTitle = `${effectiveMeta.name}のお土産 おすすめ${facilityProducts?.total ?? ""}選 | Omiyage Go`;
   const canonicalUrl = `https://omiyagego-axrcumbv.manus.space/station/${facilityId}`;
 
   return (
     <AppLayout>
       <Helmet>
         <title>{pageTitle}</title>
-        <meta name="description" content={meta.description} />
-        <meta name="keywords" content={meta.keywords.join(", ")} />
+        <meta name="description" content={effectiveMeta.description} />
+        <meta name="keywords" content={effectiveMeta.keywords.join(", ")} />
         <meta property="og:title" content={pageTitle} />
-        <meta property="og:description" content={meta.description} />
+        <meta property="og:description" content={effectiveMeta.description} />
         <meta property="og:type" content="website" />
-        {meta.image && <meta property="og:image" content={meta.image} />}
+        {effectiveMeta.image && <meta property="og:image" content={effectiveMeta.image} />}
         <link rel="canonical" href={canonicalUrl} />
         <script type="application/ld+json">{JSON.stringify({
           "@context": "https://schema.org",
           "@type": "ItemList",
-          "name": `${meta.name}のお土産`,
-          "description": meta.description,
+          "name": `${effectiveMeta.name}のお土産`,
+          "description": effectiveMeta.description,
           "url": canonicalUrl,
         })}</script>
       </Helmet>
@@ -235,8 +247,8 @@ export default function StationPage() {
             <ArrowLeft className="w-4 h-4 text-stone-600" />
           </button>
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-bold text-stone-900 truncate">{meta.name}のお土産</p>
-            <p className="text-xs text-stone-500">{meta.prefecture}</p>
+            <p className="text-sm font-bold text-stone-900 truncate">{effectiveMeta.name}のお土産</p>
+            <p className="text-xs text-stone-500">{effectiveMeta.prefecture}</p>
           </div>
         </div>
       </div>
@@ -244,17 +256,17 @@ export default function StationPage() {
       <div className="pb-24">
         {/* ── ヒーロー ── */}
         <div className="relative h-40 bg-gradient-to-br from-emerald-800 to-emerald-600 overflow-hidden">
-          {meta.image && (
-            <img src={meta.image} alt={meta.name} className="w-full h-full object-cover opacity-30" />
+          {effectiveMeta.image && (
+            <img src={effectiveMeta.image} alt={effectiveMeta.name} className="w-full h-full object-cover opacity-30" />
           )}
           <div className="absolute inset-0 flex flex-col justify-end p-4">
             <div className="flex items-center gap-2 mb-1">
-              {meta.type === "airport" ? (
+              {effectiveMeta.type === "airport" ? (
                 <Plane className="w-5 h-5 text-white" />
               ) : (
                 <Train className="w-5 h-5 text-white" />
               )}
-              <p className="text-white font-black text-xl">{meta.name}</p>
+              <p className="text-white font-black text-xl">{effectiveMeta.name}</p>
             </div>
             <p className="text-white/80 text-sm">
               {facilityProducts?.total ?? ""}件のお土産を掲載中
@@ -264,9 +276,9 @@ export default function StationPage() {
 
         {/* ── 施設説明 ── */}
         <div className="px-4 py-4 border-b border-stone-100 bg-stone-50">
-          <p className="text-sm text-stone-600 leading-relaxed">{meta.description}</p>
+          <p className="text-sm text-stone-600 leading-relaxed">{effectiveMeta.description}</p>
           <div className="flex flex-wrap gap-2 mt-3">
-            {meta.keywords.slice(0, 4).map((kw) => (
+            {effectiveMeta.keywords.slice(0, 4).map((kw) => (
               <span key={kw} className="px-2.5 py-1 bg-white border border-stone-200 text-stone-600 text-xs rounded-full">
                 #{kw}
               </span>
@@ -400,7 +412,7 @@ export default function StationPage() {
           <div className="flex items-center justify-between mb-3">
             <h2 className="text-sm font-bold text-stone-700 flex items-center gap-1.5">
               <Building2 className="w-4 h-4 text-emerald-600" />
-              {meta.name}で買えるお土産
+              {effectiveMeta.name}で買えるお土産
             </h2>
             <button
               onClick={() => navigate(`/db-search?facilityId=${facilityId}`)}
@@ -489,7 +501,7 @@ export default function StationPage() {
             onClick={() => navigate(`/db-search?facilityId=${facilityId}`)}
             className="w-full mt-4 py-3 bg-stone-100 text-stone-700 text-sm font-bold rounded-xl hover:bg-emerald-50 hover:text-emerald-700 transition-colors flex items-center justify-center gap-2"
           >
-            {meta.name}のお土産をすべて見る
+            {effectiveMeta.name}のお土産をすべて見る
             <ChevronRight className="w-4 h-4" />
           </button>
         </div>
