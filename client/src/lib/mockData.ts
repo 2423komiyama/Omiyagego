@@ -22,10 +22,15 @@ export type FacilityId =
   | "naha"
   | "hiroshima"
   | "nagoya"
+  | "chubu_airport"
+  | "nagoya_sakae"
   | "kanazawa"
   | "sendai"
   | "nagano"
   | "shizuoka"
+  | "hamamatsu"
+  | "shin_fuji"
+  | "mishima"
   | "nara"
   | "kagoshima"
   | "nagasaki"
@@ -56,11 +61,16 @@ export const FACILITIES: FacilityInfo[] = [
   { id: "fukuoka", label: "博多駅・福岡空港", shortLabel: "博多駅", coords: { lat: 33.5903, lng: 130.4207 } },
   { id: "naha", label: "那覇空港・国際通り", shortLabel: "那覇", coords: { lat: 26.2124, lng: 127.6492 } },
   { id: "hiroshima", label: "広島駅・広島空港", shortLabel: "広島駅", coords: { lat: 34.3963, lng: 132.4596 } },
-  { id: "nagoya", label: "名古屋駅・中部国際空港", shortLabel: "名古屋", coords: { lat: 35.1709, lng: 136.8815 } },
+  { id: "nagoya", label: "名古屋駅", shortLabel: "名古屋駅", coords: { lat: 35.1709, lng: 136.8815 } },
+  { id: "chubu_airport", label: "中部国際空港（セントレア）", shortLabel: "セントレア", coords: { lat: 34.8583, lng: 136.8052 } },
+  { id: "nagoya_sakae", label: "栄（名古屋）", shortLabel: "栄", coords: { lat: 35.1694, lng: 136.9065 } },
   { id: "kanazawa", label: "金沢駅", shortLabel: "金沢駅", coords: { lat: 36.5781, lng: 136.6480 } },
   { id: "sendai", label: "仙台駅・仙台空港", shortLabel: "仙台駅", coords: { lat: 38.2682, lng: 140.8694 } },
   { id: "nagano", label: "長野駅・松本駅", shortLabel: "長野駅", coords: { lat: 36.6485, lng: 138.1950 } },
-  { id: "shizuoka", label: "静岡駅・浜松駅", shortLabel: "静岡駅", coords: { lat: 34.9756, lng: 138.3828 } },
+  { id: "shizuoka", label: "静岡駅", shortLabel: "静岡駅", coords: { lat: 34.9756, lng: 138.3828 } },
+  { id: "hamamatsu", label: "浜松駅", shortLabel: "浜松駅", coords: { lat: 34.7033, lng: 137.7344 } },
+  { id: "shin_fuji", label: "新富士駅", shortLabel: "新富士駅", coords: { lat: 35.1533, lng: 138.6500 } },
+  { id: "mishima", label: "三島駅", shortLabel: "三島駅", coords: { lat: 35.1186, lng: 138.9108 } },
   { id: "nara", label: "近鉄奈良駅・JR奈良駅", shortLabel: "奈良駅", coords: { lat: 34.6851, lng: 135.8048 } },
   { id: "kagoshima", label: "鹿児島中央駅", shortLabel: "鹿児島", coords: { lat: 31.5785, lng: 130.5432 } },
   { id: "nagasaki", label: "長崎駅・長崎空港", shortLabel: "長崎駅", coords: { lat: 32.7503, lng: 129.8779 } },
