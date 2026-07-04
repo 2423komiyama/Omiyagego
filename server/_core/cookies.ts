@@ -39,10 +39,12 @@ export function getSessionCookieOptions(
   //       ? hostname
   //       : undefined;
 
+  // lax: OAuthコールバック（トップレベルGET）でも送信され、http開発環境でも有効。
+  // sameSite=none は secure必須のため http ではブラウザに拒否される。
   return {
     httpOnly: true,
     path: "/",
-    sameSite: "none",
+    sameSite: "lax",
     secure: isSecureRequest(req),
   };
 }

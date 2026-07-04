@@ -1,5 +1,4 @@
 import { z } from "zod";
-import { notifyOwner } from "./notification";
 import { adminProcedure, publicProcedure, router } from "./trpc";
 
 export const systemRouter = router({
@@ -13,6 +12,7 @@ export const systemRouter = router({
       ok: true,
     })),
 
+  // 旧Manus通知の名残。現在はサーバーログに記録するのみ。
   notifyOwner: adminProcedure
     .input(
       z.object({
@@ -21,9 +21,9 @@ export const systemRouter = router({
       })
     )
     .mutation(async ({ input }) => {
-      const delivered = await notifyOwner(input);
+      console.log(`[NotifyOwner] ${input.title}: ${input.content}`);
       return {
-        success: delivered,
+        success: true,
       } as const;
     }),
 });

@@ -1,0 +1,14 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "omiyage-dev",
+      "runtimeExecutable": "/Users/fitfounderkomiyamakyousuke/.local/node22/bin/pnpm",
+      "runtimeArgs": ["dev"],
+      "port": 3000,
+      "env": {
+        "PATH": "/Users/fitfounderkomiyamakyousuke/.local/node22/bin:/usr/bin:/bin"
+      }
+    }
+  ]
+}
