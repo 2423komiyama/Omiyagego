@@ -5,11 +5,29 @@ import { ENV } from './_core/env';
 
 let _db: ReturnType<typeof drizzle> | null = null;
 
+// TiDB Cloud等のマネージドMySQLはTLS必須。ホスト名で判定して自動で有効化する。
+function requiresTls(databaseUrl: string): boolean {
+  try {
+    const host = new URL(databaseUrl).hostname;
+    return /\.tidbcloud\.com$|\.psdb\.cloud$/.test(host);
+  } catch {
+    return false;
+  }
+}
+
 // Lazily create the drizzle instance so local tooling can run without a DB.
 export async function getDb() {
   if (!_db && process.env.DATABASE_URL) {
     try {
-      _db = drizzle(process.env.DATABASE_URL);
+      const databaseUrl = process.env.DATABASE_URL;
+      _db = requiresTls(databaseUrl)
+        ? drizzle({
+            connection: {
+              uri: databaseUrl,
+              ssl: { minVersion: "TLSv1.2", rejectUnauthorized: true },
+            },
+          })
+        : drizzle(databaseUrl);
     } catch (error) {
       console.warn("[Database] Failed to connect:", error);
       _db = null;
