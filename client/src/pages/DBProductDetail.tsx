@@ -357,6 +357,19 @@ export default function DBProductDetail() {
   const displayImageUrl = product.realImageUrl || product.imageUrl || getCategoryImage(product.category);
   const isRealImage = !!(product.realImageUrl || product.imageUrl);
 
+  // 購入導線: 公式サイト(brandUrl)があればそちら、無ければ楽天市場の商品名検索へ
+  // (アフィリエイトID経由の汎用リンク。個別商品の楽天掲載有無は商品ごとに未確認のため、常に検索結果へ誘導する)
+  const rakutenAffiliateId = import.meta.env.VITE_RAKUTEN_AFFILIATE_ID as string | undefined;
+  const rakutenSearchUrl = (() => {
+    const keyword = encodeURIComponent(`${product.name} ${product.brand}`.trim());
+    const dest = `https://search.rakuten.co.jp/search/mall/${keyword}/`;
+    if (!rakutenAffiliateId) return dest;
+    return `https://hb.afl.rakuten.co.jp/hgc/${rakutenAffiliateId}/?pc=${encodeURIComponent(dest)}&m=${encodeURIComponent(dest)}`;
+  })();
+  const purchaseLink = product.brandUrl
+    ? { href: product.brandUrl, label: "公式サイトで購入する" }
+    : { href: rakutenSearchUrl, label: "楽天市場で探す" };
+
   // 平均評価
   const avgRating = product.avgRating ? Number(product.avgRating) : 0;
 
@@ -571,8 +584,25 @@ export default function DBProductDetail() {
             )}
           </div>
 
+          {/* 購入CTA: 公式サイト or 楽天市場検索 */}
+          <a
+            href={purchaseLink.href}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center justify-center gap-2 w-full mt-4 px-4 py-3 bg-emerald-600 text-white text-sm font-bold rounded-xl hover:bg-emerald-700 transition-colors shadow-sm"
+          >
+            <ShoppingBag className="w-4 h-4" />
+            {purchaseLink.label}
+            <ExternalLink className="w-3.5 h-3.5 opacity-70" />
+          </a>
+          {!product.brandUrl && (
+            <p className="text-[11px] text-stone-400 mt-1.5 text-center">
+              楽天市場の検索結果に遷移します（取り扱いは店舗により異なります）
+            </p>
+          )}
+
           {/* お気に入り・いいね・共有ボタン */}
-          <div className="flex gap-2 mt-4">
+          <div className="flex gap-2 mt-3">
             {/* DBお気に入りボタン */}
             <button
               onClick={handleFavoriteToggle}
