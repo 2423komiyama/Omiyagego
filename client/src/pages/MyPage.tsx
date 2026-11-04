@@ -479,7 +479,7 @@ export default function MyPage() {
               ) : (
                 <div className="flex gap-2.5 overflow-x-auto pb-1">
                   {viewHistory.map((entry) => (
-                    <button key={entry.productId} onClick={() => navigate(`/product/${entry.productId}`)} className="flex-shrink-0 w-20 flex flex-col items-center gap-1 group">
+                    <button key={entry.productId} onClick={() => navigate(`/db-product/${entry.productId}`)} className="flex-shrink-0 w-20 flex flex-col items-center gap-1 group">
                       <div className="w-20 h-20 rounded-xl overflow-hidden border border-stone-200 group-hover:border-emerald-400 transition-colors">
                         <img src={entry.productImage} alt={entry.productName} className="w-full h-full object-cover" />
                       </div>

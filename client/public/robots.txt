@@ -1,0 +1,5 @@
+User-agent: *
+Disallow: /admin
+Disallow: /db-search
+
+Sitemap: https://omiyagego-production.up.railway.app/sitemap.xml

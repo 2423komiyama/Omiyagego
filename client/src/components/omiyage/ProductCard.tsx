@@ -1,6 +1,14 @@
 // ============================================================
 // Omiyage Go - 商品カードコンポーネント（切符スタイル）
 // デザイン哲学: 左端カラーバーの切符スタイル
+//
+// 注意: このコンポーネントは現状 Results.tsx / SearchPage.tsx（いずれも
+// @/lib/mockData のモック商品を使うページ）からのみ使用されている。
+// 遷移先は実データ版の商品詳細ページ(/db-product/:id)に統一したが、
+// モック商品のidは実DBには存在しないため、モック経由でこのカードを踏むと
+// 「見つかりません」表示になる（＝架空データを本物として見せるより誠実）。
+// 本質的な解消には Results.tsx / SearchPage.tsx 自体を実データ化する必要があり、
+// 本タスクの担当範囲外のため次アクションとして別途フラグする。
 // ============================================================
 import { cn } from "@/lib/utils";
 import { useLocation } from "wouter";
@@ -38,7 +46,7 @@ export function ProductCard({ product, className }: ProductCardProps) {
         "active:scale-[0.98]",
         className
       )}
-      onClick={() => navigate(`/product/${product.id}`)}
+      onClick={() => navigate(`/db-product/${product.id}`)}
     >
       {/* 切符スタイル - 左端カラーバー */}
       <div

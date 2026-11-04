@@ -9,6 +9,34 @@ import App from "./App";
 import { getLoginUrl } from "./const";
 import "./index.css";
 
+// ===== GA4 (Google Analytics) =====
+// VITE_GA_MEASUREMENT_ID が設定されている場合のみ gtag.js を読み込む。
+// 未設定時は何もしない（ローカル開発・測定ID未発行環境でも安全）。
+declare global {
+  interface Window {
+    dataLayer?: unknown[];
+  }
+}
+
+const initGoogleAnalytics = () => {
+  const measurementId = import.meta.env.VITE_GA_MEASUREMENT_ID;
+  if (!measurementId || typeof window === "undefined") return;
+
+  const script = document.createElement("script");
+  script.async = true;
+  script.src = `https://www.googletagmanager.com/gtag/js?id=${measurementId}`;
+  document.head.appendChild(script);
+
+  window.dataLayer = window.dataLayer || [];
+  function gtag(...args: unknown[]) {
+    window.dataLayer!.push(args);
+  }
+  gtag("js", new Date());
+  gtag("config", measurementId);
+};
+
+initGoogleAnalytics();
+
 const queryClient = new QueryClient();
 
 const redirectToLoginIfUnauthorized = (error: unknown) => {

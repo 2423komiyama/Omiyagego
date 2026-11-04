@@ -6,21 +6,13 @@ import { ReactNode } from "react";
 import { cn } from "@/lib/utils";
 import { BottomNav } from "./BottomNav";
 import { useLocation, Link } from "wouter";
-import { Home, Search, MapPin, Heart, User, BookOpen } from "lucide-react";
+import { NAV_ITEMS, isNavItemActive } from "@/lib/navConfig";
 
 interface AppLayoutProps {
   children: ReactNode;
   hideNav?: boolean;
   className?: string;
 }
-
-const NAV_ITEMS = [
-  { href: "/", icon: Home, label: "ホーム" },
-  { href: "/db-search", icon: Search, label: "探す" },
-  { href: "/map", icon: MapPin, label: "マップ" },
-  { href: "/db-favorites", icon: Heart, label: "お気に入り" },
-  { href: "/mypage", icon: User, label: "マイページ" },
-];
 
 function DesktopSidebar() {
   const [location] = useLocation();
@@ -39,11 +31,11 @@ function DesktopSidebar() {
       {/* ナビゲーション */}
       <nav className="flex-1 px-3 py-4 space-y-1">
         {NAV_ITEMS.map((item) => {
-          const isActive = item.href === "/" ? location === "/" : location.startsWith(item.href);
+          const isActive = isNavItemActive(item.path, location);
           return (
             <Link
-              key={item.href}
-              href={item.href}
+              key={item.path}
+              href={item.path}
               className={cn(
                 "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors",
                 isActive

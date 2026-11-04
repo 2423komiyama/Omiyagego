@@ -11,8 +11,8 @@
 事業計画書（Artifact）DOC04の日別スケジュールを部門別タスク一覧に展開したもの。ここに載っていない項目（下記「今回対象外」参照）は着手しない——1週間は「導線の完動」「エンタメ化戦略の土台」「情報の正しさ」の3点に絞る。各部門、着手時は `[ ]` を `[x]` に変える運用とする。
 
 ### Design
-- [ ] 🔴 モックデータ導線の修正 — `MapPage.tsx`・`Favorites.tsx`・`ProductCard.tsx`・`MyPage.tsx`が実DB(tRPC)ではなく`@/lib/mockData`を参照している。実データ版に繋ぎ直すか、当面ナビゲーションから外す（Day1）
-- [ ] 🔴 デスクトップ／モバイルのナビ項目統一 — `AppLayout.tsx`サイドバーと`BottomNav.tsx`で表示項目が食い違っている（Day5）
+- [ ] 🔴 モックデータ導線の修正 — `Favorites.tsx`・`ProductCard.tsx`・`MyPage.tsx`が実DB(tRPC)ではなく`@/lib/mockData`を参照している。実データ版に繋ぎ直すか、当面ナビゲーションから外す（Day1）（`MapPage.tsx`は実DB接続済み・対応済み）
+- [x] 🔴 デスクトップ／モバイルのナビ項目統一 — `navConfig.ts`の`NAV_ITEMS`に集約済み。`AppLayout.tsx`サイドバーと`BottomNav.tsx`は共に同一の`NAV_ITEMS`を参照（Day5）
 - [ ] 🟡 主要導線（戻る・いいね・シェア・購入CTA）へのaria-label付与（Day5）
 - [ ] 🆕 SNSシェアカードのビジュアルデザイン — 商品画像＋価格＋施設名を合成する縦長カードのレイアウト設計（Devと共同、Day2-3）
 
@@ -69,12 +69,11 @@
 → 全て `adminProcedure` に置換。
 
 ### [Design] モック版ページが実DBに繋がっていない導線破綻
-`MapPage.tsx`(L19)・`Favorites.tsx`(L18) が `@/lib/mockData` を参照。`ProductCard.tsx`(L41)・`MyPage.tsx`(L482、閲覧履歴)も `/product/:id`（モック版）に遷移し、実商品を見ていたユーザーが架空データの詳細ページに着地する。
+`Favorites.tsx`(L18) が `@/lib/mockData` を参照。`ProductCard.tsx`(L41)・`MyPage.tsx`(L482、閲覧履歴)も `/product/:id`（モック版）に遷移し、実商品を見ていたユーザーが架空データの詳細ページに着地する。（`MapPage.tsx`は実DB(tRPC)接続・`/db-product/:id`遷移に対応済み、ナビにも復帰済み）
 → 実データ版(tRPC)に繋ぎ直すか、当面ナビゲーションから外す。
 
-### [Design] デスクトップ/モバイルでナビ項目が不一致
-`AppLayout.tsx`のデスクトップサイドバー(L17-23)は「マップ」を含み、`BottomNav.tsx`(L9-15)は「コレクター」を含む。画面幅で機能が消える体験。
-→ ナビ項目定義を1箇所に集約。
+### [Design] デスクトップ/モバイルでナビ項目が不一致（対応済み）
+`navConfig.ts`の`NAV_ITEMS`にナビ項目定義を集約し、`AppLayout.tsx`のデスクトップサイドバーと`BottomNav.tsx`が共通で参照するよう修正済み。
 
 ### [Design] アイコンのみボタンにaria-labelがほぼ皆無
 grep実測：aria-label使用は実質1ファイルのみ、focus-visible使用も4ファイルのみ。主要導線（戻る・いいね・シェア・閉じる）約200箇所が未対応。

@@ -16,6 +16,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { useParams, useLocation } from "wouter";
 import { AppLayout } from "@/components/omiyage/AppLayout";
+import { ShareCardModal } from "@/components/omiyage/ShareCard";
 import { trpc } from "@/lib/trpc";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { getLoginUrl } from "@/const";
@@ -29,6 +30,7 @@ import {
   ChefHat, Scale, Info, Flame, Navigation, Timer
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useHistory } from "@/contexts/HistoryContext";
 
 // ── バッジ表示設定 ─────────────────────────────────────────
 const BADGE_CONFIG: Record<string, { label: string; className: string }> = {
@@ -191,6 +193,21 @@ export default function DBProductDetail() {
     { enabled: !!productId }
   );
 
+  // 閲覧履歴に保存
+  const { addViewHistory } = useHistory();
+  useEffect(() => {
+    if (product) {
+      addViewHistory({
+        productId: product.id,
+        productName: product.name,
+        productPrice: `¥${product.price.toLocaleString()}`,
+        productImage: product.realImageUrl || product.imageUrl || getCategoryImage(product.category),
+        timestamp: Date.now(),
+      });
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [product?.id]);
+
   // いいね状態
   const sessionId = useMemo(() => getSessionId(), []);
   const { data: likedIds = [], refetch: refetchLikes } = trpc.likes.getLikedIds.useQuery({ sessionId });
@@ -247,6 +264,9 @@ export default function DBProductDetail() {
 
   // ポイント通知
   const [pointToast, setPointToast] = useState<{ points: number; message: string } | null>(null);
+
+  // SNSシェアカード
+  const [shareCardOpen, setShareCardOpen] = useState(false);
 
   const createReview = trpc.reviews.create.useMutation({
     onSuccess: () => {
@@ -374,14 +394,9 @@ export default function DBProductDetail() {
   const avgRating = product.avgRating ? Number(product.avgRating) : 0;
 
   // ─── 共有・いいね ────────────────────────────────────────
+  // SNSシェア用カード画像（商品画像＋商品名＋価格＋施設名）を生成するモーダルを開く
   const handleShare = () => {
-    const url = `${window.location.origin}/db-product/${productId}`;
-    const text = `${product.name}（${product.prefecture}）- ¥${product.price.toLocaleString()}`;
-    if (navigator.share) {
-      navigator.share({ title: product.name, text, url });
-    } else {
-      navigator.clipboard.writeText(url).then(() => alert("URLをコピーしました"));
-    }
+    setShareCardOpen(true);
   };
 
   const handleLike = () => {
@@ -453,6 +468,21 @@ export default function DBProductDetail() {
           onClose={() => setPointToast(null)}
         />
       )}
+
+      {/* SNSシェアカード生成モーダル */}
+      <ShareCardModal
+        open={shareCardOpen}
+        onClose={() => setShareCardOpen(false)}
+        productUrl={`${window.location.origin}/db-product/${productId}`}
+        card={{
+          productName: product.name,
+          price: product.price,
+          prefecture: product.prefecture,
+          facilityName: sellers[0]?.storeName,
+          brand: product.brand,
+          imageUrl: displayImageUrl,
+        }}
+      />
 
       {/* ── ヘッダー ── */}
       <div className="sticky top-0 z-20 bg-white/95 backdrop-blur-sm border-b border-stone-100">

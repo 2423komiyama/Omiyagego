@@ -196,7 +196,7 @@ export default function PurposePage() {
   }
 
   const pageTitle = `${meta.title} | Omiyage Go`;
-  const canonicalUrl = `https://omiyagego-axrcumbv.manus.space/purpose/${purposeId}`;
+  const canonicalUrl = `${typeof window !== "undefined" ? window.location.origin : ""}/purpose/${purposeId}`;
 
   return (
     <AppLayout>

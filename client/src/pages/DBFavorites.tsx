@@ -208,7 +208,7 @@ export default function DBFavorites() {
             <Button
               variant="outline"
               className="mt-4 text-emerald-700 border-emerald-300"
-              onClick={() => navigate("/search")}
+              onClick={() => navigate("/db-search")}
             >
               お土産を探す
             </Button>

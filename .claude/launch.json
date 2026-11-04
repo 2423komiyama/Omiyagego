@@ -6,6 +6,7 @@
       "runtimeExecutable": "/Users/fitfounderkomiyamakyousuke/.local/node22/bin/pnpm",
       "runtimeArgs": ["dev"],
       "port": 3000,
+      "autoPort": true,
       "env": {
         "PATH": "/Users/fitfounderkomiyamakyousuke/.local/node22/bin:/usr/bin:/bin"
       }

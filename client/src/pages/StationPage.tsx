@@ -261,7 +261,7 @@ export default function StationPage() {
   }
 
   const pageTitle = `${effectiveMeta.name}のお土産 おすすめ${facilityProducts?.total ?? ""}選 | Omiyage Go`;
-  const canonicalUrl = `https://omiyagego-axrcumbv.manus.space/station/${facilityId}`;
+  const canonicalUrl = `${typeof window !== "undefined" ? window.location.origin : ""}/station/${facilityId}`;
 
   return (
     <AppLayout>

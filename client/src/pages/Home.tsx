@@ -311,7 +311,7 @@ export default function Home() {
         <meta property="og:title" content="Omiyage Go - 外さないお土産を最短距離で" />
         <meta property="og:description" content="駅・空港で買えるお土産を用途・日持ち・予算で絞り込み。場面別に最適な手土産が見つかります。" />
         <meta property="og:type" content="website" />
-        <link rel="canonical" href="https://omiyagego-axrcumbv.manus.space/" />
+        <link rel="canonical" href={`${typeof window !== "undefined" ? window.location.origin : ""}/`} />
       </Helmet>
 
       {/* ── カルーセルヒーロー ── */}

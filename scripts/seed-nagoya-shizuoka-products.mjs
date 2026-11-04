@@ -14,6 +14,81 @@ function genId(prefix = '') {
 }
 
 // ============================================================
+// purposeTags / badges 正規化
+// 再発防止: このスクリプトの `products` 配列は可読性のため日本語カンマ区切り
+// （例: '挨拶,御礼,社内配布'）で記述するが、DBには他商品と同じ英語コードの
+// JSON配列文字列（例: '["greeting","thanks","office"]'）で保存する必要がある。
+// マッピングは data-export/products.json の既存商品で使われているコード体系
+// （purposeTags: greeting/thanks/apology/office/snack/self/family/kids、
+//   badges: award/bestseller/editorial/limited/local/luxury/new/niche/
+//           organic/popular/premium/regional/soul/traditional）に揃える。
+// ============================================================
+const PURPOSE_CODE_MAP = {
+  '挨拶': 'greeting',
+  '御礼': 'thanks',
+  'お詫び': 'apology',
+  '社内配布': 'office',
+  '差し入れ': 'snack',
+  '自分用': 'self',
+  '家族へ': 'family',
+  '子供向け': 'kids',
+  // 既存コード体系に「接待」専用コードは無いため、意味的に最も近い「御礼」に統合
+  '接待': 'thanks',
+};
+
+const BADGE_CODE_MAP = {
+  // 既存コード体系にそのまま含まれるもの
+  'award': 'award',
+  'bestseller': 'bestseller',
+  'editorial': 'editorial',
+  'limited': 'limited',
+  'local': 'local',
+  'luxury': 'luxury',
+  'new': 'new',
+  'niche': 'niche',
+  'organic': 'organic',
+  'popular': 'popular',
+  'premium': 'premium',
+  'regional': 'regional',
+  'soul': 'soul',
+  'traditional': 'traditional',
+  // このスクリプト固有の独自コード → 既存コード体系へのマッピング
+  'local_specialty': 'local',
+  'instagrammable': 'niche',
+  'unique': 'niche',
+  'adult': 'premium',
+  // 空港限定＝購入場所が限られるという点で「限定(limited)」に統合
+  'airport_only': 'limited',
+  // shelfLife（数値フィールド）で既に管理されており対応バッジが無いため削除
+  'long_shelf_life': null,
+};
+
+// 日本語カンマ区切り文字列 or 既にJSON配列文字列の purposeTags/badges を
+// 「英語コードのJSON配列文字列」に変換する。
+function toCodeJsonArray(raw, codeMap, fieldLabel) {
+  if (raw == null) return null;
+  // 既にJSON配列として解釈できるならそのまま尊重する
+  try {
+    const parsed = JSON.parse(raw);
+    if (Array.isArray(parsed)) return JSON.stringify(parsed);
+  } catch {
+    // JSONではない＝カンマ区切りの生文字列として処理する
+  }
+  const codes = raw
+    .split(',')
+    .map((s) => s.trim())
+    .filter(Boolean)
+    .map((token) => {
+      if (!(token in codeMap)) {
+        throw new Error(`未知の${fieldLabel}コード "${token}" — codeMapに追記してください`);
+      }
+      return codeMap[token];
+    })
+    .filter((code) => code !== null);
+  return JSON.stringify([...new Set(codes)]);
+}
+
+// ============================================================
 // 商品データ（products）
 // ============================================================
 const products = [
@@ -582,9 +657,11 @@ for (const p of products) {
     skippedProducts++;
     continue;
   }
+  const badgesJson = toCodeJsonArray(p.badges, BADGE_CODE_MAP, 'badges');
+  const purposeTagsJson = toCodeJsonArray(p.purposeTags, PURPOSE_CODE_MAP, 'purposeTags');
   await conn.execute(
     `INSERT INTO products (id, name, brand, description, price, prefecture, region, category, shelfLife, isIndividualPackaged, servingSize, badges, purposeTags, minPeople, maxPeople, editorialPick, editorialNote, makerName, makerFoundedYear, guaranteeReason) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
-    [p.id, p.name, p.brand, p.description, p.price, p.prefecture, p.region, p.category, p.shelfLife ?? null, p.isIndividualPackaged ?? 0, p.servingSize ?? null, p.badges ?? null, p.purposeTags ?? null, p.minPeople ?? null, p.maxPeople ?? null, p.editorialPick ?? 0, p.editorialNote ?? null, p.makerName ?? null, p.makerFoundedYear ?? null, p.guaranteeReason ?? null]
+    [p.id, p.name, p.brand, p.description, p.price, p.prefecture, p.region, p.category, p.shelfLife ?? null, p.isIndividualPackaged ?? 0, p.servingSize ?? null, badgesJson, purposeTagsJson, p.minPeople ?? null, p.maxPeople ?? null, p.editorialPick ?? 0, p.editorialNote ?? null, p.makerName ?? null, p.makerFoundedYear ?? null, p.guaranteeReason ?? null]
   );
   productIdMap[p.name] = p.id;
   console.log(`  追加: ${p.name} (${p.id})`);
